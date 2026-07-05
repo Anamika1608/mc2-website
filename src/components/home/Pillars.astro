@@ -189,21 +189,31 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
      margin-left on `.card--o1` resolves against that same content-box
      width/offset — i.e. this calc's first term exactly cancels the gutter
      regardless of viewport.
+     Refactored (Initiatives Task 1) to read `--container-gutter`
+     (src/styles/global.css) instead of repeating the clamp() literal — the
+     token and this calc's first term must stay textually coupled to
+     `.container`'s own padding-inline for the cancellation above to hold.
      `100vw` includes the scrollbar gutter on platforms with an
      always-visible scrollbar (~15px on Windows/Linux; 0 on macOS's
      overlay scrollbars) — an acceptable small error here since the design
      intent is "visibly bleeds past the edge," not a pixel-exact clip line.
-     Verified via headless-Chrome renders (getBoundingClientRect on
-     `.card--o1`) at all three tiers: 1440px → left edge -91.4px (title
-     fully clear of the viewport, no cropping); 1920px → -190.6px (matches
-     the design's -33.82px-past-container-edge almost exactly: gutter
-     156.8px + 33.82px = 190.62px); 2560px → -513.8px (gutter 480px +
-     33.82px = 513.82px) — bleed magnitude grows with the gutter at wide
-     viewports, same as the design's own fixed-canvas math would imply if
-     extrapolated. */
+     Correction (Initiatives Task 1 re-verification): the prior revision of
+     this comment claimed `.card--o1`'s viewport-relative left edge grows
+     with viewport width (-91.4px at 1440px, -190.6px at 1920px, -513.8px
+     at 2560px) — that arithmetic double-counted the gutter. Because this
+     calc's first term is the exact negative of `.container`'s own
+     padding-inline plus centering margin (see above), those two terms
+     cancel completely regardless of viewport width, leaving only the
+     constant second term. Re-measured via headless Chromium
+     (getBoundingClientRect on `.card--o1`) at 1024/1440/1920px, before and
+     after this refactor: -33.77px / -33.77px / -33.75px in all six
+     readings (the sub-0.02px spread is 4vw floating-point jitter, not a
+     real per-width difference) — i.e. a constant ≈ -2.11rem (-33.76px)
+     past the viewport's left edge at every width, exactly the second term
+     alone. */
   .card--o1 {
     margin-left: calc(
-      -1 * (clamp(1.25rem, 4vw, 5rem) + max((100vw - 1760px) / 2, 0px)) -
+      -1 * (var(--container-gutter) + max((100vw - 1760px) / 2, 0px)) -
         2.11rem
     );
     min-height: 6.5663rem; /* 105.06px, Figma 1:1069 */

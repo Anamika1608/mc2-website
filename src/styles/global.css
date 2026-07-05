@@ -20,6 +20,9 @@
   /* Typography (font cssVariables are injected by Astro's <Font /> components) */
   --font-display: var(--font-faculty), Georgia, serif;
   --font-sans: var(--font-sora), system-ui, sans-serif;
+
+  /* Layout */
+  --container-gutter: clamp(1.25rem, 4vw, 5rem); /* .container's inline padding — extracted to a token (Initiatives Task 1) so Pillars' O1 bleed calc (src/components/home/Pillars.astro) can consume the identical value instead of duplicating the literal */
 }
 
 /* Minimal reset */
@@ -60,7 +63,7 @@ a {
 .container {
   max-width: 1760px;
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 5rem);
+  padding-inline: var(--container-gutter);
 }
 
 /* Visually hidden until focused (keyboard users) */
