@@ -1,0 +1,203 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, groups 1:9174 (eyebrow/H2/intro) and 1:9306
+// (4 stat columns). Node ids + exact derivations are documented inline in the
+// style block below. Two corrections vs. the task brief/starter guesses,
+// confirmed against the Figma reference code and pixel-sampled screenshots:
+//   1. The eyebrow (1:9175) is set in Faculty_Glyphic per the Figma reference
+//      code's own font-family class, NOT Sora as the brief guessed (other
+//      sections' eyebrows are Sora, but this one's node data is explicit).
+//   2. The stat descriptions sample to solid RGB(30,30,60) = #1e1e3c =
+//      --color-ink-alt, NOT --color-gray as the brief guessed — same
+//      gray-vs-navy correction SponsorStrip.astro already made for its
+//      caption text.
+import SparkOrange from "../../assets/about/spark-orange.svg";
+
+const STATS = [
+  { value: "4OO+", unit: "acres", desc: "Dedicated R&D campuses across the energy majors" },
+  { value: "12+", unit: "", desc: "R&D centres and labs open to startups" },
+  { value: "Pan India", unit: "", desc: "Refining, E&P, gas, LNG and retail operations" },
+  { value: "7", unit: "", desc: "Balance sheets behind a single mandate", arrow: true },
+];
+---
+
+<section class="scale">
+  <div class="container">
+    <p class="eyebrow">THE SCALE BEHIND YOU</p>
+    <h2>The industrial weight behind<br />every venture.</h2>
+    <p class="intro">
+      Seven energy majors contribute infrastructure, domain mentorship, pilot
+      sites and anchor demand, assets no standalone incubator can replicate.
+    </p>
+
+    <ul class="stats">
+      {STATS.map((s, i) => (
+        <li class={i > 0 ? "has-divider" : ""}>
+          {i > 0 && <SparkOrange class="stat-spark stat-spark-top" aria-hidden="true" />}
+          <p class="stat-value">
+            {s.value}
+            {s.unit && (<><br />{s.unit}</>)}
+            {s.arrow && <span class="stat-arrow" aria-hidden="true"> &rarr;</span>}
+          </p>
+          <p class="stat-desc">{s.desc}</p>
+          {i > 0 && <SparkOrange class="stat-spark stat-spark-bottom" aria-hidden="true" />}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .scale {
+    background: var(--color-cream);
+    padding-block: 4rem;
+    text-align: center;
+  }
+
+  /* Eyebrow (text node 1:9175): Figma reference code returns
+     font-['Faculty_Glyphic:Regular'] text-[27.07px] text-[#959595]
+     tracking-[6.7675px] — an exact, unambiguous match (real text node, not
+     vectorized). Color = --color-gray. 6.7675 / 27.07 = 0.25 exactly, so
+     letter-spacing is a clean 0.25em. CORRECTS the starter's --font-sans /
+     0.2em guesses: this eyebrow is set in the display face, unlike
+     SponsorStrip's/Mission's Sora eyebrows — confirmed visually too, the
+     isolated screenshot shows serifed letterforms (flared "Y", bracketed
+     "T"/"S"), not Sora's geometric sans. */
+  .eyebrow {
+    font-family: var(--font-display);
+    color: var(--color-gray);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-size: 1.6919rem; /* 27.07px, node 1:9175 */
+    margin: 0 0 1.25rem;
+  }
+
+  /* H2 (real text nodes 1:9177/1:9178): reference code gives
+     text-[#1e1e3c] text-[65px] font-['Faculty_Glyphic:Regular'] — identical
+     treatment to Mission.astro's and SponsorStrip.astro's H2s. */
+  h2 {
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px */
+    color: var(--color-ink-alt);
+    margin: 0 0 1.75rem;
+  }
+
+  /* Intro (group 1:9179) is a vectorized paragraph, not real text, so its
+     size is reverse-engineered the same way as Mission's body / SponsorStrip's
+     eyebrow: the "S" of "Seven" (vector 1:9180) measures 19.16px cap height;
+     against Sora's capHeight/upm of 0.73 -> 19.16 / 0.73 ≈ 26.25px. Line-top
+     delta between line 1 (y 3613.12) and line 2 (y 3646.06) is 32.94px ->
+     32.94 / 26.25 ≈ 1.255, rounded to 1.26. Color pixel-sampled from the full
+     heading screenshot: RGB(149,149,149) = #959595 = --color-gray, matching
+     the brief's guess. */
+  .intro {
+    max-width: 44rem;
+    margin: 0 auto 3rem;
+    font-family: var(--font-sans);
+    font-size: 1.64rem; /* 26.25px, derived — see comment above */
+    line-height: 1.26;
+    color: var(--color-gray);
+  }
+
+  /* Stats row (group 1:9306). Labels (1:9309/1:9354/1:9388/1:9429, real text
+     nodes) are text-[#f37d2c] text-[35.23px] font-['Faculty_Glyphic:Regular']
+     per the Figma reference code — an exact match for --color-orange at
+     2.2019rem (rounded 2.2rem here, a 0.03px difference). Stat 1's "4OO+"
+     and "acres" are two separate text nodes stacked in the same orange
+     group (1:9308), which is why they're both inside one .stat-value <p>
+     with a <br /> between them, both inheriting the orange color. Stat 4
+     ("7") has its own free-floating arrow vector (node 1:9464, positioned
+     immediately right of the "7" text) — confirmed by both the design
+     context and the get_screenshot render ("7 →"), rendered here as a
+     literal &rarr; glyph.
+
+     Descriptions (the "Dedicated R&D campuses..." vectorized paragraphs,
+     e.g. group 1:9311) pixel-sample to a solid RGB(30,30,60) = #1e1e3c =
+     --color-ink-alt — CORRECTS the brief's --color-gray guess (Figma wins;
+     same gray-vs-navy correction SponsorStrip.astro made for its captions).
+     Size derived the same way as the intro: "D" of "Dedicated" (vector
+     1:9312) measures 14.74px cap height -> 14.74 / 0.73 ≈ 20.19px = 1.26rem. */
+  .stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    text-align: left;
+  }
+  .stats li {
+    position: relative;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .stats li.has-divider {
+    /* Hairline color CORRECTED from the brief's --color-line guess: the
+       vertical dividers in group 1:9465/1:9466 (vectors 1:9467-1:9471)
+       pixel-sample to a solid RGB(243,125,44) = #f37d2c = --color-orange,
+       not the neutral --color-line. The source file actually draws 5
+       vertical hairlines (outer-left/right edges plus the 3 internal
+       column gaps) crossed by 2 asymmetric horizontal hairlines, all
+       studded with sparks at seemingly arbitrary points — a decorative
+       flourish that doesn't reduce to a simple per-column border pattern
+       (same kind of unreachable/irregular spark geometry SponsorStrip.astro
+       already ran into and simplified). This build keeps the readable core
+       of it: 3 internal vertical dividers, each with one spark at its top
+       and one at its bottom, and drops the outer-edge lines/asymmetric
+       horizontals. */
+    border-left: 1px solid var(--color-orange);
+  }
+  .stat-spark {
+    position: absolute;
+    left: -0.75rem;
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .stat-spark-top {
+    top: -0.75rem;
+  }
+  .stat-spark-bottom {
+    bottom: -0.75rem;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 2.2rem; /* 35.23px, derived — see comment above */
+    color: var(--color-orange);
+    margin: 0 0 0.75rem;
+    line-height: 1.1;
+  }
+  .stat-arrow {
+    color: var(--color-orange);
+  }
+  .stat-desc {
+    font-family: var(--font-sans);
+    font-size: 1.26rem; /* 20.19px, derived — see comment above */
+    color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 2.5rem;
+    }
+    .stats li:nth-child(odd).has-divider {
+      border-left: 0;
+    }
+    .stats li:nth-child(odd) .stat-spark {
+      display: none;
+    }
+  }
+  @media (max-width: 559.98px) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
+    .stats li.has-divider {
+      border-left: 0;
+    }
+    .stat-spark {
+      display: none;
+    }
+  }
+</style>
