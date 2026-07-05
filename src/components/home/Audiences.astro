@@ -163,8 +163,24 @@ import SparkOrange from "../../assets/home/spark-orange.svg";
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     /* Column gap is a whole-page layout concern per the Pillars.astro
-       precedent — reasonable equal-width grid here, checked in Task 7. */
+       precedent — reasonable equal-width grid here, checked in Task 7.
+       Left as the plain 3rem: the design's own gap (avg 102px across the
+       three measured column gaps, node 1:536/1:626/1:727/1:840) is wider,
+       but the .dspark/.vline/.divider-spark rules below hardcode this
+       gap's half/quarter (1.5rem/0.75rem) into their offsets — changing
+       gap alone would desync the decor overlay from the actual gap band,
+       and retuning every dependent offset is out of this task's scope. */
     gap: 3rem;
+    /* Outer inset tuned in Task 7: the design's own column group (node
+       1:535) is only 1429.98px wide at the 1920px canvas (243.06px inset
+       each side) — narrower than the shared .container's 1606.4px content
+       box (156.8px inset) this row was inheriting, so the columns bled
+       closer to the viewport edges than the design. Constraining this row
+       to the design's own measured width restores its wider outer gutter
+       without touching the shared .container utility (heading above is
+       unaffected). 89.3738rem = 1429.98px. */
+    max-width: 89.3738rem;
+    margin-inline: auto;
     /* 58px: measured off the 1:377 screenshot — pill bottom y408 to the
        "01" number tops y466. The decor geometry below anchors to the pill's
        center through this value, so it is design-sourced (not eyeballed). */

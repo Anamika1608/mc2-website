@@ -1,35 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/home/Hero.astro";
+import SponsorStrip from "../components/home/SponsorStrip.astro";
+import Pillars from "../components/home/Pillars.astro";
+import Audiences from "../components/home/Audiences.astro";
+import CtaBand from "../components/home/CtaBand.astro";
 ---
 
 <BaseLayout title="MC²+ · Multiply · Collaborate · Create">
-  <div class="hero">
-    <p class="eyebrow">Multiply · Collaborate · Create</p>
-    <h1>Where ideas <span class="accent">multiply</span>.</h1>
-    <p>Project base is ready — pages arrive in the next step.</p>
-  </div>
+  <Hero />
+  <SponsorStrip />
+  <Pillars />
+  <Audiences />
+  <CtaBand />
 </BaseLayout>
-
-<style>
-  .hero {
-    min-height: 60vh;
-    display: grid;
-    place-content: center;
-    text-align: center;
-    gap: 1rem;
-    padding: 2rem;
-  }
-  .eyebrow {
-    color: var(--color-gray);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    margin: 0;
-  }
-  h1 {
-    font-size: 3rem;
-  }
-  .accent {
-    color: var(--color-orange);
-  }
-</style>

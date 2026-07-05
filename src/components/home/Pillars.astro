@@ -88,9 +88,23 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
 <style>
   .pillars {
     background: var(--color-cream);
-    /* Not sourced from Figma page math (that's a whole-page concern) —
-       reasonable section rhythm, to be checked against neighbors in Task 7. */
-    padding-block: 6rem;
+    /* padding-top/bottom split in Task 7 gap-fix pass (whole-page cross-
+       section rhythm): the old symmetric `padding-block: 6rem` (96px both
+       sides) was a placeholder rhythm guess, not page math. Measured via
+       Figma metadata: SponsorStrip's divider (1:1026, bottom y1503.79) to
+       this section's own eyebrow top (1:1029, y1580.31) = 76.52px design
+       gap; this section's CTA pill (1:1033, bottom y2361.07) to Audiences'
+       eyebrow top (1:379, y2548.26) = 187.19px design gap. Rendered (before
+       fix, 1920px headless Chrome): 160px and 192px respectively — both
+       larger than design. SponsorStrip's own padding-bottom (64px) and
+       Audiences' own padding-top (96px) already read correctly elsewhere
+       (Hero→SponsorStrip, Audiences→CtaBand) and are out of scope, so both
+       deltas are absorbed here: padding-top = 76.52 − 64 = 12.52px
+       (0.7825rem); padding-bottom = 187.19 − 96 = 91.19px (5.6994rem).
+       Re-rendered after the fix: 76.52px and 187.19px — both match design
+       to within 0.01px. */
+    padding-top: 0.7825rem;
+    padding-bottom: 5.6994rem;
     overflow-x: hidden;
   }
 
@@ -143,11 +157,47 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     padding: 0.8rem 1.47rem 1.5rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards) */
   }
   /* O1 bleeds off the container's left edge (Figma: the 4-card row starts at
-     x=-33.82, one card-width+gap left of O2 — i.e. this is where a uniform
-     grid naturally lands the first cell, not a special extra offset).
-     Expressed as % of the row width for the same reason as the gap above. */
+     x=-33.82 on the 1920px canvas — one card-width+gap left of O2, i.e.
+     this is where a uniform grid naturally lands the first cell, not a
+     special extra offset).
+     Retuned in Task 7 review round 2: a row-relative percentage (the
+     original -1.91%, then a since-superseded -11.7% eyeballed at 1920px
+     only) can't reproduce this — the required offset is the sum of two
+     independent quantities that don't scale together: (a) the .container
+     utility's own left gutter, which must be fully cancelled so the row's
+     left edge reaches the true viewport edge, and (b) a further constant
+     33.82px (the design's own bleed magnitude, x=-33.82 on the 1920 frame)
+     to pass that edge. (a) is fixed per viewport width but not proportional
+     to the row's own width, so no single percentage-of-row-width holds
+     across breakpoints (verified: -11.7% under-bled at 1440px, cropping the
+     card's own title text, and over-bled at 2560px into a much larger gap
+     than the design shows).
+     `.container`'s left gutter (src/styles/global.css) is
+     `clamp(1.25rem, 4vw, 5rem)` padding-inline plus, once the viewport
+     exceeds the 1760px max-width, `(100vw - 1760px) / 2` of centering
+     margin — reproduced identically here so the two stay coupled if
+     `.container` ever changes. `.pillars-row` sits directly inside
+     `.container` with no padding/border of its own, so a flex-item
+     margin-left on `.card--o1` resolves against that same content-box
+     width/offset — i.e. this calc's first term exactly cancels the gutter
+     regardless of viewport.
+     `100vw` includes the scrollbar gutter on platforms with an
+     always-visible scrollbar (~15px on Windows/Linux; 0 on macOS's
+     overlay scrollbars) — an acceptable small error here since the design
+     intent is "visibly bleeds past the edge," not a pixel-exact clip line.
+     Verified via headless-Chrome renders (getBoundingClientRect on
+     `.card--o1`) at all three tiers: 1440px → left edge -91.4px (title
+     fully clear of the viewport, no cropping); 1920px → -190.6px (matches
+     the design's -33.82px-past-container-edge almost exactly: gutter
+     156.8px + 33.82px = 190.62px); 2560px → -513.8px (gutter 480px +
+     33.82px = 513.82px) — bleed magnitude grows with the gutter at wide
+     viewports, same as the design's own fixed-canvas math would imply if
+     extrapolated. */
   .card--o1 {
-    margin-left: -1.91%; /* 33.82px / 1772.2px */
+    margin-left: calc(
+      -1 * (clamp(1.25rem, 4vw, 5rem) + max((100vw - 1760px) / 2, 0px)) -
+        2.11rem
+    );
     min-height: 6.5663rem; /* 105.06px, Figma 1:1069 */
   }
   .card--o2 {

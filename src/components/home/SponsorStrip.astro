@@ -154,7 +154,12 @@ const sponsors = [
 
   .divider {
     display: block;
-    margin: 3rem auto 0;
+    /* margin-top tuned in Task 7: was 3rem/48px (an eyeball guess); the
+       actual gap between the caption row's bottom (1:234, ends y1381.66)
+       and the spark's own top (1:1026, y1454.25) measures 72.59px in Figma —
+       verified against the full-page render, which showed the spark sitting
+       visibly tighter under the logos than the design. 4.54rem = 72.64px. */
+    margin: 4.54rem auto 0;
     width: 3.0963rem; /* 49.54px, Figma 1:1026 */
     height: 3.0963rem;
   }
