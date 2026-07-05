@@ -1,0 +1,127 @@
+---
+import Logo from "./Logo.astro";
+import { NAV_ITEMS } from "../data/nav";
+
+const EXPLORE = NAV_ITEMS.slice(0, 5);
+// "Coming soon" and "Partners" have no destination yet — user decision routes
+// all ENGAGE items to /contact until dedicated pages exist.
+const ENGAGE = [
+  { label: "Coming soon", href: "/contact" },
+  { label: "Contact", href: "/contact" },
+  { label: "Partners", href: "/contact" },
+];
+---
+
+<footer>
+  <div class="container top">
+    <div class="brand">
+      <Logo variant="footer" />
+      <p>
+        Multiply. Collaborate. Create. India's flagship energy innovation
+        platform – a Section 8 not-for-profit, initiated by the Ministry of
+        Petroleum &amp; Natural Gas and backed by energy majors.
+      </p>
+    </div>
+
+    <nav class="links" aria-label="Footer">
+      <div>
+        <h2>Explore</h2>
+        <ul>
+          {
+            EXPLORE.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div>
+        <h2>Engage</h2>
+        <ul>
+          {
+            ENGAGE.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div class="bottom">
+    <div class="container bottom-row">
+      <p>© 2026 MC²+ Foundation · New Delhi, India</p>
+      <p>Multiply · Collaborate · Create</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+  .top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 3rem;
+    padding-block: 3.5rem;
+  }
+  .brand p {
+    max-width: 46ch;
+    margin: 1.25rem 0 0;
+    line-height: 1.6;
+  }
+  .links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  .links h2 {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-cream);
+    margin: 0 0 1rem;
+  }
+  .links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .links a {
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .links a:hover {
+    text-decoration: underline;
+  }
+  .bottom {
+    border-top: 1px solid rgba(30, 30, 58, 0.25);
+  }
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    padding-block: 1.25rem;
+    font-size: 0.9rem;
+  }
+  .bottom-row p {
+    margin: 0;
+  }
+
+  @media (max-width: 767.98px) {
+    .top {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>
