@@ -1,0 +1,87 @@
+---
+import PillButton from "../PillButton.astro";
+---
+
+<section class="cta-band">
+  <div class="container heading">
+    <h2>
+      <span class="line">Building in energy?</span>
+      <span class="line">Translate it with MC²+</span>
+    </h2>
+    <p class="body">
+      The first MC²+ cohort launches in August 2026, with applications
+      opening soon. Bring a defensible technology and a real problem worth
+      an industrial pilot.
+    </p>
+    <div class="cta">
+      <PillButton label="Get in touch" href="/contact" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    background: var(--color-cream);
+    /* Not sourced from Figma page math (whole-page concern) — reasonable
+       section rhythm per the Pillars/Audiences precedent, checked against
+       neighbors in Task 7. */
+    padding-block: 6rem;
+  }
+
+  .heading {
+    text-align: center;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    /* 65px, Figma text nodes 1:55/1:56 (real text nodes, not outlined) —
+       the design context call reports this size directly, correcting the
+       brief's "~42px" bbox-derived guess. Matches the 65px H2 size already
+       established for this same Faculty Glyphic H2 role in
+       Pillars.astro/Audiences.astro. */
+    font-size: 4.0625rem;
+    line-height: 1.07; /* consistent with the sibling H2s at this size */
+    color: var(--color-ink-alt); /* #1e1e3c, exact fill on 1:55/1:56 */
+  }
+  h2 .line {
+    display: block;
+  }
+
+  .body {
+    /* 8.88px, gap between the H2 group's own bbox bottom (1:54, ends
+       y3615.31) and the paragraph group's bbox top (1:57, starts
+       y3624.19) — both real Figma coordinates, not eyeballed. */
+    margin: 0.555rem auto 0;
+    /* 805.87px, Figma node 1:57 width — also node 1:53's own bbox width,
+       since this paragraph's longest wrapped line is the widest element
+       in the group (the H2 is narrower and centered within it). */
+    max-width: 50.3669rem;
+    font-family: var(--font-sans);
+    /* Outlined vectors, no text node (see node 1:57's ~130 child paths).
+       Sized to match the site's other secondary/gray copy (Hero .lede,
+       Pillars .card-body, Audiences .body), all 20px/1.4 — the 3-line
+       wrap's 90.74px bbox height is consistent with that size at this
+       line-height (3 * 20px * 1.4 ≈ 84px, close to the measured 90.74px
+       tight-crop height). */
+    font-size: 1.25rem;
+    line-height: 1.4;
+    color: var(--color-gray);
+  }
+
+  .cta {
+    display: flex;
+    justify-content: center;
+    /* 36.12px, gap between the paragraph group's bbox bottom (1:57, ends
+       y3714.93) and the pill's own top (1:1479, starts y3751.05). */
+    margin-top: 2.2575rem;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+    }
+    .body {
+      max-width: 90%;
+    }
+  }
+</style>
