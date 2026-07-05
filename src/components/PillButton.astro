@@ -1,0 +1,79 @@
+---
+interface Props {
+  label: string;
+  href: string;
+  variant?: "filled" | "ghost";
+}
+const { label, href, variant = "filled" } = Astro.props;
+---
+
+<a class:list={["pill", variant]} href={href}>
+  <span class="pill-label">{label}</span>
+  <span class="pill-arrow" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
+      <path
+        d="M2 8h11M9 3.5 13.5 8 9 12.5"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </span>
+</a>
+
+<style>
+  /*
+   * Measurements pulled from Figma (file u4NLOVKuXUTKULhSn0sAJQ):
+   * filled "Explore initiatives" = 1:8953, ghost "Meet the team" = 1:8932.
+   * See PillButton section of task-2-report.md for the full derivation.
+   */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.7rem; /* measured ~25-29px label-to-circle gap across both pills (1:8953, 1:8932) */
+    font-family: var(--font-sans);
+    font-size: 1.75rem; /* ~28px, derived from label glyph bbox heights (pixel + font-metric estimate), not 0.95rem */
+    font-weight: 600; /* visually medium/semibold weight in the Figma screenshot; not present in brief default */
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0 0 0 2.7rem; /* no block padding: pill height is set by the arrow circle, flush top/bottom (measured 76px both nodes) */
+    border: none;
+  }
+  .pill-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 4.75rem; /* 76px — arrow-circle diameter exactly equals pill height in both 1:8953 and 1:8932 */
+    height: 4.75rem;
+    border-radius: 999px;
+    transition: transform 150ms ease;
+  }
+  .pill:hover .pill-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Filled — navy pill, white label, orange arrow circle (1:8953) */
+  .pill.filled {
+    background: var(--color-ink-alt); /* exact fill sampled via Plugin API: #1e1e3c, matches --color-ink-alt, not --color-ink */
+    color: var(--color-white);
+  }
+  .pill.filled .pill-arrow {
+    background: var(--color-orange);
+    /* Deviation from brief: sampled fill + pixel inspection of the circle both show a NAVY
+       arrow glyph on the orange disc, not white as the brief's default assumed. */
+    color: var(--color-ink-alt);
+  }
+
+  /* Ghost — transparent pill, navy hairline border, navy arrow outline (1:8932) */
+  .pill.ghost {
+    background: transparent; /* Figma fill is --color-cream, but transparent matches the cream page bg and is more portable */
+    color: var(--color-ink-alt);
+    box-shadow: inset 0 0 0 2px var(--color-ink-alt); /* measured strokeWeight: 2 (not 1px); inset box-shadow keeps the 76px circle/pill sizing exact */
+  }
+  .pill.ghost .pill-arrow {
+    background: transparent;
+    color: var(--color-ink-alt);
+    box-shadow: inset 0 0 0 2px var(--color-ink-alt);
+  }
+</style>
