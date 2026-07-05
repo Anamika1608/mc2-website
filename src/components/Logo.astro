@@ -1,0 +1,48 @@
+---
+interface Props {
+  variant?: "header" | "footer";
+}
+const { variant = "header" } = Astro.props;
+
+// The real logo arrives later as src/assets/logo.svg (optional logo-footer.svg
+// variant for the orange footer). import.meta.glob tolerates absent files,
+// so the text fallback below ships until the export lands — a static import
+// would fail the build. Astro ≥5.7 imports SVGs as inline components.
+const svgs = import.meta.glob("../assets/logo{,-footer}.svg", {
+  eager: true,
+}) as Record<string, { default: any }>;
+const HeaderSvg = svgs["../assets/logo.svg"]?.default;
+const FooterSvg = svgs["../assets/logo-footer.svg"]?.default ?? HeaderSvg;
+const Svg = variant === "footer" ? FooterSvg : HeaderSvg;
+---
+
+{
+  Svg ? (
+    <Svg class={`logo logo--${variant}`} aria-hidden="true" />
+  ) : (
+    <span class={`logo logo--${variant} logo--text`} aria-hidden="true">
+      mc<sup>2</sup><span class="plus">+</span>
+    </span>
+  )
+}
+
+<style>
+  .logo--text {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .logo--header.logo--text {
+    font-size: 1.75rem;
+  }
+  .logo--footer.logo--text {
+    font-size: 2.5rem;
+  }
+  .logo--text sup {
+    font-size: 0.6em;
+  }
+  .logo--text .plus {
+    color: var(--color-orange);
+  }
+</style>

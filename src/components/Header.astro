@@ -1,0 +1,162 @@
+---
+import Logo from "./Logo.astro";
+import { NAV_ITEMS } from "../data/nav";
+
+const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isActive = (href: string) =>
+  pathname === href || pathname.startsWith(href + "/");
+---
+
+<header id="site-header">
+  <div class="container bar">
+    <a class="home-link" href="/" aria-label="MC²+ home">
+      <Logo />
+    </a>
+
+    <button
+      id="menu-button"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="sr-only">Menu</span>
+      <span class="burger" aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-nav" aria-label="Main">
+      <ul class="nav-list">
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById("site-header")!;
+  const button = document.getElementById("menu-button")!;
+
+  const setScrolled = () =>
+    header.classList.toggle("scrolled", window.scrollY > 4);
+  setScrolled();
+  addEventListener("scroll", setScrolled, { passive: true });
+
+  const isOpen = () => button.getAttribute("aria-expanded") === "true";
+  const setOpen = (open: boolean) => {
+    button.setAttribute("aria-expanded", String(open));
+    header.classList.toggle("menu-open", open);
+  };
+
+  button.addEventListener("click", () => setOpen(!isOpen()));
+
+  header.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest("#site-nav a")) setOpen(false);
+  });
+
+  addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isOpen()) {
+      setOpen(false);
+      button.focus();
+    }
+  });
+</script>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-cream);
+    border-bottom: 1px solid var(--color-line);
+    transition: box-shadow 150ms ease;
+  }
+  header.scrolled {
+    box-shadow: 0 2px 12px rgba(30, 30, 58, 0.08);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 1.1rem;
+  }
+  .home-link {
+    display: inline-flex;
+    text-decoration: none;
+  }
+  .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 2.2rem;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-list a {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: color 120ms ease;
+  }
+  .nav-list a:hover,
+  .nav-list a[aria-current="page"] {
+    color: var(--color-orange);
+  }
+  #menu-button {
+    display: none;
+    background: none;
+    border: 0;
+    padding: 0.6rem;
+    cursor: pointer;
+  }
+  .burger {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-ink);
+    box-shadow:
+      0 -7px 0 var(--color-ink),
+      0 7px 0 var(--color-ink);
+  }
+
+  @media (max-width: 1023.98px) {
+    #menu-button {
+      display: inline-flex;
+      order: 2;
+    }
+    #site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--color-cream);
+      border-bottom: 1px solid var(--color-line);
+      box-shadow: 0 12px 24px rgba(30, 30, 58, 0.08);
+    }
+    header.menu-open #site-nav {
+      display: block;
+    }
+    .nav-list {
+      flex-direction: column;
+      gap: 0;
+      padding-block: 0.5rem;
+    }
+    .nav-list a {
+      display: block;
+      padding: 0.9rem clamp(1.25rem, 4vw, 5rem);
+    }
+  }
+</style>
