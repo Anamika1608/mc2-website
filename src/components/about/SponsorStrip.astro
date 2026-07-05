@@ -1,0 +1,174 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:8931: eyebrow (vectorized, node 1:9127),
+// H2 "Seven sponsors. One platform." (real text node 1:9126, Faculty 65px, #1e1e3c),
+// 7 logo+caption pairs (1:9000 = 7 caption text groups, 1:9102 = 7 logo icon groups),
+// ghost pill "Meet the team" (1:8932) + filled pill "Explore initiatives" (1:8953) —
+// same node IDs PillButton.astro was already derived from in an earlier task, so its
+// pill sizing/colors are reused as-is here. See exact derivations in style block below.
+import { Image } from "astro:assets";
+import PillButton from "../PillButton.astro";
+import SparkOrange from "../../assets/about/spark-orange.svg";
+import hpcl from "../../assets/about/sponsor-hpcl.png";
+import ongc from "../../assets/about/sponsor-ongc.png";
+import indianoil from "../../assets/about/sponsor-indianoil.png";
+import bpcl from "../../assets/about/sponsor-bpcl.png";
+import gail from "../../assets/about/sponsor-gail.png";
+import oilindia from "../../assets/about/sponsor-oilindia.png";
+import petronet from "../../assets/about/sponsor-petronet.png";
+
+const SPONSORS = [
+  { img: hpcl, caption: "Hindustan Petroleum", alt: "Hindustan Petroleum Corporation" },
+  { img: ongc, caption: "Oil & Natural Gas", alt: "Oil and Natural Gas Corporation" },
+  { img: indianoil, caption: "Indian Oil Corp", alt: "Indian Oil Corporation" },
+  { img: bpcl, caption: "Bharat Petroleum", alt: "Bharat Petroleum Corporation" },
+  { img: gail, caption: "Gas Authority", alt: "GAIL (India) Limited" },
+  { img: oilindia, caption: "Oil India Ltd", alt: "Oil India Limited" },
+  { img: petronet, caption: "Petronet LNG", alt: "Petronet LNG Limited" },
+];
+---
+
+<section class="sponsors">
+  <div class="container">
+    <p class="eyebrow">Promoted by India&rsquo;s leading energy majors</p>
+    <h2>Seven sponsors. One platform.</h2>
+
+    <ul class="logos">
+      {SPONSORS.map((s) => (
+        <li>
+          <Image src={s.img} alt={s.alt} widths={[120, 240]} sizes="120px" class="logo" />
+          <span class="caption">{s.caption}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="ctas">
+      <PillButton label="Meet the team" href="/team" variant="ghost" />
+      <PillButton label="Explore initiatives" href="/initiatives" variant="filled" />
+    </div>
+
+    <SparkOrange class="divider-spark" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .sponsors {
+    background: var(--color-cream);
+    padding-block: 3rem;
+    text-align: center;
+  }
+
+  /* Eyebrow (node 1:9127) is a vectorized paragraph, not a real text node, so its
+     font-size is reverse-engineered the same way as AboutHero's lede / Mission's
+     body: isolated get_screenshot on 1:9127 returns a tight 654x29px ink bbox for
+     "Promoted by India's leading energy majors". The line's tallest glyph ("P")
+     tops out at Sora's capHeight/upm of 0.73 and its lowest descenders ("g"/"y")
+     bottom out at -208/1000 -> full extent 938/1000 of the em -> 29 / 0.938 ≈
+     30.9px, which CORRECTS the plan's ~1.25rem/20px guess (Figma wins) and lands
+     on the same ~31px body-paragraph size used by Hero's lede and Mission's body.
+     Color sampled directly from the exported PNG's darkest opaque pixel: RGB
+     (149,149,149) = #959595, an exact match for --color-gray. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    color: var(--color-gray);
+    font-size: 1.9375rem; /* 31px, derived — see comment above */
+    margin: 0 0 1.3125rem; /* 21px gap to h2, measured from the full-section screenshot */
+  }
+
+  /* H2 (node 1:9126) is a real text node: Tailwind reference code returned it
+     literally as `text-[#1e1e3c] text-[65px]` — an exact, unambiguous match for
+     --color-ink-alt at 4.0625rem, identical to Mission.astro's H2 treatment. */
+  h2 {
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:9126 */
+    color: var(--color-ink-alt);
+    margin: 0 0 2.5rem; /* ~40px gap to the logo row, measured from the full-section screenshot */
+  }
+
+  /* Logo row (7 icon groups under 1:9102, 7 caption groups under 1:9000). Each
+     icon group was screenshotted individually (isolated, unscaled): heights
+     measured 120, 120, 126, 123, 153, 142, 142px across the 7 logos — the
+     design does NOT use one uniform pixel height per logo (varying aspect,
+     bottom-aligned row). For this build a single shared display height is
+     used (per the starter template's align-items:end + object-fit:contain
+     approach). CRISPNESS CHECK: the 7 exported sponsor PNGs are natively
+     185-336px wide / 240-306px tall (smallest: bpcl 192x241, petronet
+     185x246). Choosing the CONSERVATIVE end of the measured Figma range
+     (120px = 7.5rem, matching the two logos that measured exactly 120px)
+     keeps every logo downscaled at least ~2x from its native height at 1x
+     DPR (240/120 = 2.0 for the smallest), and only a mild ~1.1x upscale at
+     2x DPR for the three shortest-native logos (bpcl/ongc/petronet,
+     240-246px native vs 264px needed) — negligible, imperceptible softening.
+     A taller display height (e.g. the 132px Figma average) would push that
+     2x-DPR upscale further, so 120px was chosen deliberately. */
+  .logos {
+    list-style: none;
+    margin: 0 0 3rem; /* gap to the CTAs — approximate, not pixel-derived (see report) */
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+  }
+  .logos li {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+  }
+  .logo {
+    height: 7.5rem; /* 120px, conservative end of the measured 120-153px Figma range */
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* Captions (7 groups under 1:9000) are ALSO vectorized paragraphs, not real
+     text. Isolated screenshots of two captions with no descenders
+     ("Hindustan Petroleum": 176x13px ink bbox; a second sample: 141x13/14px)
+     give a consistent 13px cap-height-to-baseline extent. Against Sora's
+     capHeight/upm of 0.73 (same constant as the eyebrow/Hero/Mission
+     derivations): 13 / 0.73 ≈ 17.8px. Darkest-pixel color sample from both
+     caption PNGs is RGB(30,30,60) — an EXACT match for --color-ink-alt, NOT
+     --color-gray as the plan/brief assumed (Figma wins: captions are navy,
+     matching the H2's ink, not muted gray). */
+  .caption {
+    font-family: var(--font-sans);
+    font-size: 1.1125rem; /* 17.8px, derived — see comment above */
+    color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
+  }
+
+  .ctas {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* No exact position/size could be confirmed for the spark: get_screenshot on
+     1:8931 crops flush to the pills at its bottom edge, so the spark (visually
+     "below the pills" per the brief) sits outside this node's own bounding box
+     in the Figma file and wasn't reachable via this section's node id. Kept at
+     the starter template's conservative decorative size/spacing. */
+  .divider-spark {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 2rem auto 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+    .logos {
+      grid-template-columns: repeat(4, 1fr);
+      row-gap: 2rem;
+    }
+  }
+  @media (max-width: 559.98px) {
+    .logos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ctas {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
