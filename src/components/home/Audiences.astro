@@ -1,0 +1,447 @@
+---
+import PillButton from "../PillButton.astro";
+import SparkOrange from "../../assets/home/spark-orange.svg";
+---
+
+<section class="audiences">
+  <div class="container heading">
+    <p class="eyebrow">WHO IT’S FOR</p>
+    <h2>
+      <span class="line">Built for every builder</span>
+      <span class="line">in India’s energy story.</span>
+    </h2>
+    <p class="intro">
+      Whether you are an early-stage aspiring entrepreneur, a researcher with
+      a lab-stage IP, or an institution ready to co-build the next decade of
+      energy technology – MC²+ is for you.
+    </p>
+    <div class="cta">
+      <PillButton label="Explore the initiatives" href="/initiatives" />
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="columns">
+      <!-- Desktop-only decorative framework (node group 1:945 + 1:534,
+           pixel-mapped off the 1:377 screenshot): a top rule at the pill's
+           vertical center emerging from behind the pill and bleeding off the
+           right viewport edge; a bottom rule bleeding off the left viewport
+           edge and tapering out just past the grid's center; bookend
+           verticals outside columns 1 and 4; and sparks at the line
+           intersections/endpoints (sizes vary per the design — see the
+           per-spark rules below). Hidden <1024 along with the pill-anchored
+           divider extensions. -->
+      <div class="decor" aria-hidden="true">
+        <span class="rule rule--top"></span>
+        <span class="rule rule--bottom"></span>
+        <span class="vline vline--left"></span>
+        <span class="vline vline--right"></span>
+        <SparkOrange class="dspark dspark--sm dspark--top-d1" />
+        <SparkOrange class="dspark dspark--lg dspark--top-d3" />
+        <SparkOrange class="dspark dspark--lg dspark--top-right" />
+        <SparkOrange class="dspark dspark--lg dspark--bot-left" />
+        <SparkOrange class="dspark dspark--lg dspark--bot-d1" />
+        <SparkOrange class="dspark dspark--lg dspark--bot-d2" />
+        <SparkOrange class="dspark dspark--xs dspark--bot-d3" />
+      </div>
+
+      <div class="column">
+        <p class="number">01</p>
+        <h3 class="title">Startups & Founders</h3>
+        <p class="body">
+          Validate, pilot and scale your energy technology with India’s
+          largest energy majors behind you.
+        </p>
+      </div>
+
+      <div class="column">
+        <SparkOrange class="divider-spark divider-spark--top" aria-hidden="true" />
+        <SparkOrange class="divider-spark divider-spark--bottom" aria-hidden="true" />
+        <p class="number">02</p>
+        <h3 class="title">Researchers & Scientists</h3>
+        <p class="body">
+          Turn lab-stage IP into venture-ready technology through the MC²
+          Fellows Entrepreneur-in-Residence track.
+        </p>
+      </div>
+
+      <div class="column">
+        <SparkOrange class="divider-spark divider-spark--top" aria-hidden="true" />
+        <SparkOrange class="divider-spark divider-spark--bottom" aria-hidden="true" />
+        <p class="number">03</p>
+        <h3 class="title">Academic & R&D Institutions</h3>
+        <p class="body">
+          Bring your labs, faculty and pipeline of innovators into a national
+          energy-innovation platform.
+        </p>
+      </div>
+
+      <div class="column">
+        <SparkOrange class="divider-spark divider-spark--top" aria-hidden="true" />
+        <SparkOrange class="divider-spark divider-spark--bottom" aria-hidden="true" />
+        <p class="number">04</p>
+        <h3 class="title">Corporates & Investors</h3>
+        <!-- trailing ".t" in design file removed; approved by user 2026-07-05 -->
+        <p class="body">
+          Co-invest, co-pilot, or plug into a sourcing pipeline built on real
+          industrial validation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .audiences {
+    /* Sampled from the screenshot background (244,243,237) — matches
+       --color-cream-alt exactly, not --color-cream used by Hero/Pillars/
+       SponsorStrip. A deliberate alternating-band choice, node group 1:377. */
+    background: var(--color-cream-alt);
+    padding-block: 6rem;
+    /* Contain the decor rules' 50vw viewport bleeds (Pillars precedent). */
+    overflow-x: hidden;
+  }
+
+  .heading {
+    text-align: center;
+    /* Paint the pill above the decor's top rule — the design's rule emerges
+       from behind the pill (screenshot: no rule visible left of the pill,
+       line starts at its right edge). */
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-sans);
+    /* Figma reports Faculty Glyphic on the wrapping group, but the rendered
+       glyphs are sans — same eyebrow-is-sans correction already made in
+       Hero.astro/SponsorStrip.astro/Pillars.astro. Size/tracking identical
+       to Pillars' eyebrow (node 1:379): 27.07px / 6.7675px tracking = 0.25em. */
+    font-size: 1.6919rem;
+    letter-spacing: 0.25em;
+    color: var(--color-gray);
+  }
+
+  h2 {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-display);
+    /* 65px, node 1:381/1:382. Line-height verified directly against the
+       screenshot (same method as Pillars.astro): line-tops sit ~70px apart
+       (70/65 = 1.077), matching Pillars' 1.07 for the same font-size. */
+    font-size: 4.0625rem;
+    line-height: 1.07;
+    color: var(--color-ink-alt);
+  }
+  h2 .line {
+    display: block;
+  }
+
+  .intro {
+    /* Not a text node (no node id) — Figma's design-context call returned no
+       text node for this paragraph, so its outlined-vector metrics were
+       measured directly off the 1:1 screenshot: a capital "W" of "Whether"
+       has an 18px cap-height vs. the column body copy's 15px "V" (both
+       outlined too) — 18/15 * 20px = ~24px, a size step up from the site's
+       usual 20px secondary text. */
+    max-width: 51.875rem; /* 830px, screenshot's longest wrapped line */
+    margin: 1.5rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: var(--color-gray);
+  }
+
+  .cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .columns {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Column gap is a whole-page layout concern per the Pillars.astro
+       precedent — reasonable equal-width grid here, checked in Task 7. */
+    gap: 3rem;
+    /* 58px: measured off the 1:377 screenshot — pill bottom y408 to the
+       "01" number tops y466. The decor geometry below anchors to the pill's
+       center through this value, so it is design-sourced (not eyeballed). */
+    margin-top: 3.625rem;
+    /* Decor anchors, both measured off the 1:377 screenshot:
+       --decor-rise: columns-top to pill-center = 96px (58px margin above
+         + half the 76px pill) — the top rule and divider tops sit here.
+       --decor-drop: columns-bottom to the bottom spark row = 40px
+         (deepest column text bottoms at y716, bottom rule at y756). */
+    --decor-rise: 6rem;
+    --decor-drop: 2.5rem;
+  }
+
+  .column {
+    position: relative;
+    text-align: left;
+  }
+
+  /* ==== Column dividers (node group 1:945) ====
+     Thin vertical hairlines between the four columns — sampled color
+     (243,184,140), an antialiased tint of --color-orange at 1px width; the
+     token is used directly rather than a new literal. On desktop each
+     divider rises past the columns to the top rule at the pill's center
+     (screenshot: lines at x580/x962/x1342 all start at rule level y372 —
+     x962's top is hidden behind the pill, exactly what happens here too
+     since that divider sits at the grid's center under the centered pill)
+     and drops to the bottom spark row. */
+  .column:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--decor-rise));
+    bottom: calc(-1 * var(--decor-drop));
+    left: -1.5rem; /* half of the 3rem column gap */
+    width: 1px;
+    background: var(--color-orange);
+  }
+  /* col3/4 divider tapers out above its tiny bottom spark (screenshot:
+     solid to y707, fading to y756) — approximated with a gradient fade. */
+  .column:nth-child(4)::before {
+    background: linear-gradient(
+      to bottom,
+      var(--color-orange) calc(100% - 3rem),
+      transparent
+    );
+  }
+
+  /* Per-column sparks are the <1024 fallback only — on desktop all sparks
+     are drawn by the .decor overlay (sizes/positions differ per spark in
+     the design, which the uniform per-column pair can't express). Only
+     rendered for columns 2-4 (see markup), so no first-child guard needed. */
+  .divider-spark {
+    display: none;
+    position: absolute;
+    left: -1.5rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    transform: translate(-50%, -50%);
+  }
+  .divider-spark--top {
+    top: 0;
+  }
+  .divider-spark--bottom {
+    top: 100%;
+  }
+
+  /* ==== Desktop decor overlay (node groups 1:945 + 1:534) ====
+     All geometry below is pixel-mapped off the 1920px-wide 1:377 screenshot.
+     Divider x-positions in grid coords: divider n sits mid-gap, i.e. at
+     calc(n*25% ± 0.75rem) — for a 4-col grid with gap g, divider 1 =
+     25% - g/4, divider 2 = 50%, divider 3 = 75% + g/4 (g = 3rem). Bookends
+     sit half a gap outside the grid edges (design: grid lines at
+     x198/580/962/1342/1723, uniformly 381-382px apart). */
+  .decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .rule {
+    position: absolute;
+    height: 1px;
+  }
+  /* Top rule (y372 = pill center): emerges from behind the pill — nothing
+     is drawn left of it (screenshot: cream gap between the col1/2 spark and
+     the pill's left edge) — and bleeds off the right viewport edge, fading
+     near the end (solid to x1847 of 1920). Starting it at the grid's 50%
+     center hides the left half behind the centered pill, matching the
+     design's visible extent exactly. */
+  .rule--top {
+    top: calc(-1 * var(--decor-rise));
+    left: 50%;
+    right: calc(50% - 50vw); /* full-bleed right */
+    background: linear-gradient(
+      to right,
+      var(--color-orange) 92%,
+      transparent
+    );
+  }
+  /* Bottom rule (y756): bleeds off the left viewport edge (tapering in over
+     the first ~75px) and runs through the left-bookend, col1/2 and col2/3
+     bottom sparks, tapering out 96px past the grid center (x1058). */
+  .rule--bottom {
+    top: calc(100% + var(--decor-drop));
+    left: calc(50% - 50vw); /* full-bleed left */
+    right: calc(50% - 6rem); /* right edge 96px past grid center */
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-orange) 6%,
+      var(--color-orange) 90%,
+      transparent
+    );
+  }
+
+  .vline {
+    position: absolute;
+    width: 1px;
+    background: var(--color-orange);
+  }
+  /* Left bookend (x198): tapers in ~21px above the columns' content top
+     (y445 vs y466) — never reaching the top rule — and runs down to the
+     bottom spark row. */
+  .vline--left {
+    left: -1.5rem;
+    top: -1.3125rem;
+    bottom: calc(-1 * var(--decor-drop));
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-orange) 2rem
+    );
+  }
+  /* Right bookend (x1723): from its spark on the top rule down 275px
+     (y372 to y647), tapering out well above the bottom row — the only
+     vertical with no bottom spark. */
+  .vline--right {
+    left: calc(100% + 1.5rem);
+    top: calc(-1 * var(--decor-rise));
+    height: 17.1875rem;
+    background: linear-gradient(
+      to bottom,
+      var(--color-orange) calc(100% - 3rem),
+      transparent
+    );
+  }
+
+  /* Spark sizes from the screenshot: large ~43px (the Hero's 2.7rem spark
+     size), the lone small one at the col1/2 divider top ~20px, and the tiny
+     one ending the col3/4 divider ~7px. */
+  .dspark {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .dspark--lg {
+    width: 2.7rem;
+    height: 2.7rem;
+  }
+  .dspark--sm {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .dspark--xs {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+  .dspark--top-d1 {
+    left: calc(25% - 0.75rem);
+    top: calc(-1 * var(--decor-rise));
+  }
+  .dspark--top-d3 {
+    left: calc(75% + 0.75rem);
+    top: calc(-1 * var(--decor-rise));
+  }
+  .dspark--top-right {
+    left: calc(100% + 1.5rem);
+    top: calc(-1 * var(--decor-rise));
+  }
+  .dspark--bot-left {
+    left: -1.5rem;
+    top: calc(100% + var(--decor-drop));
+  }
+  .dspark--bot-d1 {
+    left: calc(25% - 0.75rem);
+    top: calc(100% + var(--decor-drop));
+  }
+  .dspark--bot-d2 {
+    left: 50%;
+    top: calc(100% + var(--decor-drop));
+  }
+  .dspark--bot-d3 {
+    left: calc(75% + 0.75rem);
+    top: calc(100% + var(--decor-drop));
+  }
+
+  .number {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-sans);
+    /* No text node (outlined, like the body copy) — screenshot cap-height
+       (16px) is a near-match for the body copy's 15px "V" at 20px, so sized
+       the same as .body rather than stepping down further. */
+    font-size: 1.25rem;
+    /* Navy, not the site's usual gray eyebrow — sampled (30,30,60) off the
+       screenshot, an exact match for --color-ink-alt. */
+    color: var(--color-ink-alt);
+  }
+
+  .title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    /* 35.23px, node 1:538/1:539 (col 1) and 1:628/1:629 (col 2) — real text
+       nodes, and (unlike the eyebrow) genuinely serif on inspection of the
+       screenshot. Line-height measured off the two-line title's line-top
+       gap (42px / 35.23px = 1.19). */
+    font-size: 2.2019rem;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--color-ink-alt);
+  }
+
+  .body {
+    margin: 0;
+    font-family: var(--font-sans);
+    /* Outlined vectors, no text node. Screenshot cap-height ("V" of
+       "Validate" ~15px) matches the site's other 20px secondary text
+       (Hero .lede, Pillars .card-body) exactly, including the 1.4
+       line-height (measured line-top gap ~29px / 20px = 1.45). */
+    font-size: 1.25rem;
+    line-height: 1.4;
+    color: var(--color-gray);
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+    }
+    .intro {
+      max-width: 90%;
+    }
+
+    /* Responsive rule (brief step 2): 2x2 grid below 1024. The desktop decor
+       overlay (rules, bookends, pill-anchored geometry) assumes the pill
+       sits directly above a single 4-column row, so it is hidden here;
+       dividers revert to spanning just their own column's height with the
+       uniform per-column spark pair. Column 2/3 are no longer horizontally
+       adjacent (col 2 top-right, col 3 bottom-left), so that divider is
+       dropped; the col1/col2 and col3/col4 dividers stay, each still
+       separating two columns sharing a row. */
+    .decor {
+      display: none;
+    }
+    .columns {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 3rem;
+    }
+    .column:not(:first-child)::before {
+      top: 0;
+      bottom: 0;
+      background: var(--color-orange);
+    }
+    .divider-spark {
+      display: block;
+    }
+    .column:nth-child(3)::before,
+    .column:nth-child(3) .divider-spark {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    /* Single column: no two columns are adjacent, so every hairline/spark
+       drops out. */
+    .columns {
+      grid-template-columns: 1fr;
+    }
+    .column::before,
+    .divider-spark {
+      display: none;
+    }
+  }
+</style>
