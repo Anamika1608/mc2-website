@@ -1,0 +1,136 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: caption group (1:8198) left column, video
+// still (1:8190, visible crop 907.71x459.48) right column. See exact
+// derivations in the style block below.
+import { Image } from "astro:assets";
+import videoStill from "../../assets/about/video-vision.png";
+
+// TODO: real "Watch the Vision" video URL; placeholder approved by user 2026-07-05
+const VIDEO_URL = "#";
+---
+
+<section class="video-feature">
+  <div class="container layout">
+    <div class="caption">
+      <p class="caption-title">Watch the Vision:</p>
+      <p class="caption-sub">Dr Neeraj Mittal, Secretary,<br />MoP&amp;NG, on why MC2+ exists</p>
+    </div>
+
+    <a
+      class="thumb"
+      href={VIDEO_URL}
+      target="_blank"
+      rel="noopener"
+      aria-label="Watch the Vision — Dr Neeraj Mittal, Secretary, MoP&amp;NG, on why MC2+ exists (opens in a new tab)"
+    >
+      <Image src={videoStill} alt="" widths={[600, 907, 1814]} sizes="(max-width: 1023px) 100vw, 56vw" class="thumb-img" />
+      <span class="play" aria-hidden="true">
+        <svg viewBox="0 0 68 68" width="68" height="68">
+          <circle cx="34" cy="34" r="34" fill="rgba(30, 30, 60, 0.72)"></circle>
+          <path d="M28 22l20 12-20 12z" fill="#fff"></path>
+        </svg>
+      </span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .video-feature {
+    background: var(--color-cream);
+    /* Figma gap Video-top (2197.39, node 1:8189's visible clipped still — NOT
+       the unclipped image asset 1:8194, which overflows above/below its own
+       clip path) − Vision-bottom (2091.43, node 1:8261) ≈ 105.96px = 6.62rem.
+       Bottom is 0 — the Video-to-Sponsor gap is owned by SponsorStrip's own
+       padding-block-start (see SponsorStrip.astro). */
+    padding-block: 6.62rem 0;
+  }
+
+  /* Column widths from node 1:8198 (caption, w=293.84 -> 18.36rem) and node
+     1:8190 (still's visible crop, w=907.71). The still's real exported asset
+     (src/assets/about/video-vision.png, 1956x1096, ratio ~1.784) does not
+     match the Figma crop's own ratio (907.71/459.48 ~= 1.976) — the design's
+     video embed and the committed still were sourced independently. Rather
+     than force a mismatched aspect-ratio (which would crop or distort the
+     real asset), the video column is a flexible 1fr and the image renders at
+     its native ratio via height:auto. Gap = still x (599.92) - caption right
+     edge (267.19+293.84=561.03) = 38.89px = 2.43rem. */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 18.36rem) minmax(0, 1fr);
+    gap: 2.43rem;
+    /* Caption group (1:8198) bottom sits ~36.7px above the still's own
+       bottom edge (still bottom 2656.87 - caption bottom 2620.16) - i.e.
+       the caption is bottom-aligned with the still, slightly inset. */
+    align-items: end;
+  }
+
+  .caption {
+    margin: 0;
+  }
+
+  /* Caption is vectorized (no real text nodes), so both sizes are
+     reverse-engineered from glyph ink bounds against Sora's capHeight/upm of
+     0.73, the same method used in Mission.astro/AboutHero.astro. Sampling
+     the rendered PNG confirms colors exactly: title pixels are (243,125,44)
+     = #f37d2c = --color-orange; sub-line pixels are (30,30,60) = #1e1e3c =
+     --color-ink-alt (NOT --color-ink #1e1e3a - off by one channel, verified
+     by exact pixel sampling, so --color-ink-alt wins here). */
+  .caption-title {
+    font-family: var(--font-sans);
+    color: var(--color-orange);
+    /* Cap-height ~22.5px (baseline 2559.13 - cap-top 2536.7) / 0.73 ~= 30.8px,
+       rounds to the same 31px/1.9375rem body-text size derived in
+       AboutHero.astro's .lede and Mission.astro's .body - this caption reuses
+       that shared text style, just recolored. */
+    font-size: 1.9375rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .caption-sub {
+    font-family: var(--font-sans);
+    color: var(--color-ink-alt);
+    /* Cap-height ~15.1px (baseline ~2616.2 - cap-top 2601.06) / 0.73 ~= 20.7px
+       -> rounds to 1.25rem (20px). Line-height from line2->line3 baseline
+       delta (28.24px) / 20px ~= 1.41, rounded to 1.4. */
+    font-size: 1.25rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .thumb {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    /* No corner radius in the design - the still renders as a plain
+       rectangle in both the 1:8190 and 1:8194 screenshots. */
+  }
+
+  .thumb-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* The Figma design has no play-button asset on the still itself (confirmed
+     via screenshot of 1:8190/1:8194) - this overlay is added per the task's
+     own requirement, not sourced from Figma. */
+  .play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    transition: transform 150ms ease;
+  }
+  .thumb:hover .play,
+  .thumb:focus-visible .play {
+    transform: scale(1.06);
+  }
+
+  @media (max-width: 1023.98px) {
+    .layout {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+  }
+</style>

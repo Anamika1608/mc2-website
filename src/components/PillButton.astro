@@ -2,49 +2,99 @@
 interface Props {
   label: string;
   href: string;
+  variant?: "filled" | "ghost";
 }
-const { label, href } = Astro.props;
+const { label, href, variant = "filled" } = Astro.props;
 ---
 
-<a class="pill" href={href}>
-  <span>{label}</span>
+<a class:list={["pill", variant]} href={href}>
+  <span class="pill-label">{label}</span>
   <span class="pill-arrow" aria-hidden="true">
     <svg viewBox="0 0 16 16" width="32" height="32" fill="none">
-      <path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <path
+        d="M2 8h11M9 3.5 13.5 8 9 12.5"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
     </svg>
   </span>
 </a>
 
 <style>
-  /* Sizing sourced from Figma pill 1:1479 ("Get in touch", CTA-band instance —
-     all pills in the design share this one size): overall 336.9x76.01px,
-     circle diameter == pill height (76px, flush right, no vertical padding),
-     label left inset 46.06px, label-to-circle gap 25.57px. */
+  /*
+   * Merge reconciliation (home + about, u4NLOVKuXUTKULhSn0sAJQ): both pages point at
+   * the same pill design — home's CTA-band instance "Get in touch" = 1:1479, about's
+   * SponsorStrip pair = filled "Explore initiatives" 1:8953 / ghost "Meet the team"
+   * 1:8932. Metadata for all three gives the same circle diameter (76px, flush to
+   * pill height) and the same label-to-circle gap (25.3-28.9px, one shared value —
+   * the ~3.5px spread is ordinary Illustrator-vector-import noise, not a deliberate
+   * per-page difference; see the file's own "Illustrator import" caveat). Padding is
+   * likewise one shared value (42-46px across the 3 nodes); home's 1:1479 number is
+   * kept as it's this repo's most precisely-derived sample (exact node percentages).
+   *
+   * Font size/weight were RE-DERIVED during merge by isolating the lowercase "e" in
+   * all three labels ("Get" / "Meet" / "Explore") and measuring x-height + stroke
+   * width directly, letter-for-letter — sidestepping the ascender/descender
+   * differences between the three label strings entirely. Result: x-height 17-18px
+   * and stroke widths identical (±1px) across all three. Home's 2rem/400 (this
+   * component's original filled-only build) was the correct read; about's 1.75rem/600
+   * was a derivation error from the earlier about-page task and is corrected here.
+   * (About's own label bbox height, 29.14px for "Explore initiatives", looked ~22%
+   * taller than home's 23.84px for "Get in touch" — but "Explore" contains a
+   * descender, 'p', that neither other label has; correcting for that with the same
+   * capHeight/upm≈0.73 and full-extent≈0.938 constants this file's SponsorStrip
+   * eyebrow comment already established lands back on ~32px, i.e. 2rem.)
+   */
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: 1.6rem; /* 25.6px */
-    background: var(--color-ink);
-    color: var(--color-white);
+    gap: 1.6rem; /* 25.6px, node 1:1479; about's 1:8953/1:8932 measured 25.3-28.9px, same shared value within noise */
     font-family: var(--font-sans);
-    font-size: 2rem; /* 32px, estimated from the label's vector cap-height (~23.8px) */
+    font-size: 2rem; /* 32px — verified equal across 1:1479, 1:8953, 1:8932 by direct glyph measurement, see block comment above */
+    font-weight: 400; /* regular — stroke widths measured pixel-identical across all 3 nodes, not 600 */
     text-decoration: none;
     border-radius: 999px;
-    padding: 0 0 0 2.875rem; /* 46px left inset; no other padding — circle fills the rest */
+    padding: 0 0 0 2.875rem; /* 46px left inset, node 1:1479; about's nodes measured 42-45px, same shared value within noise */
+    border: none;
   }
   .pill-arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 4.75rem; /* 76px == pill height */
-    height: 4.75rem;
     flex-shrink: 0;
+    width: 4.75rem; /* 76px — arrow-circle diameter exactly equals pill height in 1:1479, 1:8953 and 1:8932 */
+    height: 4.75rem;
     border-radius: 999px;
-    background: var(--color-orange);
-    color: var(--color-white);
     transition: transform 150ms ease;
   }
   .pill:hover .pill-arrow {
     transform: translateX(3px);
+  }
+
+  /* Filled — navy pill, white label, orange arrow circle (1:1479, 1:8953) */
+  .pill.filled {
+    background: var(--color-ink-alt); /* #1e1e3c, plugin-API-exact sample from 1:8953; ~identical to --color-ink #1e1e3a (home's original token) — imperceptible, standardized on the exact sample */
+    color: var(--color-white);
+  }
+  .pill.filled .pill-arrow {
+    background: var(--color-orange);
+    /* Both 1:1479 (home) and 1:8953 (about) show a NAVY arrow glyph on the orange
+       disc on direct pixel inspection, not white — home's original build (this
+       component, filled-only) used white; corrected during merge. */
+    color: var(--color-ink-alt);
+  }
+
+  /* Ghost — transparent pill, navy hairline border, navy arrow outline (1:8932).
+     Not used by any home page call site today. */
+  .pill.ghost {
+    background: transparent; /* Figma fill is --color-cream, but transparent matches the cream page bg and is more portable */
+    color: var(--color-ink-alt);
+    box-shadow: inset 0 0 0 2px var(--color-ink-alt); /* measured strokeWeight: 2 (not 1px); inset box-shadow keeps the 76px circle/pill sizing exact */
+  }
+  .pill.ghost .pill-arrow {
+    background: transparent;
+    color: var(--color-ink-alt);
+    box-shadow: inset 0 0 0 2px var(--color-ink-alt);
   }
 </style>

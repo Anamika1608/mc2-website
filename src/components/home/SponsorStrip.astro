@@ -9,9 +9,22 @@ import Gail from "../../assets/home/sponsor-gail.png";
 import OilIndia from "../../assets/home/sponsor-oilindia.png";
 import Petronet from "../../assets/home/sponsor-petronet.png";
 
-// Order, captions and alt text per plan (Task 3 brief). Width/height are the
-// sponsor PNGs' native pixel size, which is a 1:1 match for each logo's
-// design bbox in Figma (node 1:354's children) — see report for the mapping.
+// Order, captions and alt text per plan (Task 3 brief). Width/height are each
+// logo's design bbox in Figma (node 1:354's children) — see report for the
+// mapping — i.e. the DISPLAY size, unchanged by the merge below.
+//
+// Merge reconciliation: these source PNGs were originally 1x exports (pixel
+// dimensions equal to the width/height below), so the `densities={[1,2]}`
+// request below had no real 2x data to draw from — the "2x" srcset candidate
+// was just an upscale of the 1x file (soft on retina screens). The about page
+// (src/assets/about/sponsor-*.png, e.g. gail 336x252) exported the same seven
+// logos at ~1.9x resolution; those files were copied over these paths (same
+// filenames, same import statements) so this component's code is unchanged —
+// only the underlying source resolution improved. The display width/height
+// below are untouched, so rendered size on the page is identical; the 1x
+// candidate is now a true downsample and the 2x candidate needs only a ~5%
+// upscale (1.9x source vs the exact 2x it's asked for) instead of a full 2x
+// upscale from a 1x source.
 const sponsors = [
   {
     src: Hpcl,

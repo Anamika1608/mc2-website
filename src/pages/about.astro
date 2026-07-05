@@ -1,5 +1,16 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AboutHero from "../components/about/AboutHero.astro";
+import Mission from "../components/about/Mission.astro";
+import Vision from "../components/about/Vision.astro";
+import SponsorStrip from "../components/about/SponsorStrip.astro";
+import Scale from "../components/about/Scale.astro";
 ---
 
-<StubPage name="About" />
+<BaseLayout title="About · MC²+">
+  <AboutHero />
+  <Mission />
+  <Vision />
+  <SponsorStrip />
+  <Scale />
+</BaseLayout>

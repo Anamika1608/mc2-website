@@ -1,0 +1,148 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: eyebrow 1:9501, H1 lines 1:9505/1:9506/1:9507,
+// lede 1:9508, curves+sparks group 1:9164. See exact derivations in style block below.
+import HeroCurves from "../../assets/about/hero-curves.svg";
+import ScrollArrow from "../../assets/about/scroll-arrow.svg";
+---
+
+<section class="hero">
+  <div class="orbit" aria-hidden="true">
+    <HeroCurves class="curves" />
+  </div>
+
+  <div class="hero-inner">
+    <p class="eyebrow">ABOUT</p>
+    <div class="underline" aria-hidden="true"></div>
+
+    <h1>
+      <span class="line">Where India&rsquo;s</span>
+      <span class="line accent">Energy Innovation</span>
+      <span class="line">gets built.</span>
+    </h1>
+
+    <p class="lede">
+      MC&sup2;+ exists with a single mandate: to catalyse Indian energy
+      innovation and accelerate the country&rsquo;s energy security and
+      transition.
+    </p>
+
+    <ScrollArrow class="scroll" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-cream);
+    /* Top spacing kept as-is (sits under the sticky header, not derived from
+       Figma's absolute canvas). Bottom is zeroed so the Hero->Mission gap is
+       owned entirely by Mission's own padding-block-start (see Mission.astro). */
+    padding-block: 6rem 0;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      /* Approximates the design's hero band from the curves group (1:9164,
+         h=1039.81px) plus text column; exact cross-section fit is verified
+         once this component is wired into the page. */
+      min-height: 62rem;
+    }
+  }
+
+  /* Curves + sparks: 1:9164 (fileKey u4NLOVKuXUTKULhSn0sAJQ) exports as a
+     single 1920x1040 SVG (src/assets/about/hero-curves.svg) that already
+     bakes in all 4 orange four-point sparks as filled paths (Vector_4-7)
+     alongside the 3 stroked orbit curves (Vector/Vector_2/Vector_3) —
+     confirmed via get_screenshot on 1:9164 and by inspecting the SVG's own
+     path fills. Unlike the home hero (whose curves.svg holds only outline
+     rings, requiring 3 separately-overlaid <SparkOrange> instances at
+     guessed % positions), the About curves asset needs no overlay: dropping
+     it in reproduces the design pixel-for-pixel with no manual positioning.
+     spark-orange.svg exists in src/assets/about/ but is intentionally unused
+     here for that reason. */
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .curves {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 56rem; /* buffer above the 49.65rem lede width (1:9508) and 43.31rem widest H1 line (1:9506) */
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.69rem; /* 27.07px, node 1:9501 */
+    letter-spacing: 0.25em; /* 6.7675px / 27.07px = 0.25em exactly, node 1:9501 */
+    color: var(--color-gray); /* #959595 exact match, node 1:9501 */
+  }
+  .underline {
+    width: 11.77rem; /* 188.25px, node 1:9500 (hairline vector, height 0) */
+    height: 1px;
+    margin: 2.8rem auto 1.6rem; /* ~45.11px / ~26.15px gaps, nodes 1:9500/1:9501/1:9505 */
+    background: #000; /* one-off literal: hairline renders black in the 1:9499 screenshot, not a token */
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 5.08rem; /* 81.3px, nodes 1:9505/1:9506/1:9507 */
+    line-height: 1.08; /* baseline delta ~87.57px / 81.3px = 1.077, confirms plan's ~1.08 estimate */
+    color: var(--color-ink-alt); /* #1e1e3c exact match */
+  }
+  h1 .line {
+    display: block;
+  }
+  h1 .accent {
+    color: var(--color-orange); /* #f37d2c exact match, node 1:9506 */
+  }
+
+  .lede {
+    /* Lede (1:9508) is an outlined/vectorized paragraph, not real text, so its
+       font-size is reverse-engineered from glyph ink bounds against the
+       self-hosted Sora font's own metrics (src/assets/fonts/Sora-VariableFont_wght.ttf,
+       unitsPerEm 1000): the "M" in "MC²+" (vector 1:9509) measures 22.63px tall
+       against Sora's capHeight/upm of 0.73 → 22.63/0.73 ≈ 31.0px; the "C"
+       (1:9510, 23.76px tall) against Sora's C-glyph h/upm of 0.768 → ≈30.9px;
+       and the ascender "t" (1:9538, 21.77px tall) against Sora's t h/upm of
+       0.702 → ≈31.0px. All three independently converge on ~31px, which
+       CORRECTS the plan's rough ~20px guess (Figma wins). Line-height is
+       likewise derived from baseline-to-baseline deltas across the 3 lines
+       (~40.55px avg) / 31px ≈ 1.31, correcting the plan's assumed 1.4.
+       Max-width 49.65rem = 794.44px, the group's own bounding width. */
+    max-width: 49.65rem;
+    margin: 1.5rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 1.9375rem; /* 31px, derived — see comment above */
+    line-height: 1.31; /* derived — see comment above */
+    color: var(--color-ink);
+  }
+
+  .scroll {
+    display: block;
+    margin: 3rem auto 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    h1 {
+      font-size: clamp(2.4rem, 7vw, 5.08rem);
+    }
+    .lede {
+      max-width: 90%;
+    }
+  }
+</style>
