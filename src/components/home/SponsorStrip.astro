@@ -1,0 +1,173 @@
+---
+import { Image } from "astro:assets";
+import SparkOrange from "../../assets/home/spark-orange.svg";
+import Hpcl from "../../assets/home/sponsor-hpcl.png";
+import Ongc from "../../assets/home/sponsor-ongc.png";
+import IndianOil from "../../assets/home/sponsor-indianoil.png";
+import Bpcl from "../../assets/home/sponsor-bpcl.png";
+import Gail from "../../assets/home/sponsor-gail.png";
+import OilIndia from "../../assets/home/sponsor-oilindia.png";
+import Petronet from "../../assets/home/sponsor-petronet.png";
+
+// Order, captions and alt text per plan (Task 3 brief). Width/height are the
+// sponsor PNGs' native pixel size, which is a 1:1 match for each logo's
+// design bbox in Figma (node 1:354's children) — see report for the mapping.
+const sponsors = [
+  {
+    src: Hpcl,
+    width: 124,
+    height: 161,
+    caption: "Hindustan Petroleum",
+    alt: "Hindustan Petroleum Corporation",
+  },
+  {
+    src: Ongc,
+    width: 126,
+    height: 126,
+    caption: "Oil & Natural Gas",
+    alt: "Oil and Natural Gas Corporation",
+  },
+  {
+    src: IndianOil,
+    width: 140,
+    height: 149,
+    caption: "Indian Oil Corp",
+    alt: "Indian Oil Corporation",
+  },
+  {
+    src: Bpcl,
+    width: 101,
+    height: 126,
+    caption: "Bharat Petroleum",
+    alt: "Bharat Petroleum Corporation",
+  },
+  {
+    src: Gail,
+    width: 176,
+    height: 132,
+    caption: "Gas Authority",
+    alt: "GAIL (India) Limited",
+  },
+  {
+    src: OilIndia,
+    width: 104,
+    height: 153,
+    caption: "Oil India Ltd",
+    alt: "Oil India Limited",
+  },
+  {
+    src: Petronet,
+    width: 97,
+    height: 129,
+    caption: "Petronet LNG",
+    alt: "Petronet LNG Limited",
+  },
+] as const;
+---
+
+<section class="sponsor-strip">
+  <div class="container">
+    <h2>Built together by India's energy backbone:</h2>
+
+    <ul class="logos">
+      {
+        sponsors.map((sponsor) => (
+          <li>
+            <figure class="logo">
+              <span class="logo-frame">
+                <Image
+                  src={sponsor.src}
+                  alt={sponsor.alt}
+                  width={sponsor.width}
+                  height={sponsor.height}
+                  densities={[1, 2]}
+                />
+              </span>
+              <figcaption>{sponsor.caption}</figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+
+    <SparkOrange class="divider" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .sponsor-strip {
+    background: var(--color-cream);
+    padding-block: 4rem;
+  }
+
+  h2 {
+    margin: 0 0 2.5rem;
+    text-align: center;
+    /* Design (node 1:195) sets this heading in Sora, not the site's serif
+       display face global.css defaults h2 to — text is outlined vectors in
+       Figma, so size (~20px from bbox) and color are approximated per the
+       brief rather than read off a text node. */
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1.25rem; /* ~20px, Figma 1:195 bbox height 29.4px */
+    color: var(--color-ink);
+  }
+
+  .logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    align-items: start;
+    column-gap: 1.5rem;
+    row-gap: 2.5rem;
+  }
+
+  .logo {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-frame {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    /* 10.0625rem = 161px, the tallest sponsor asset (Hindustan Petroleum).
+       The 7 source PNGs vary 126-161px tall (each logo's own artwork bakes
+       in different amounts of padding — confirmed against Figma, node 1:354
+       has no shared card/border around the logos), so bottom-aligning each
+       image inside a box this tall keeps the row visually level like the
+       design without stretching or cropping any logo. */
+    height: 10.0625rem;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem; /* ~12px, estimated from caption bbox heights (Figma 1:253 etc.) relative to the heading — captions are outlined vectors too */
+    color: var(--color-gray);
+    text-align: center;
+  }
+
+  .divider {
+    display: block;
+    margin: 3rem auto 0;
+    width: 3.0963rem; /* 49.54px, Figma 1:1026 */
+    height: 3.0963rem;
+  }
+
+  @media (max-width: 1023.98px) {
+    .logos {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 559.98px) {
+    .logos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
