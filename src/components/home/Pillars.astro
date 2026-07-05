@@ -32,14 +32,18 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
   <div class="container">
     <div class="pillars-row">
       <article class="card card--o1">
-        <h3 class="card-title">O1 Infrastructure</h3>
-        <div class="card-rule" aria-hidden="true"></div>
+        <div class="card-head">
+          <h3 class="card-title">O1 Infrastructure</h3>
+          <div class="card-rule" aria-hidden="true"></div>
+        </div>
         <Fragment set:html={NOTCH_BLACK} />
       </article>
 
       <article class="card card--o2">
-        <h3 class="card-title">O2 Capital</h3>
-        <div class="card-rule" aria-hidden="true"></div>
+        <div class="card-head">
+          <h3 class="card-title">O2 Capital</h3>
+          <div class="card-rule" aria-hidden="true"></div>
+        </div>
         <div class="card-content">
           <p class="card-body">
             Structured access to seed funding for early validation and
@@ -51,8 +55,10 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
       </article>
 
       <article class="card card--o3">
-        <h3 class="card-title">O3 Mentorship</h3>
-        <div class="card-rule" aria-hidden="true"></div>
+        <div class="card-head">
+          <h3 class="card-title">O3 Mentorship</h3>
+          <div class="card-rule" aria-hidden="true"></div>
+        </div>
         <div class="card-content">
           <p class="card-body">
             Deep mentorship and research partnerships with premier
@@ -65,8 +71,10 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
       </article>
 
       <article class="card card--o4">
-        <h3 class="card-title">O4 Market Access</h3>
-        <div class="card-rule" aria-hidden="true"></div>
+        <div class="card-head">
+          <h3 class="card-title">O4 Market Access</h3>
+          <div class="card-rule" aria-hidden="true"></div>
+        </div>
         <div class="card-content">
           <!-- O4 body: design file duplicated O2's text; replacement approved by user 2026-07-05 -->
           <p class="card-body">
@@ -220,11 +228,32 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     color: var(--color-ink-alt);
   }
 
+  /* Wraps just the title + its rule. Position:relative here (rather than on
+     .card) makes this box hug the title's own rendered height exactly — 1
+     line at ≥1440px, 2 lines at 1024–1366px for O1/O3/O4 — since .card-rule
+     is absolutely positioned inside it and so doesn't add to its height.
+     .card-content's own margin-top (below) is therefore untouched by any of
+     this: it still measures from the title's bottom edge, same as before. */
+  .card-head {
+    position: relative;
+  }
+
+  /* Final-review fix (whole-branch review): this used to be `top: 3.92rem`
+     fixed from the card's own top, calibrated for a one-line title. At
+     1024–1366px O1/O3/O4's titles wrap to 2 lines and the fixed offset then
+     landed mid-text, striking through the wrapped second line. Anchoring to
+     `top: 100%` of `.card-head` (which hugs the title's real height, see
+     above) instead makes the rule track the title's actual bottom edge at
+     any wrap count. `margin-top` reproduces the exact one-line gap so
+     ≥1440px (where every title is still 1 line) renders pixel-identically
+     to the old fixed-offset rule: 3.92rem (old top) − [0.8rem card
+     padding-top + 1.7831rem × 1.3 title line-box] = 0.80197rem ≈ 0.802rem. */
   .card-rule {
     position: absolute;
-    left: 3.9rem; /* 62.4px inset from card edge, all four cards */
-    right: 0; /* flush to the border, matching Figma's ~0.44px gap */
-    top: 3.92rem; /* 62.73px */
+    left: 2.43rem; /* 3.9rem original card-relative inset minus the card's own 1.47rem left padding, which .card-head (unlike .card) sits inside of already — reproduces the same 62.4px inset from the card's border */
+    right: -1.47rem; /* extends back out through the card's own right padding to stay flush with the border, same as the original `right: 0` measured from the card's padding edge */
+    top: 100%;
+    margin-top: 0.802rem;
     height: 0.125rem;
     background: var(--color-ink-alt);
   }
@@ -284,6 +313,25 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     display: flex;
     justify-content: center;
     margin-top: 4.1856rem; /* 66.97px, gap between the card collage (1:1068) and the CTA pill (1:1033) */
+  }
+
+  @media (min-width: 1024px) and (max-width: 1439.98px) {
+    /* Final-review fix (whole-branch review): O1's bleed calc (`.card--o1`
+       margin-left, above) is correct and shared with O3/O4's wrap — left
+       untouched. But at this range O1's title itself wraps to 2 lines
+       ("O1" / "Infrastructure"), and its box's left edge sits ~8.25px past
+       the viewport edge at any width in this range (the bleed math is
+       viewport-independent, verified via getBoundingClientRect). A
+       one-line "O1 Infrastructure" survives that crop (the rounded "O"'s
+       own left bearing absorbs it — verified readable ≥1440px, left as-is
+       there), but the wrapped second line's leading "I" has ~zero left
+       bearing and was visibly clipped to "nfrastructure". Nudging the
+       title inward by more than the 8.25px overhang (with a little extra
+       margin) restores full readability without touching the bleed
+       calc itself or the ≥1440px rendering (out of range here). */
+    .card--o1 .card-title {
+      padding-left: 0.75rem;
+    }
   }
 
   @media (max-width: 1023.98px) {

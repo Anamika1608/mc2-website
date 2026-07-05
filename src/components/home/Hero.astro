@@ -44,9 +44,20 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   @media (min-width: 1024px) {
     .hero {
       /* Approximates the design's hero band (page y110.65 header end to
-         y1143.56 sponsor-strip start ~= 1033px); final cross-section fit is
-         verified in Task 7. */
-      min-height: 64.5rem;
+         y1143.56 sponsor-strip start ~= 1033px = 64.5rem at the 1920px
+         reference canvas: 1033/1920 = 53.75vw).
+         Final-review fix (whole-branch review): a flat 64.5rem for every
+         ≥1024px width left a large dead cream band between the chevron and
+         the sponsor strip at 1024–1366px, because `.curves` scales its
+         *height* down with viewport width (100% width, height:auto) while
+         this fixed min-height did not. Using `53.75vw` as the fluid branch
+         reproduces 64.5rem exactly at 1920px (53.75vw × 1920 = 1032.6px,
+         which the 64.5rem cap then rounds to) and scales it down
+         proportionately below that, closing the gap at 1024–1366px; the
+         64.5rem cap keeps ≥1920px identical to before (unauthorized to
+         change here). 40rem floor is a sanity backstop, not expected to
+         bind at any ≥1024px width. */
+      min-height: clamp(40rem, 53.75vw, 64.5rem);
     }
   }
 
@@ -139,7 +150,13 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     font-family: var(--font-sans);
     font-size: 1.25rem; /* 20px */
     line-height: 1.4; /* 28/20 */
-    color: var(--color-ink-alt);
+    /* Final-review fix: the plan's own transcription of the trial-frame
+       paragraph node (1:27, native text — the real page's own paragraph is
+       an outlined vector with no fill data to read) is `#1e1e3a`, i.e.
+       --color-ink, not --color-ink-alt (#1e1e3c). The two are visually
+       near-identical (one value off in the blue channel); this corrects an
+       undocumented token slip to match that node exactly. */
+    color: var(--color-ink);
   }
 
   .scroll {
