@@ -1,0 +1,109 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:8261: heading "The Vision"
+// (1:8262, x235.64 w326) left column, body paragraph group (1:8263, x600.82
+// w1080.71) right column. See exact derivations in the style block below.
+import VideoFeature from "./VideoFeature.astro";
+---
+
+<section class="vision">
+  <div class="container grid">
+    <h2>The Vision</h2>
+    <div class="body">
+      <p>
+        MC&sup2;+ is India&rsquo;s commitment to backing the founders,
+        researchers, and builders creating the technologies that will define
+        India&rsquo;s energy future. By opening up the infrastructure, capital,
+        piloting sites, and expertise of India&rsquo;s largest energy majors, we
+        are creating an unprecedented platform for energy entrepreneurship at a
+        scale no single organization could offer alone.
+      </p>
+      <p>
+        MC&sup2;+ brings HPCL, ONGC, Indian Oil, BPCL, GAIL, Oil India and
+        Petronet LNG under one mandate. Where a startup once knocked on different
+        doors hoping one would open, there is now a single, serious, well-funded
+        door, backed by $232 billion in combined industrial scale.
+      </p>
+      <p class="accent">
+        Our goal is to make India the world&rsquo;s most vibrant hub for energy
+        innovations that define a secure, sustainable, globally competitive
+        energy future.
+      </p>
+    </div>
+  </div>
+</section>
+
+<VideoFeature />
+
+<style>
+  .vision {
+    background: var(--color-cream);
+    padding-block: 3rem;
+  }
+
+  /* Column widths from node 1:8261 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
+     text bbox (1:8262) is x=235.64 w=326 -> ends at x=561.64; body group bbox
+     (1:8263) is x=600.82 w=1080.71. Gap = 600.82 - 561.64 = 39.18px = 2.45rem
+     -- matches Mission's 2.45rem gap exactly, and the heading column's right
+     edge (561.64) matches Mission's (561.65) almost to the pixel, confirming
+     the SAME 22.5rem heading column is reused (heading text itself is just
+     shorter than "Our Mission", left-aligned within that column). The body
+     column, however, is NOT ~46rem as the plan guessed: with three full
+     paragraphs (11 wrapped lines) the vectorized ink's tightest bbox runs
+     almost edge-to-edge of the group (1080.71px ends at the group's own right
+     edge), confirmed visually in the screenshot where the longest lines in
+     each paragraph run nearly to the right margin. 1080.71px = 67.54rem. */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 22.5rem) minmax(0, 67.54rem);
+    gap: 2.45rem;
+    align-items: start;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:8262 */
+    color: var(--color-ink-alt);
+  }
+
+  .body {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  /* Body (1:8263) is vectorized, not real text. The "M" in the first
+     paragraph's opening "MC²+" (vector 1:8264) measures 22.63px tall --
+     identical to Mission's body "T" ink height -- against Sora's
+     capHeight/upm of 0.73 -> 22.63/0.73 ≈ 31.0px, the same 31px body size
+     used throughout this build (hero lede, Mission body). */
+  .body p {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.9375rem; /* 31px, derived — see comment above */
+    line-height: 1.31; /* matches Mission's derived body line-height */
+    color: var(--color-ink);
+  }
+
+  /* Third paragraph confirmed bold + orange by screenshot sampling (visibly
+     heavier weight than P1/P2, colored #f37d2c = --color-orange). */
+  .body .accent {
+    color: var(--color-orange);
+    font-weight: 700;
+  }
+
+  @media (max-width: 1023.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    h2 {
+      font-size: clamp(2.4rem, 6vw, 4.0625rem);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .grid {
+      gap: 0.85rem;
+    }
+  }
+</style>
