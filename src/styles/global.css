@@ -12,6 +12,7 @@
   --color-cream-alt: #f4f3ed;    /* alternate surface */
   --color-line: #e8e6da;         /* hairline borders / dividers */
   --color-gray: #959595;         /* muted text — eyebrows, captions */
+  --color-gray-dark: #676767;    /* hero eyebrow — from Figma trial frame 1:26 */
   --color-green: #18784c;        /* logo leaf accent */
   --color-green-soft: #397650;   /* logo leaf accent (light) */
   --color-white: #ffffff;
