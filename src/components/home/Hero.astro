@@ -1,0 +1,158 @@
+---
+import HeroCurves from "../../assets/home/hero-curves.svg";
+import SparkOrange from "../../assets/home/spark-orange.svg";
+import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+---
+
+<section class="hero">
+  <div class="orbit" aria-hidden="true">
+    <HeroCurves class="curves" />
+    <SparkOrange class="spark spark-a" />
+    <SparkOrange class="spark spark-b" />
+    <SparkOrange class="spark spark-c" />
+  </div>
+
+  <div class="hero-inner">
+    <p class="eyebrow">Multiply · Collaborate · Create</p>
+    <div class="underline" aria-hidden="true"></div>
+
+    <h1>
+      <span class="line">Where ideas <span class="accent">multiply</span>,</span>
+      <span class="line">industries <span class="accent">collaborate</span> and</span>
+      <span class="line"
+        >visionaries <span class="accent">create</span> energy ventures.</span
+      >
+    </h1>
+
+    <p class="lede">
+      India's flagship energy innovation platform, uniting seven of the
+      country's largest energy majors to carry ventures from the lab bench to
+      industrial scale.
+    </p>
+
+    <ScrollArrow class="scroll" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-cream);
+    padding-block: 6rem 4rem;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      /* Approximates the design's hero band (page y110.65 header end to
+         y1143.56 sponsor-strip start ~= 1033px); final cross-section fit is
+         verified in Task 7. */
+      min-height: 64.5rem;
+    }
+  }
+
+  /* Curves + sparks: decorative, absolutely positioned behind copy.
+     Positions are percentages of the curves SVG's own 1920x1153 box (Figma
+     node 1:188), so sparks stay locked to the curve intersections at any
+     viewport width — this also satisfies the "curves scale with section
+     (allow crop)" responsive rule without extra breakpoints. */
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .curves {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .spark {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .spark-a {
+    left: 5.17%;
+    top: 66.88%;
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+  .spark-b {
+    left: 13.66%;
+    top: 74.73%;
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+  .spark-c {
+    left: 80.63%;
+    top: 26.98%;
+    width: 2.7rem;
+    height: 2.7rem;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 55.4375rem; /* 887px, Figma 1:23 HEADLINE column */
+    margin-inline: auto;
+    /* Deliberately NOT the sitewide .container utility (the brief's "Consumes: .container"):
+       its clamp(1.25rem, 4vw, 5rem) gutters eat into the fixed 887px column at desktop widths
+       and wrap the H1 onto a 4th line. Fixed 1.25rem is narrow-viewport safety only. */
+    padding-inline: 1.25rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* 20px */
+    /* Real page eyebrow is navy, verified against the page export (1:995/1:997) —
+       corrects the plan/trial-frame value #676767 (trial node 1:26). */
+    color: var(--color-ink-alt);
+  }
+  .underline {
+    width: 8.15625rem; /* 130.5px, Figma 1:25 */
+    height: 1px;
+    margin: 1rem auto 3rem;
+    background: #000; /* one-off literal, sampled from the real page (1:996) — not a token */
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 3.25rem; /* 52px */
+    line-height: 1.173; /* 61/52 */
+    color: var(--color-ink-alt);
+  }
+  h1 .line {
+    display: block;
+  }
+  h1 .accent {
+    /* Real page accent fill is #f37d2c per node 1:1876 — corrects the trial frame's #e58341. */
+    color: var(--color-orange);
+  }
+
+  .lede {
+    max-width: 38.8125rem; /* 621px */
+    margin: 1.5rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.4; /* 28/20 */
+    color: var(--color-ink-alt);
+  }
+
+  .scroll {
+    display: block;
+    margin: 3rem auto 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.25rem);
+    }
+    .lede {
+      max-width: 90%;
+    }
+  }
+</style>

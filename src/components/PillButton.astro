@@ -1,0 +1,50 @@
+---
+interface Props {
+  label: string;
+  href: string;
+}
+const { label, href } = Astro.props;
+---
+
+<a class="pill" href={href}>
+  <span>{label}</span>
+  <span class="pill-arrow" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="32" height="32" fill="none">
+      <path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </span>
+</a>
+
+<style>
+  /* Sizing sourced from Figma pill 1:1479 ("Get in touch", CTA-band instance —
+     all pills in the design share this one size): overall 336.9x76.01px,
+     circle diameter == pill height (76px, flush right, no vertical padding),
+     label left inset 46.06px, label-to-circle gap 25.57px. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.6rem; /* 25.6px */
+    background: var(--color-ink);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    font-size: 2rem; /* 32px, estimated from the label's vector cap-height (~23.8px) */
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0 0 0 2.875rem; /* 46px left inset; no other padding — circle fills the rest */
+  }
+  .pill-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.75rem; /* 76px == pill height */
+    height: 4.75rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-orange);
+    color: var(--color-white);
+    transition: transform 150ms ease;
+  }
+  .pill:hover .pill-arrow {
+    transform: translateX(3px);
+  }
+</style>
