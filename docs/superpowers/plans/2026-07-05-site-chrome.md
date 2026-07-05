@@ -711,11 +711,11 @@ Expected: every route prints `200`.
 
 ```bash
 for page in about team initiatives support portfolio contact; do
-  printf "%s: %s\n" "$page" "$(curl -s "http://localhost:4321/$page" | grep -c 'aria-current="page"')"
+  printf "%s: %s\n" "$page" "$(curl -s "http://localhost:4321/$page" | grep -o '<a [^>]*aria-current="page"' | wc -l | tr -d ' ')"
 done
-curl -s http://localhost:4321/ | grep -c 'aria-current="page"' || true
+printf "home: %s\n" "$(curl -s "http://localhost:4321/" | grep -o '<a [^>]*aria-current="page"' | wc -l | tr -d ' ')"
 ```
-Expected: each of the six pages prints `1` (its own nav link is active); the homepage prints `0`.
+Expected: each of the six pages prints `1` (its own nav link is active); the homepage prints `0`. (The pattern is anchor-scoped on purpose: dev-server HTML inlines the page CSS unminified, so a bare `grep 'aria-current="page"'` would also match the Header's CSS attribute selector.)
 
 Also verify the active link is the RIGHT one on a sample:
 ```bash
