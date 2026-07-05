@@ -1,0 +1,56 @@
+/*
+ * MC²+ design tokens.
+ * Color values are exact, extracted from MC2_AllPages.ai vector data — do not tweak by eye.
+ */
+:root {
+  /* Color */
+  --color-ink: #1e1e3a;          /* primary navy — headings, body text, dark pills */
+  --color-ink-alt: #1e1e3c;      /* navy variant present in some design fills */
+  --color-orange: #f37d2c;       /* vivid orange — highlights, CTAs, footer */
+  --color-orange-soft: #e58341;  /* muted orange — decorative curves, illustrations */
+  --color-cream: #f3f2eb;        /* page background */
+  --color-cream-alt: #f4f3ed;    /* alternate surface */
+  --color-line: #e8e6da;         /* hairline borders / dividers */
+  --color-gray: #959595;         /* muted text — eyebrows, captions */
+  --color-green: #18784c;        /* logo leaf accent */
+  --color-green-soft: #397650;   /* logo leaf accent (light) */
+  --color-white: #ffffff;
+
+  /* Typography (font cssVariables are injected by Astro's <Font /> components) */
+  --font-display: var(--font-faculty), Georgia, serif;
+  --font-sans: var(--font-sora), system-ui, sans-serif;
+}
+
+/* Minimal reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  margin: 0;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}

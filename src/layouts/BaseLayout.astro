@@ -1,0 +1,31 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "MC²+ — Multiply · Collaborate · Create. India's flagship energy innovation platform.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <Font cssVariable="--font-sora" preload />
+    <Font cssVariable="--font-faculty" preload />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
