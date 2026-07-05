@@ -35,7 +35,10 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     position: relative;
     overflow: hidden;
     background: var(--color-cream);
-    padding-block: 6rem 4rem;
+    /* Top spacing kept as-is (sits under the sticky header, not derived from
+       Figma's absolute canvas). Bottom is zeroed so the Hero->Mission gap is
+       owned entirely by Mission's own padding-block-start (see Mission.astro). */
+    padding-block: 6rem 0;
   }
   @media (min-width: 1024px) {
     .hero {

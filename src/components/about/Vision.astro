@@ -37,7 +37,10 @@ import VideoFeature from "./VideoFeature.astro";
 <style>
   .vision {
     background: var(--color-cream);
-    padding-block: 3rem;
+    /* Figma gap Vision-top (1506.06) − Mission-bottom (1404.60, node 1:8065)
+       ≈ 101.46px = 6.34rem. Bottom is 0 — the Vision-to-Video gap is owned by
+       VideoFeature's own padding-block-start (see VideoFeature.astro). */
+    padding-block: 6.34rem 0;
   }
 
   /* Column widths from node 1:8261 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading

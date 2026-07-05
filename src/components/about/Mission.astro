@@ -18,7 +18,10 @@
 <style>
   .mission {
     background: var(--color-cream);
-    padding-block: 3rem;
+    /* Figma gap Mission-top (1230.41) − Hero-bottom (984.16, node 1:9499's
+       scroll-chevron) ≈ 246.25px = 15.39rem. Bottom is 0 — the Mission-to-Vision
+       gap is owned by Vision's own padding-block-start (see Vision.astro). */
+    padding-block: 15.39rem 0;
   }
 
   /* Column widths from node 1:8065 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading

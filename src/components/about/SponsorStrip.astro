@@ -53,7 +53,11 @@ const SPONSORS = [
 <style>
   .sponsors {
     background: var(--color-cream);
-    padding-block: 3rem;
+    /* Figma gap Sponsor-top (2755.41, node 1:8931) − Video-bottom (2656.87,
+       node 1:8189's visible clipped still) ≈ 98.54px = 6.16rem. Bottom is 0 —
+       the Sponsor-to-Scale gap is owned by Scale's own padding-block-start
+       (see Scale.astro). */
+    padding-block: 6.16rem 0;
     text-align: center;
   }
 
