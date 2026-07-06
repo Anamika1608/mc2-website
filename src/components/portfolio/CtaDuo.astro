@@ -26,14 +26,22 @@
 // reused via CSS sizing rather than exporting a second near-duplicate file.
 import PillButton from "../PillButton.astro";
 import SparkRow from "../../assets/portfolio/spark-row.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="cta-duo">
   <div class="container">
     <div class="columns">
-      <div class="column">
-        <h2>Building one of these?</h2>
-        <p>
+      <div class="column reveal">
+        <h2>
+          <span class="reveal-line">
+            <span class="reveal-line-box">
+              <span class="reveal-line-text">Building one of these?</span>
+              <RevealStar class="reveal-star" aria-hidden="true" />
+            </span>
+          </span>
+        </h2>
+        <p class="reveal-rise reveal-rise--after-1-line">
           If your venture fits any of these sectors at TRL 4+, Cohort 1 is
           open. Bring the technology and a real industrial problem.
         </p>
@@ -44,9 +52,16 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
         <SparkRow class="divider-spark" />
       </div>
 
-      <div class="column">
-        <h2>Scouting for deal flow?</h2>
-        <p>
+      <div class="column reveal">
+        <h2>
+          <span class="reveal-line">
+            <span class="reveal-line-box">
+              <span class="reveal-line-text">Scouting for deal flow?</span>
+              <RevealStar class="reveal-star" aria-hidden="true" />
+            </span>
+          </span>
+        </h2>
+        <p class="reveal-rise reveal-rise--after-1-line">
           Corporates and investors can plug into a sourcing pipeline built on
           real industrial validation, co-invest or co-pilot with us.
         </p>

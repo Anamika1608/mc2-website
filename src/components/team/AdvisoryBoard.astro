@@ -7,11 +7,12 @@
 // description, centered, one row, with a single orange spark (1:13347)
 // centered below the row. See exact derivations in the style block below.
 import { Image } from "astro:assets";
-import SparkOrange from "../../assets/team/spark-orange.svg";
+import SparkOrange from "../../assets/team/board-spark.svg";
 import abhay from "../../assets/team/adv-abhay.png";
 import madhukar from "../../assets/team/adv-madhukar.png";
 import neelkanth from "../../assets/team/adv-neelkanth.png";
 import pawan from "../../assets/team/adv-pawan.png";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 
 // Copy verbatim from the task brief. Literal "&" is used here (not the
 // "&amp;" entity), same house convention as BoardOfDirectors.astro's DIRECTORS
@@ -45,11 +46,20 @@ const ADVISORS = [
 <section class="advisory">
   <div class="container">
     <p class="eyebrow">GUIDANCE</p>
-    <h2>Advisory Board</h2>
-    <p class="subheading">
-      Independent experts across energy, deep-tech research and public policy
-      who guide theme strategy and selection.
-    </p>
+    <div class="reveal">
+      <h2>
+        <span class="reveal-line">
+          <span class="reveal-line-box">
+            <span class="reveal-line-text">Advisory Board</span>
+            <RevealStar class="reveal-star" aria-hidden="true" />
+          </span>
+        </span>
+      </h2>
+      <p class="subheading reveal-rise reveal-rise--after-1-line">
+        Independent experts across energy, deep-tech research and public policy
+        who guide theme strategy and selection.
+      </p>
+    </div>
 
     <div class="grid">
       {ADVISORS.map((a) => (
@@ -87,7 +97,7 @@ const ADVISORS = [
   .eyebrow {
     margin: 0 0 1.3rem;
     font-family: var(--font-display);
-    font-size: 1.69rem; /* 27.07px, node 1:12978 */
+    font-size: 1.375rem; /* 22px — reduced from the Figma 27.07px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     letter-spacing: 0.25em;
     color: var(--color-orange-bright);
     text-align: center;
@@ -98,7 +108,7 @@ const ADVISORS = [
   h2 {
     margin: 0 0 1.5rem;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:12979 */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     color: var(--color-ink-alt);
     text-align: center;
   }
@@ -117,7 +127,7 @@ const ADVISORS = [
     max-width: 46.97rem;
     margin: 0 auto 4.5rem;
     font-family: var(--font-sans);
-    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667;
     color: var(--color-gray);
     text-align: center;
@@ -175,7 +185,7 @@ const ADVISORS = [
   h3 {
     margin: 0 0 0.64rem; /* ~10.3px name-bottom -> desc-top gap, node metadata */
     font-family: var(--font-display);
-    font-size: 1.88rem; /* 30.102px */
+    font-size: 1.5rem; /* 24px — reduced from 30.102px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
   }
@@ -195,7 +205,7 @@ const ADVISORS = [
     margin: 0;
     max-width: 20rem;
     font-family: var(--font-sans);
-    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.3;
     color: var(--color-gray);
   }
@@ -224,7 +234,7 @@ const ADVISORS = [
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
