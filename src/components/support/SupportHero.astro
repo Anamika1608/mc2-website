@@ -80,7 +80,14 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 
   .orbit {
     position: absolute;
-    top: 0;
+    /* Was top:0. The orbit PNG is a fixed ~984px tall regardless of the
+       (now content-driven, ~761px) hero box, so .hero's overflow:hidden was
+       cropping the decoration's own crossing-point sparks — they sit in the
+       lower-middle of the image, not the top — leaving only faint top
+       curve tails visible. Shifted up so those crossings land inside the
+       visible window instead, matching how the Team/Contact heroes' own
+       (shorter) curve assets stay fully visible without needing this. */
+    top: -14rem;
     left: 50%;
     z-index: 0;
     width: 100%;
@@ -171,8 +178,9 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        the hero's min-height was floored to close the earlier dead-space
        bug. .support-hero uses min-height (a floor, not a cap), so this
        margin grows the hero's own rendered height to fit, rather than
-       getting clipped. Doubled from 2rem per user directive. */
-    margin: 6.12rem auto 4rem;
+       getting clipped. Was 2rem, then 4rem, then 10rem, then 8rem, now
+       12rem per user directive. */
+    margin: 6.12rem auto 12rem;
   }
 
   @media (max-width: 1023.98px) {
