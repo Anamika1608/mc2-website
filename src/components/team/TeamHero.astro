@@ -57,9 +57,19 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
   @media (min-width: 1024px) {
     .hero {
-      /* hero-curves.svg's own exported height is 1012px (63.25rem); used as
-         an approximation of the hero band until this is wired into the page. */
-      min-height: 63.25rem;
+      /* Was 63.25rem, matching hero-curves.svg's own raw exported height —
+         a placeholder that was never fitted to the actual content (own
+         prior comment admitted as much). Real content (eyebrow through the
+         scroll chevron) only needs ~38.2rem; the 63.25rem floor left ~401px
+         of dead space between the chevron and the next section. Refit to
+         42rem — .hero has overflow:hidden, so the decorative curve (100%
+         width, height:auto) just crops a bit earlier instead of forcing
+         extra section height; verified the crop still reads fine
+         (crosses cleanly just before its own intersection point rather than
+         mid-stroke). Cuts the dead space to ~61px, matching the same
+         fit-to-content pass Initiatives/Portfolio/Home's Heroes already
+         went through (per user request 2026-07-06). */
+      min-height: 42rem;
     }
   }
 
