@@ -60,6 +60,15 @@ const SPONSORS = [
     padding-block: 6.16rem 0;
     text-align: center;
   }
+  @media (min-width: 1024px) {
+    .sponsors {
+      /* No existing <1024 override touches padding-block, so this is gated
+         here rather than left unqualified. 98.54px = Sponsor-top (2755.41) −
+         Video-bottom (2656.87) — proportional-exact per user directive
+         2026-07-06. */
+      padding-block: calc(98.54 * var(--fig)) 0;
+    }
+  }
 
   /* Eyebrow (node 1:9127) is a vectorized paragraph, not a real text node, so its
      font-size is reverse-engineered the same way as AboutHero's lede / Mission's
@@ -74,8 +83,14 @@ const SPONSORS = [
   .eyebrow {
     font-family: var(--font-sans);
     color: var(--color-gray);
-    font-size: var(--text-body); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(31 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
     margin: 0 0 1.3125rem; /* 21px gap to h2, measured from the full-section screenshot */
+  }
+  @media (min-width: 1024px) {
+    .eyebrow {
+      font-size: calc(31 * var(--fig)); /* 31px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body) home-normalized token */
+      margin-bottom: calc(21 * var(--fig)); /* 21px gap to h2, measured from the full-section screenshot — proportional-exact per user directive 2026-07-06 */
+    }
   }
 
   /* H2 (node 1:9126) is a real text node: Tailwind reference code returned it
@@ -83,9 +98,14 @@ const SPONSORS = [
      --color-ink-alt at 4.0625rem, identical to Mission.astro's H2 treatment. */
   h2 {
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:9126 */
+    font-size: calc(65 * var(--fig)); /* 65px, node 1:9126 — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below overrides font-size with a clamp. */
     color: var(--color-ink-alt);
-    margin: 0 0 2.5rem; /* ~40px gap to the logo row, measured from the full-section screenshot */
+    margin: 0 0 2.5rem; /* ~40px gap to the logo row, measured from the full-section screenshot — no existing <1024 override, so the proportional-exact calc(40 * var(--fig)) lives in the >=1024 block below */
+  }
+  @media (min-width: 1024px) {
+    h2 {
+      margin-bottom: calc(40 * var(--fig)); /* ~40px gap to the logo row, measured from the full-section screenshot — proportional-exact per user directive 2026-07-06 */
+    }
   }
 
   /* Logo row (7 icon groups under 1:9102, 7 caption groups under 1:9000). Each
@@ -119,9 +139,14 @@ const SPONSORS = [
     justify-items: center;
   }
   .logo {
-    height: 7.5rem; /* 120px, conservative end of the measured 120-153px Figma range */
+    height: 7.5rem; /* 120px, conservative end of the measured 120-153px Figma range — no existing <1024 override, so the proportional-exact calc(120 * var(--fig)) lives in the >=1024 block below */
     width: auto;
     object-fit: contain;
+  }
+  @media (min-width: 1024px) {
+    .logo {
+      height: calc(120 * var(--fig)); /* 120px — proportional-exact per user directive 2026-07-06 */
+    }
   }
 
   /* Captions (7 groups under 1:9000) are ALSO vectorized paragraphs, not real
@@ -135,8 +160,13 @@ const SPONSORS = [
      matching the H2's ink, not muted gray). */
   .caption {
     font-family: var(--font-sans);
-    font-size: var(--text-caption); /* 17.8px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-caption); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(17.8 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
     color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
+  }
+  @media (min-width: 1024px) {
+    .caption {
+      font-size: calc(17.8 * var(--fig)); /* 17.8px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-caption) home-normalized token */
+    }
   }
 
   .ctas {

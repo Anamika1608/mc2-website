@@ -10,6 +10,21 @@
 //      --color-ink-alt, NOT --color-gray as the brief guessed — same
 //      gray-vs-navy correction SponsorStrip.astro already made for its
 //      caption text.
+//
+// Decor (added per user directive 2026-07-06): the "irregular spark geometry"
+// dismissed above turns out to be fully reachable — group 1:9465/1:9466 (5
+// verticals 1:9467-1:9471 + 2 horizontals 1:9472-1:9473) and its sibling
+// spark group 1:9474 (8 sparks 1:9475-1:9482), all with real vector geometry
+// via get_metadata (fileKey u4NLOVKuXUTKULhSn0sAJQ), cross-verified against
+// the design render (.superpowers/sdd/figma-about-full.png): 4 of the 5
+// verticals meet a top rule that bleeds off the right viewport edge, and (a
+// different) 4 of the 5 meet a bottom rule that bleeds off the left edge;
+// sparks mark each true line intersection plus a couple of "near miss"
+// points where a vertical's end sits at a rule's height without actually
+// reaching it. This replaces the old 3-internal-divider approximation below
+// as the desktop treatment; that approximation now becomes the <1024
+// fallback instead (house pattern: home/Audiences.astro's .decor is
+// likewise desktop-only, with a simpler per-column fallback below 1024).
 import SparkOrange from "../../assets/about/spark-orange.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
 
@@ -22,6 +37,24 @@ const STATS = [
 ---
 
 <section class="scale">
+  <div class="decor" aria-hidden="true">
+    <span class="dline dline--v1"></span>
+    <span class="dline dline--v2"></span>
+    <span class="dline dline--v3"></span>
+    <span class="dline dline--v4"></span>
+    <span class="dline dline--v5"></span>
+    <span class="dline dline--h1"></span>
+    <span class="dline dline--h2"></span>
+    <SparkOrange class="dspark dspark--s1" />
+    <SparkOrange class="dspark dspark--s2" />
+    <SparkOrange class="dspark dspark--s3" />
+    <SparkOrange class="dspark dspark--s4" />
+    <SparkOrange class="dspark dspark--s5" />
+    <SparkOrange class="dspark dspark--s6" />
+    <SparkOrange class="dspark dspark--s7" />
+    <SparkOrange class="dspark dspark--s8" />
+  </div>
+
   <div class="container reveal">
     <p class="eyebrow">THE SCALE BEHIND YOU</p>
     <h2>
@@ -62,6 +95,10 @@ const STATS = [
 
 <style>
   .scale {
+    position: relative; /* anchors the decor overlay below */
+    /* Contains the decor overlay's horizontal-rule bleeds (H1 off the right
+       edge, H2 off the left edge) — house precedent (home/Audiences.astro). */
+    overflow-x: hidden;
     background: var(--color-cream);
     /* Figma gap Scale-top (3409.04, node 1:9173 — the full section incl. the
        stat-cards group 1:9305, not just the heading sub-group 1:9174) −
@@ -71,6 +108,15 @@ const STATS = [
        edges of its surrounding gaps. */
     padding-block: 11.74rem 4.34rem;
     text-align: center;
+  }
+  @media (min-width: 1024px) {
+    .scale {
+      /* No existing <1024 override touches padding-block, so this is gated
+         here rather than left unqualified. 187.77px = Scale-top (3409.04) −
+         Sponsor-bottom (3221.27); 69.5px = Footer-top (4103) − Scale-bottom
+         (4033.50) — proportional-exact per user directive 2026-07-06. */
+      padding-block: calc(187.77 * var(--fig)) calc(69.5 * var(--fig));
+    }
   }
 
   /* Eyebrow (text node 1:9175): Figma reference code returns
@@ -87,8 +133,13 @@ const STATS = [
     color: var(--color-gray);
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    font-size: 1.6919rem; /* 27.07px, node 1:9175 */
+    font-size: 1.6919rem; /* 27.07px, node 1:9175 — no existing <1024 override, so the proportional-exact calc(27.07 * var(--fig)) lives in the >=1024 block below */
     margin: 0 0 1.25rem;
+  }
+  @media (min-width: 1024px) {
+    .eyebrow {
+      font-size: calc(27.07 * var(--fig)); /* 27.07px, node 1:9175 — proportional-exact per user directive 2026-07-06 */
+    }
   }
 
   /* H2 (real text nodes 1:9177/1:9178): reference code gives
@@ -96,7 +147,7 @@ const STATS = [
      treatment to Mission.astro's and SponsorStrip.astro's H2s. */
   h2 {
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px */
+    font-size: calc(65 * var(--fig)); /* 65px — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below overrides font-size with a clamp. */
     color: var(--color-ink-alt);
     margin: 0 0 1.75rem;
   }
@@ -116,9 +167,14 @@ const STATS = [
     max-width: 44rem;
     margin: 0 auto 3rem;
     font-family: var(--font-sans);
-    font-size: var(--text-body); /* 26.25px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(26.25 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
     line-height: 1.26;
     color: var(--color-gray);
+  }
+  @media (min-width: 1024px) {
+    .intro {
+      font-size: calc(26.25 * var(--fig)); /* 26.25px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body) home-normalized token */
+    }
   }
 
   /* Stats row (group 1:9306). Labels (1:9309/1:9354/1:9388/1:9429, real text
@@ -155,23 +211,19 @@ const STATS = [
     /* Hairline color CORRECTED from the brief's --color-line guess: the
        vertical dividers in group 1:9465/1:9466 (vectors 1:9467-1:9471)
        pixel-sample to a solid RGB(243,125,44) = #f37d2c = --color-orange,
-       not the neutral --color-line. The source file actually draws 5
-       vertical hairlines (outer-left/right edges plus the 3 internal
-       column gaps) crossed by 2 asymmetric horizontal hairlines, all
-       studded with sparks at seemingly arbitrary points — a decorative
-       flourish that doesn't reduce to a simple per-column border pattern
-       (same kind of unreachable/irregular spark geometry SponsorStrip.astro
-       already ran into and simplified). This build keeps the readable core
-       of it: 3 internal vertical dividers, each with one spark at its top
-       and one at its bottom, and drops the outer-edge lines/asymmetric
-       horizontals. */
-    border-left: 1px solid var(--color-orange);
+       not the neutral --color-line. This simplified 3-internal-divider
+       treatment (dropping the outer-edge lines/asymmetric horizontals/full
+       spark set) is now the <1024 fallback only — the .decor overlay below
+       reproduces the design's full line system (5 verticals, 2 horizontals,
+       8 sparks) exactly at desktop, so this border is switched off there. */
+    border-left: 0;
   }
   .stat-spark {
     position: absolute;
     left: -0.75rem;
     width: 1.4rem;
     height: 1.4rem;
+    display: none; /* <1024 fallback only — see .decor overlay below for desktop */
   }
   .stat-spark-top {
     top: -0.75rem;
@@ -181,20 +233,154 @@ const STATS = [
   }
   .stat-value {
     font-family: var(--font-display);
-    font-size: 2.2rem; /* 35.23px, derived — see comment above */
+    font-size: 2.2rem; /* 35.23px, derived — see comment above — no existing <1024 override, so the proportional-exact calc(35.23 * var(--fig)) lives in the >=1024 block below */
     color: var(--color-orange);
     margin: 0 0 0.75rem;
     line-height: 1.1;
+  }
+  @media (min-width: 1024px) {
+    .stat-value {
+      font-size: calc(35.23 * var(--fig)); /* 35.23px, derived — see comment above — proportional-exact per user directive 2026-07-06 */
+    }
   }
   .stat-arrow {
     color: var(--color-orange);
   }
   .stat-desc {
     font-family: var(--font-sans);
-    font-size: var(--text-body-sm); /* 20.19px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body-sm); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(20.19 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
     color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
     line-height: 1.5;
     margin: 0;
+  }
+  @media (min-width: 1024px) {
+    .stat-desc {
+      font-size: calc(20.19 * var(--fig)); /* 20.19px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body-sm) home-normalized token */
+    }
+  }
+
+  /* ==== Decor overlay (node groups 1:9465/1:9466 + 1:9474) ====
+     All geometry below is design-absolute-y minus 3221.27 (Scale's own
+     design-region top, i.e. Sponsor-bottom — see the .scale padding-block
+     comment above), converted to --fig units. x is used as-is: .scale is a
+     full-bleed section (no inline padding of its own — only its .container
+     child is inset), so design x=0..1920 maps directly onto the section's
+     own left/right edges regardless of --fig's value. Verified against the
+     design render (.superpowers/sdd/figma-about-full.png): the top rule (H1)
+     runs through 3 of the verticals (v1/v2/v3, big+medium sparks) and bleeds
+     off the right edge; the bottom rule (H2) runs through a different 3
+     (v3/v4/v5, big+medium sparks) and bleeds off the left edge; v2 stops
+     short of the bottom rule with a tiny spark near-but-not-on it, and v1
+     has no spark at its own (unconnected) bottom end. */
+  .decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .dline {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  .dspark {
+    position: absolute;
+  }
+  /* v1 (1:9467): x1722.59, y3698.85→477.58, h244.65. Top end meets h1 (s2); no spark at its bottom end. */
+  .dline--v1 {
+    left: calc(1722.59 * var(--fig));
+    top: calc(477.58 * var(--fig));
+    width: calc(0.98 * var(--fig));
+    height: calc(244.65 * var(--fig));
+  }
+  /* v2 (1:9468): x1341.53, y3698.85→477.58, h294.65. Top end meets h1 (s3); bottom end has a small near-miss spark (s1) just short of h2. */
+  .dline--v2 {
+    left: calc(1341.53 * var(--fig));
+    top: calc(477.58 * var(--fig));
+    width: calc(0.92 * var(--fig));
+    height: calc(294.65 * var(--fig));
+  }
+  /* v3 (1:9469): x960.45, y3718.85→497.58, h314.65. Top end meets h1 (s5); bottom end meets h2 (s4). */
+  .dline--v3 {
+    left: calc(960.45 * var(--fig));
+    top: calc(497.58 * var(--fig));
+    width: calc(0.92 * var(--fig));
+    height: calc(314.65 * var(--fig));
+  }
+  /* v4 (1:9470): x579.36, y3728.85→507.58, h304.65. Top end has a small near-miss spark (s7, at h1's height but left of where h1 starts); bottom end meets h2 (s6). */
+  .dline--v4 {
+    left: calc(579.36 * var(--fig));
+    top: calc(507.58 * var(--fig));
+    width: calc(0.92 * var(--fig));
+    height: calc(304.65 * var(--fig));
+  }
+  /* v5 (1:9471): x198.25, y3813.85→592.58, h219.65 — starts below h1 entirely (no top spark); bottom end meets h2 (s8). */
+  .dline--v5 {
+    left: calc(198.25 * var(--fig));
+    top: calc(592.58 * var(--fig));
+    width: calc(0.98 * var(--fig));
+    height: calc(219.65 * var(--fig));
+  }
+  /* h1 (1:9473): x727.47→1947.85, y3749.44→528.17, w1220.38 — bleeds off the right viewport edge (1947.85 > 1920). */
+  .dline--h1 {
+    left: calc(727.47 * var(--fig));
+    top: calc(528.17 * var(--fig));
+    width: calc(1220.38 * var(--fig));
+    height: calc(0.87 * var(--fig));
+  }
+  /* h2 (1:9472): x-27.85→1074.75, y3983.91→762.64, w1102.6 — bleeds off the left viewport edge (-27.85 < 0). */
+  .dline--h2 {
+    left: calc(-27.85 * var(--fig));
+    top: calc(762.64 * var(--fig));
+    width: calc(1102.6 * var(--fig));
+    height: calc(0.87 * var(--fig));
+  }
+  /* Sparks (group 1:9474), topleft coords, converted the same way. */
+  .dspark--s1 { /* 1:9475: v2's near-miss bottom, xs */
+    left: calc(1337.65 * var(--fig));
+    top: calc(758.73 * var(--fig));
+    width: calc(8.68 * var(--fig));
+    height: calc(8.68 * var(--fig));
+  }
+  .dspark--s2 { /* 1:9476: v1 x h1, lg (non-square) */
+    left: calc(1698.3 * var(--fig));
+    top: calc(503.84 * var(--fig));
+    width: calc(49.54 * var(--fig));
+    height: calc(36.87 * var(--fig));
+  }
+  .dspark--s3 { /* 1:9477: v2 x h1, lg (non-square) */
+    left: calc(1317.22 * var(--fig));
+    top: calc(503.84 * var(--fig));
+    width: calc(49.54 * var(--fig));
+    height: calc(36.87 * var(--fig));
+  }
+  .dspark--s4 { /* 1:9478: v3 x h2, md */
+    left: calc(943.07 * var(--fig));
+    top: calc(745.59 * var(--fig));
+    width: calc(35.32 * var(--fig));
+    height: calc(35.32 * var(--fig));
+  }
+  .dspark--s5 { /* 1:9479: v3 x h1, md (non-square) */
+    left: calc(942.78 * var(--fig));
+    top: calc(510.48 * var(--fig));
+    width: calc(36.26 * var(--fig));
+    height: calc(26.99 * var(--fig));
+  }
+  .dspark--s6 { /* 1:9480: v4 x h2, lg */
+    left: calc(555.05 * var(--fig));
+    top: calc(738.3 * var(--fig));
+    width: calc(49.54 * var(--fig));
+    height: calc(49.54 * var(--fig));
+  }
+  .dspark--s7 { /* 1:9481: v4's near-miss top, sm */
+    left: calc(571.65 * var(--fig));
+    top: calc(520.43 * var(--fig));
+    width: calc(16.36 * var(--fig));
+    height: calc(16.36 * var(--fig));
+  }
+  .dspark--s8 { /* 1:9482: v5 x h2, lg */
+    left: calc(173.96 * var(--fig));
+    top: calc(738.3 * var(--fig));
+    width: calc(49.54 * var(--fig));
+    height: calc(49.54 * var(--fig));
   }
 
   @media (max-width: 1023.98px) {
@@ -204,6 +390,18 @@ const STATS = [
     .stats {
       grid-template-columns: repeat(2, 1fr);
       row-gap: 2.5rem;
+    }
+    /* Hidden <1024 — house precedent (home/Audiences.astro's .decor); the
+       overlay above is pixel-anchored to the desktop-only 4-column row. The
+       simplified has-divider/.stat-spark treatment takes over instead. */
+    .decor {
+      display: none;
+    }
+    .stats li.has-divider {
+      border-left: 1px solid var(--color-orange);
+    }
+    .stat-spark {
+      display: block;
     }
     .stats li:nth-child(odd).has-divider {
       border-left: 0;

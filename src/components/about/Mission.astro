@@ -2,9 +2,25 @@
 // Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:8065: heading "Our Mission" (1:8066,
 // x201.65 w360) left column, body paragraph group (1:8067, x600.79 w673.66) right
 // column. See exact derivations in style block below.
+//
+// Decor: node group 1:9491 — a thin cross (vertical 1:9494 + horizontal
+// 1:9493 + spark 1:9492) sitting left of "Our Mission", node ids verified via
+// get_metadata/get_design_context (fileKey u4NLOVKuXUTKULhSn0sAJQ). House
+// pattern per home/Audiences.astro: absolutely-positioned hairlines + a
+// SparkOrange instance, aria-hidden, hidden <1024. Geometry is this
+// section's own design-absolute y minus the Mission design-region's own top
+// (984.16px = Hero-bottom, the same origin Mission's padding-block-start
+// above is computed from), so it lines up regardless of --fig's value.
+import SparkOrange from "../../assets/about/spark-orange.svg";
 ---
 
 <section class="mission">
+  <div class="decor" aria-hidden="true">
+    <span class="dline dline--v"></span>
+    <span class="dline dline--h"></span>
+    <SparkOrange class="dspark" />
+  </div>
+
   <div class="container grid">
     <h2>Our Mission</h2>
     <p class="body">
@@ -17,11 +33,21 @@
 
 <style>
   .mission {
+    position: relative; /* anchors the decor cross overlay below */
     background: var(--color-cream);
     /* Figma gap Mission-top (1230.41) − Hero-bottom (984.16, node 1:9499's
        scroll-chevron) ≈ 246.25px = 15.39rem. Bottom is 0 — the Mission-to-Vision
        gap is owned by Vision's own padding-block-start (see Vision.astro). */
     padding-block: 15.39rem 0;
+  }
+  @media (min-width: 1024px) {
+    .mission {
+      /* No existing <1024 override touches padding-block, so this is gated
+         here rather than left unqualified — otherwise mobile's fixed gap
+         would start scaling with viewport width, which must stay untouched.
+         246.25px = Mission-top (1230.41) − Hero-bottom (984.16) — proportional-exact per user directive 2026-07-06. */
+      padding-block: calc(246.25 * var(--fig)) 0;
+    }
   }
 
   /* Column widths from node 1:8065 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
@@ -31,8 +57,8 @@
      (rounded 42.1rem) — confirms the plan's ~42rem estimate almost exactly. */
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 22.5rem) minmax(0, 42.1rem);
-    gap: 2.45rem;
+    grid-template-columns: minmax(0, calc(360 * var(--fig))) minmax(0, calc(673.66 * var(--fig))); /* proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below replaces this entirely with 1fr. */
+    gap: calc(39.14 * var(--fig)); /* 39.14px — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024/<768 blocks below override gap. */
     align-items: start; /* heading's visual cap-top and body's first-line
       ink-top land within ~10px of each other once the heading text box's
       own leading is discounted (box top 1230.41 + ~half-leading ≈ 1249.66
@@ -43,7 +69,7 @@
   h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:8066 */
+    font-size: calc(65 * var(--fig)); /* 65px, node 1:8066 — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below overrides font-size with a clamp. */
     color: var(--color-ink-alt); /* #1e1e3c */
   }
 
@@ -60,9 +86,56 @@
        31px ≈ 1.305, rounded to 1.31 (same as the hero lede's derived value). */
     margin: 0;
     font-family: var(--font-sans);
-    font-size: var(--text-body-lg); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
-    line-height: 1.4; /* was 1.31 — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body-lg); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(31 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
+    line-height: 1.4; /* was 1.31 — normalized to home hero scale per user directive 2026-07-06. Unitless ratio — stays as-is per the proportional-exact directive. */
     color: var(--color-ink); /* body text token */
+  }
+
+  @media (min-width: 1024px) {
+    .body {
+      font-size: calc(31 * var(--fig)); /* 31px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body-lg) home-normalized token */
+    }
+  }
+
+  /* ==== Decor cross (node group 1:9491) ====
+     All geometry below is design-absolute-y minus 984.16 (Mission's own
+     design-region top, i.e. Hero-bottom — see the .mission padding-block
+     comment above), converted to --fig units so it scales with everything
+     else. Verified against the design render (.superpowers/sdd/
+     figma-about-full.png): a vertical hairline running down from well above
+     "Our Mission" through a spark, with a short tail continuing past the
+     spark, and a horizontal hairline through the same spark extending much
+     further right (under "Our Mis...") than left. */
+  .decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .dline {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  /* Vertical (1:9494): x154.58, y1225.46→241.30 (Mission-relative), h167.94. */
+  .dline--v {
+    left: calc(154.58 * var(--fig));
+    top: calc(241.3 * var(--fig));
+    width: calc(0.98 * var(--fig));
+    height: calc(167.94 * var(--fig));
+  }
+  /* Horizontal (1:9493): x73.36, y1340.86→356.70 (Mission-relative), w299.75. */
+  .dline--h {
+    left: calc(73.36 * var(--fig));
+    top: calc(356.7 * var(--fig));
+    width: calc(299.75 * var(--fig));
+    height: calc(0.92 * var(--fig));
+  }
+  /* Spark (1:9492): topleft x132.11, y1318.36→334.20 (Mission-relative), 45.92 square — sits at the vertical/horizontal intersection. */
+  .dspark {
+    position: absolute;
+    left: calc(132.11 * var(--fig));
+    top: calc(334.2 * var(--fig));
+    width: calc(45.92 * var(--fig));
+    height: calc(45.92 * var(--fig));
   }
 
   @media (max-width: 1023.98px) {
@@ -72,6 +145,11 @@
     }
     h2 {
       font-size: clamp(2.4rem, 6vw, 4.0625rem);
+    }
+    /* Hidden <1024 — house precedent (home/Audiences.astro's .decor), and
+       this cross is pixel-anchored to the desktop-only two-column layout. */
+    .decor {
+      display: none;
     }
   }
 

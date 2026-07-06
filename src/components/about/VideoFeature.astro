@@ -44,6 +44,15 @@ const VIDEO_URL = "#";
        padding-block-start (see SponsorStrip.astro). */
     padding-block: 6.62rem 0;
   }
+  @media (min-width: 1024px) {
+    .video-feature {
+      /* No existing <1024 override touches padding-block, so this is gated
+         here rather than left unqualified. 105.96px = Video-top (2197.39) −
+         Vision-bottom (2091.43) — proportional-exact per user directive
+         2026-07-06. */
+      padding-block: calc(105.96 * var(--fig)) 0;
+    }
+  }
 
   /* Column widths from node 1:8198 (caption, w=293.84 -> 18.36rem) and node
      1:8190 (still's visible crop, w=907.71). The still's real exported asset
@@ -56,8 +65,8 @@ const VIDEO_URL = "#";
      edge (267.19+293.84=561.03) = 38.89px = 2.43rem. */
   .layout {
     display: grid;
-    grid-template-columns: minmax(0, 18.36rem) minmax(0, 1fr);
-    gap: 2.43rem;
+    grid-template-columns: minmax(0, calc(293.84 * var(--fig))) minmax(0, 1fr); /* proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below replaces this entirely with 1fr. */
+    gap: calc(38.89 * var(--fig)); /* 38.89px — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below overrides gap. */
     /* Caption group (1:8198) bottom sits ~36.7px above the still's own
        bottom edge (still bottom 2656.87 - caption bottom 2620.16) - i.e.
        the caption is bottom-aligned with the still, slightly inset. */
@@ -82,8 +91,8 @@ const VIDEO_URL = "#";
        rounds to the same 31px/1.9375rem body-text size derived in
        AboutHero.astro's .lede and Mission.astro's .body - this caption reuses
        that shared text style, just recolored. */
-    font-size: var(--text-body-lg); /* was 1.9375rem — normalized to home hero scale per user directive 2026-07-06 */
-    line-height: 1.4; /* new — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body-lg); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(31 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
+    line-height: 1.4; /* new — normalized to home hero scale per user directive 2026-07-06. Unitless ratio — stays as-is per the proportional-exact directive. */
     margin: 0 0 0.5rem;
   }
 
@@ -93,9 +102,18 @@ const VIDEO_URL = "#";
     /* Cap-height ~15.1px (baseline ~2616.2 - cap-top 2601.06) / 0.73 ~= 20.7px
        -> rounds to 1.25rem (20px). Line-height from line2->line3 baseline
        delta (28.24px) / 20px ~= 1.41, rounded to 1.4. */
-    font-size: var(--text-body); /* was 1.25rem, value unchanged — tokenized for consistency — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body); /* was 1.25rem, value unchanged — tokenized for consistency — left as the token here; the proportional-exact calc(20 * var(--fig)) lives in the >=1024 block below (mobile must stay untouched) */
     line-height: 1.4;
     margin: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .caption-title {
+      font-size: calc(31 * var(--fig)); /* 31px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body-lg) home-normalized token */
+    }
+    .caption-sub {
+      font-size: calc(20 * var(--fig)); /* 20px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body) home-normalized token */
+    }
   }
 
   .thumb {

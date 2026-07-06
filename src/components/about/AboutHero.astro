@@ -56,14 +56,35 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        owned entirely by Mission's own padding-block-start (see Mission.astro). */
     padding-block: 6rem 0;
   }
-  @media (min-width: 1024px) {
-    .hero {
-      /* Approximates the design's hero band from the curves group (1:9164,
-         h=1039.81px) plus text column; exact cross-section fit is verified
-         once this component is wired into the page. */
-      min-height: 62rem;
-    }
-  }
+  /* No min-height on .hero (final-review fix, replaces the old
+     `min-height: calc(960 * var(--fig))` floor this rule used to set — see
+     the about-fix-report.md §4/§4a and initiatives' Hero.astro orbit-offset
+     comment for the house precedent this follows). That floor was sized to
+     the curve asset's own oval-bottom point (svg-local y=960,
+     hero-curves.svg path "...960 960 C429.81 960 -0.000244141
+     530.19...") so `.orbit`'s curve wouldn't clip — but this section's real
+     text content (eyebrow→chevron) is only 601.40625px tall at 1920
+     (measured via getBoundingClientRect), far short of 960px, so the floor
+     left ~358.6px of dead space below the chevron before Mission began
+     (Hero→Mission gap ~604.8px at 1920 vs the design's own 246.25px). Fix:
+     shift the ART up instead of growing the BAND (see `.orbit`'s `top`
+     override below) so the section's own content-driven auto height (no
+     floor needed — same as <1024) already reveals the correct window of
+     curve without clipping any spark or the oval. With no min-height,
+     hero's box is exactly 601.40625px at 1920, so Mission's own
+     padding-block-start (246.25px, unchanged) now IS the whole
+     Hero→Mission gap — 0px delta from the design, down from +358.6px. The
+     actual shift value lives in `.orbit`'s own >=1024px override, in a
+     SEPARATE media block placed after `.orbit`'s base rule below — not
+     merged into `.orbit`'s base rule itself, because `.orbit`'s base rule
+     also sets `top`, and at equal specificity the LATER declaration in
+     source order always wins regardless of which media query matches (see
+     that block's own comment for the full reasoning — the same
+     cascade-ordering rule the `.eyebrow`/`.underline`/`.lede` gate (further
+     below, after their own base rules) follows for the same reason: an
+     earlier revision of this file placed that gate BEFORE those three
+     selectors' base rules, which made it dead code at every viewport — see
+     about-fix-report.md §4a, fixed alongside this hero-band fix). */
 
   /* Curves + sparks: 1:9164 (fileKey u4NLOVKuXUTKULhSn0sAJQ) exports as a
      single 1920x1040 SVG (src/assets/about/hero-curves.svg) that already
@@ -75,7 +96,11 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
      guessed % positions), the About curves asset needs no overlay: dropping
      it in reproduces the design pixel-for-pixel with no manual positioning.
      spark-orange.svg exists in src/assets/about/ but is intentionally unused
-     here for that reason. */
+     here for that reason. Base `top: 0` here is the original, untouched
+     <1024 positioning (curve flush with .hero's own top edge); the
+     >=1024px vertical-offset override (see media query below) is what the
+     final-review hero-band fix shifts, so mobile keeps rendering exactly
+     as it did before that fix. */
   .orbit {
     position: absolute;
     top: 0;
@@ -83,6 +108,53 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     width: 100%;
     z-index: 0;
     pointer-events: none;
+  }
+  @media (min-width: 1024px) {
+    /* Deliberately a SEPARATE media block placed AFTER the base `.orbit`
+       rule above — `.orbit`'s base rule also sets `top`, so this override
+       has to win the cascade by SOURCE ORDER (equal specificity, later
+       wins), not just by media-query truth. The `.eyebrow`/`.underline`/
+       `.lede` gate further below (after `.hero-inner`) follows the same
+       rule, placed after their own base rules for the same reason.
+
+       Node 1:9164's own metadata reports the curve group at design-canvas
+       y=79.87 while the hero copy group (node 1:9499, eyebrow→chevron)
+       starts at design-canvas y=311.42 — i.e. in the design the curve's
+       own top sits 231.55px ABOVE the copy, extending up behind where the
+       shared site header renders (same "canvas y0 is BEHIND the header"
+       situation initiatives/Hero.astro's own orbit-offset comment
+       documents), not flush with the copy's own top the way the base
+       `top: 0` above (.orbit flush with .hero's own top edge, right where
+       .hero-inner's copy ALSO starts) renders it below 1024px. Re-deriving
+       the exact shift from that design ratio still hits the same
+       header-double-count problem initiatives did (About's live
+       header-to-content spacing isn't Figma-derived at all — see the
+       "kept as-is" .hero padding-top comment above), so this value is
+       instead derived from the asset itself, empirically verified by
+       rendering: hero-curves.svg's own path data (src/assets/about/
+       hero-curves.svg) places the 4 sparks at svg-local y=[419.93,
+       904.55] (Vector_6 top to Vector_7 bottom) and the oval's rounded
+       bottom point at exactly y=960 (path "...960 960 C429.81 960
+       -0.000244141 530.19..."). Shifting up by (960 − 601.40625) =
+       358.59375px — 960 being that same oval-bottom, 601.40625px being
+       the section's own real content height at 1920 (see the .hero
+       min-height-removal comment above) — makes the section's now
+       content-auto-height window land EXACTLY on [358.59375, 960] in the
+       curve's local coordinates: comfortably below every spark's own top
+       (419.93, 61.34px of margin) and comfortably above every spark's own
+       bottom (904.55, 55.45px of margin), while its own lower edge lands
+       exactly on the oval's rounded bottom (960) — zero clipping of the
+       oval's curve (no "flat cut" edge), same as the old min-height:960
+       version, clipping only the same faint Vector_3 tail past the oval
+       it always clipped. Verified visually at 1920 (all 4 sparks + oval
+       intact — see the report's evidence crops) and confirmed
+       proportional at 1440 (both this shift and the removed min-height
+       are --fig-scaled, so they move together with the rest of the
+       section). Below 1024px, only the base rule above matches, so mobile
+       keeps rendering exactly as it did before this fix. */
+    .orbit {
+      top: calc(-358.59375 * var(--fig));
+    }
   }
   .curves {
     display: block;
@@ -116,8 +188,8 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: var(--text-hero-h1); /* 81.3px, nodes 1:9505/1:9506/1:9507 — normalized to home hero scale per user directive 2026-07-06 */
-    line-height: var(--text-hero-h1-lh); /* baseline delta ~87.57px / 81.3px = 1.077, confirms plan's ~1.08 estimate — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: calc(81.3 * var(--fig)); /* 81.3px, nodes 1:9505/1:9506/1:9507 — proportional-exact per user directive 2026-07-06, supersedes the var(--text-hero-h1) home-normalized token. Safe unqualified: the <1024 block below already overrides font-size with the fluid clamp. */
+    line-height: 1.077; /* baseline delta ~87.57px / 81.3px = 1.077, confirms plan's ~1.08 estimate. Unitless ratio — stays as a literal number per the proportional-exact directive (no --fig involved); resolved here instead of via var(--text-hero-h1-lh), which currently points at the HOME hero's own 1.173 ratio, not About's. */
     color: var(--color-ink-alt); /* #1e1e3c exact match */
   }
   h1 .line {
@@ -140,12 +212,43 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        likewise derived from baseline-to-baseline deltas across the 3 lines
        (~40.55px avg) / 31px ≈ 1.31, correcting the plan's assumed 1.4.
        Max-width 49.65rem = 794.44px, the group's own bounding width. */
-    max-width: 49.65rem;
+    max-width: calc(794.44 * var(--fig)); /* 49.65rem = 794.44px, the group's own bounding width — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below already overrides max-width with 90%. */
     margin: 1.5rem auto 0;
     font-family: var(--font-sans);
-    font-size: var(--text-hero-lede); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
-    line-height: var(--text-hero-lede-lh); /* derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-hero-lede); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(31 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
+    line-height: 1.31; /* derived — see comment above. Unitless ratio — stays as a literal number per the proportional-exact directive; resolved here instead of via var(--text-hero-lede-lh), which currently points at the HOME hero's own 1.4 ratio, not About's. */
     color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    /* Gated here (rather than left unqualified) because none of these
+       properties have an existing <1024 override to fall back on below the
+       breakpoint — leaving them unqualified would make mobile start scaling
+       with viewport width too, which the task requires to stay untouched.
+
+       Placed AFTER `.eyebrow`/`.underline`/`.lede`'s own base rules above
+       (final-review fix — see about-fix-report.md §4a): an earlier revision
+       of this file placed this exact block BEFORE those three selectors'
+       base rules (up near `.hero`), which made it dead code at every
+       viewport — at equal specificity, the LATER declaration in source
+       order always wins regardless of which media query matches, so the
+       unconditional base rules above always won, even at 1920 (confirmed
+       via getComputedStyle before this fix). `.orbit`'s own >=1024px
+       override above already followed the correct pattern — a separate
+       block placed AFTER its base rule — and is the precedent this block
+       now matches. */
+    .eyebrow {
+      font-size: calc(27.07 * var(--fig)); /* 27.07px, node 1:9501 — proportional-exact per user directive 2026-07-06, supersedes the var(--text-hero-eyebrow) home-normalized token */
+    }
+
+    .underline {
+      width: calc(188.25 * var(--fig)); /* 188.25px, node 1:9500 — proportional-exact per user directive 2026-07-06 */
+      margin: calc(45.11 * var(--fig)) auto calc(26.15 * var(--fig)); /* ~45.11px / ~26.15px gaps, nodes 1:9500/1:9501/1:9505 — proportional-exact per user directive 2026-07-06 */
+    }
+
+    .lede {
+      font-size: calc(31 * var(--fig)); /* 31px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-hero-lede) home-normalized token */
+    }
   }
 
   .scroll {

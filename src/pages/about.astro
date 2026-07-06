@@ -8,9 +8,29 @@ import Scale from "../components/about/Scale.astro";
 ---
 
 <BaseLayout title="About · MC²+">
-  <AboutHero />
-  <Mission />
-  <Vision />
-  <SponsorStrip />
-  <Scale />
+  <div class="about-scope">
+    <AboutHero />
+    <Mission />
+    <Vision />
+    <SponsorStrip />
+    <Scale />
+  </div>
 </BaseLayout>
+
+<style>
+  .about-scope {
+    /* Design-unit for a PROPORTIONAL-EXACT render of the Figma design (user
+       directive 2026-07-06): 1 design px at the file's 1920px canvas width.
+       At a 1920px viewport, --fig resolves to exactly 1px, so every
+       calc(<designpx> * var(--fig)) below reproduces the Figma value
+       pixel-for-pixel; at any other desktop width it scales linearly (a
+       "zoomed" render of the same design — not capped above 1920, so it
+       keeps scaling up on wider screens too). Page-scoped on purpose (not
+       :root/global.css): About is the only page built to this technique.
+       Caveat: 100vw includes the vertical scrollbar's reserved gutter
+       (~15px on most desktop browsers), so --fig is fractionally larger
+       than a true 1/1920th of the *content* viewport — an accepted,
+       sub-1% drift, not a bug. */
+    --fig: calc(100vw / 1920);
+  }
+</style>

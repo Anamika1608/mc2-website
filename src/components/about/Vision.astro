@@ -2,10 +2,39 @@
 // Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:8261: heading "The Vision"
 // (1:8262, x235.64 w326) left column, body paragraph group (1:8263, x600.82
 // w1080.71) right column. See exact derivations in the style block below.
+//
+// Decor: two thin crosses (house pattern per home/Audiences.astro —
+// absolutely-positioned hairlines + a SparkOrange instance, aria-hidden,
+// hidden <1024), both verified against the design render
+// (.superpowers/sdd/figma-about-full.png) and get_metadata/get_design_context
+// (fileKey u4NLOVKuXUTKULhSn0sAJQ):
+//   - node group 1:9487 (vertical 1:9490 + horizontal 1:9489 + spark 1:9488),
+//     right of the body paragraphs, bleeding up ~8px above Vision's own
+//     design-region top into the Mission/Vision gap (harmless — Vision has
+//     no overflow:hidden clipping it).
+//   - node group 1:9483, a second cross left of "The Vision" — the task's
+//     length-filter missed it because it's a single flattened/baked SVG
+//     asset (get_design_context on 1:9483 returns one <img>, not decomposed
+//     vector children), not real text-adjacent vector nodes like 1:9491's.
+//     Its raw SVG (fetched directly) gives an exact internal vertical +
+//     horizontal + spark at local (158.05, 52.07) within its 239.75x167.94
+//     viewBox, i.e. design-absolute (155.24, 1613.76) once added to the
+//     group's own (-2.81, 1561.69) origin — matching the task's own rough
+//     "~y1590-1610" estimate closely (spark top lands at y1590.80).
 import VideoFeature from "./VideoFeature.astro";
+import SparkOrange from "../../assets/about/spark-orange.svg";
 ---
 
 <section class="vision">
+  <div class="decor" aria-hidden="true">
+    <span class="dline dline--v1"></span>
+    <span class="dline dline--h1"></span>
+    <SparkOrange class="dspark dspark--1" />
+    <span class="dline dline--v2"></span>
+    <span class="dline dline--h2"></span>
+    <SparkOrange class="dspark dspark--2" />
+  </div>
+
   <div class="container grid">
     <h2>The Vision</h2>
     <div class="body">
@@ -36,11 +65,24 @@ import VideoFeature from "./VideoFeature.astro";
 
 <style>
   .vision {
+    position: relative; /* anchors the decor cross overlay below */
+    /* Contains Cross 1's horizontal-rule bleed off the right viewport edge
+       (x up to 1960.56 at a 1920 canvas) — house precedent (home/Audiences.astro). */
+    overflow-x: hidden;
     background: var(--color-cream);
     /* Figma gap Vision-top (1506.06) − Mission-bottom (1404.60, node 1:8065)
        ≈ 101.46px = 6.34rem. Bottom is 0 — the Vision-to-Video gap is owned by
        VideoFeature's own padding-block-start (see VideoFeature.astro). */
     padding-block: 6.34rem 0;
+  }
+  @media (min-width: 1024px) {
+    .vision {
+      /* No existing <1024 override touches padding-block, so this is gated
+         here rather than left unqualified. 101.46px = Vision-top (1506.06) −
+         Mission-bottom (1404.60) — proportional-exact per user directive
+         2026-07-06. */
+      padding-block: calc(101.46 * var(--fig)) 0;
+    }
   }
 
   /* Column widths from node 1:8261 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
@@ -57,15 +99,15 @@ import VideoFeature from "./VideoFeature.astro";
      each paragraph run nearly to the right margin. 1080.71px = 67.54rem. */
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 22.5rem) minmax(0, 67.54rem);
-    gap: 2.45rem;
+    grid-template-columns: minmax(0, calc(360 * var(--fig))) minmax(0, calc(1080.71 * var(--fig))); /* proportional-exact per user directive 2026-07-06 (heading column reuses Mission's own 360px design width, see comment above). Safe unqualified: the <1024 block below replaces this entirely with 1fr. */
+    gap: calc(39.18 * var(--fig)); /* 39.18px — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024/<768 blocks below override gap. */
     align-items: start;
   }
 
   h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:8262 */
+    font-size: calc(65 * var(--fig)); /* 65px, node 1:8262 — proportional-exact per user directive 2026-07-06. Safe unqualified: the <1024 block below overrides font-size with a clamp. */
     color: var(--color-ink-alt);
   }
 
@@ -82,9 +124,15 @@ import VideoFeature from "./VideoFeature.astro";
   .body p {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: var(--text-body-lg); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
-    line-height: 1.4; /* was 1.31, matched Mission's derived body line-height — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: var(--text-body-lg); /* left as the home-normalized token here — no existing <1024 override covers font-size, so the proportional-exact calc(31 * var(--fig)) lives in the >=1024 block below instead (mobile must stay untouched) */
+    line-height: 1.4; /* was 1.31, matched Mission's derived body line-height — normalized to home hero scale per user directive 2026-07-06. Unitless ratio — stays as-is per the proportional-exact directive. */
     color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .body p {
+      font-size: calc(31 * var(--fig)); /* 31px, derived — see comment above — proportional-exact per user directive 2026-07-06, supersedes the var(--text-body-lg) home-normalized token */
+    }
   }
 
   /* Third paragraph confirmed bold + orange by screenshot sampling (visibly
@@ -94,6 +142,72 @@ import VideoFeature from "./VideoFeature.astro";
     font-weight: 700;
   }
 
+  /* ==== Decor crosses ====
+     Geometry is design-absolute-y minus 1404.60 (Vision's own design-region
+     top, i.e. Mission-bottom — see the .vision padding-block comment above),
+     converted to --fig units. */
+  .decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .dline {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  .dspark {
+    position: absolute;
+    width: calc(45.92 * var(--fig));
+    height: calc(45.92 * var(--fig));
+  }
+
+  /* Cross 1 (node group 1:9487), right of the body paragraphs. Vertical
+     (1:9490) starts 8.2px ABOVE this section's own design-region top (its
+     y1396.40 is earlier than Vision's y1404.60), so it pokes above the
+     section box on purpose — harmless, .vision has no overflow clipping.
+     Verified against the render: long tail below the spark, short tail
+     above; horizontal runs far left of the spark and bleeds off the right
+     viewport edge (x1173.59 to x1960.56, > the 1920 canvas width). */
+  .dline--v1 {
+    left: calc(1754.48 * var(--fig));
+    top: calc(-8.2 * var(--fig));
+    width: calc(0.92 * var(--fig));
+    height: calc(327.29 * var(--fig));
+  }
+  .dline--h1 {
+    left: calc(1173.59 * var(--fig));
+    top: calc(54.6 * var(--fig));
+    width: calc(786.97 * var(--fig));
+    height: calc(0.92 * var(--fig));
+  }
+  .dspark--1 {
+    left: calc(1731.98 * var(--fig));
+    top: calc(32.1 * var(--fig));
+  }
+
+  /* Cross 2 (node group 1:9483), left of "The Vision" — a baked/flattened
+     asset in Figma (see the top-of-file comment); geometry below is read
+     directly off its raw SVG. Verified against the render: short tail above
+     the spark, long tail below (opposite of Cross 1's own vertical); a long
+     horizontal running left off-canvas (x-2.81) and a short stub right of
+     the spark. */
+  .dline--v2 {
+    left: calc(155.24 * var(--fig));
+    top: calc(157.09 * var(--fig));
+    width: calc(1.32 * var(--fig));
+    height: calc(167.94 * var(--fig));
+  }
+  .dline--h2 {
+    left: calc(-2.81 * var(--fig));
+    top: calc(209.17 * var(--fig));
+    width: calc(239.75 * var(--fig));
+    height: calc(1.31 * var(--fig));
+  }
+  .dspark--2 {
+    left: calc(132.28 * var(--fig));
+    top: calc(186.2 * var(--fig));
+  }
+
   @media (max-width: 1023.98px) {
     .grid {
       grid-template-columns: 1fr;
@@ -101,6 +215,12 @@ import VideoFeature from "./VideoFeature.astro";
     }
     h2 {
       font-size: clamp(2.4rem, 6vw, 4.0625rem);
+    }
+    /* Hidden <1024 — house precedent (home/Audiences.astro's .decor), and
+       these crosses are pixel-anchored to the desktop-only two-column
+       layout. */
+    .decor {
+      display: none;
     }
   }
 
