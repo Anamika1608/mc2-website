@@ -55,10 +55,8 @@
 //
 // Hover band (rounded-rect 1:23932, Task 1's hover-photo-xyma.png export):
 // markup placeholder only here — Task 4 adds the script + hover CSS.
-import { Image } from "astro:assets";
 import { BACKERS, SECTORS, VENTURES } from "../../data/ventures";
 import SparkRow from "../../assets/portfolio/spark-row.svg";
-import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
 ---
 
 <section class="explorer" aria-label="Venture explorer">
@@ -111,7 +109,6 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
             class="row"
             data-backer={v.backer}
             data-sector={v.sector}
-            style={v.name === "Xyma Analytics" ? `--hover-photo:url(${hoverPhotoXyma.src})` : undefined}
           >
             <div class="row-divider" aria-hidden="true">
               <span class="row-tag">Backed by {v.backer}</span>
@@ -135,11 +132,6 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
                   <span class="row-link">
                     Visit Page <span aria-hidden="true">&rarr;</span>
                   </span>
-                )}
-              </div>
-              <div class="row-hover" aria-hidden="true">
-                {v.name === "Xyma Analytics" && (
-                  <Image src={hoverPhotoXyma} alt="" class="row-hover-photo" />
                 )}
               </div>
             </div>
@@ -225,13 +217,6 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
     border-radius: 1.5rem;
     transition: padding 500ms ease;
   }
-  .row:hover,
-  .row:focus-within {
-    /* Grows to make room for the photo band (node 1:23932 is 442.8px tall vs
-       this row's own ~264px cadence) — a "reveal" interaction rather than an
-       overlay that would clip against neighbouring rows. */
-    padding-inline: 2rem;
-  }
   .row-divider {
     position: relative;
     z-index: 2; /* stays above .row-hover's own z-index:0 band, which would otherwise paint over this unpositioned-by-default sibling */
@@ -270,15 +255,23 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
     pointer-events: none;
   }
 
+  /* Figma card (1:24199): two-column row — title+sector left (≈48%),
+     description+Visit Page right (≈52%). Right column starts at ~48.2% of the
+     card (desc node 1:24206 at card-x 768/1595). min-height gives the columns
+     a band so the sector (left) and Visit Page (right) pin to the same bottom
+     baseline (both at card-y ~225 in Figma). */
   .row-body {
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem 3rem;
+    display: grid;
+    grid-template-columns: 48% 52%;
+    align-items: stretch;
+    min-height: 7rem;
   }
   .row-main {
-    flex: 1 1 48%;
-    min-width: 18rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
   }
   .row-name {
     margin: 0;
@@ -292,9 +285,10 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    margin: 0.7rem 0 0;
-    font-family: var(--font-sans);
-    font-size: 1rem;
+    margin: 0;
+    font-family: var(--font-display); /* Faculty, node 1:24315 */
+    font-size: 0.93rem; /* 14.88px */
+    letter-spacing: 0.1em; /* 1.488px / 14.88px */
     color: var(--color-gray);
   }
   .row-sector .dot {
@@ -306,9 +300,10 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
   }
 
   .row-side {
-    flex: 1 1 51%;
-    min-width: 18rem;
-    padding-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
   }
   .row-desc {
     margin: 0;
@@ -322,81 +317,17 @@ import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 1rem;
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
-    font-weight: 600;
+    margin-top: 0;
+    align-self: flex-start;
+    font-family: var(--font-display); /* Faculty, node 1:24318 */
+    font-size: 0.93rem; /* 14.88px */
+    letter-spacing: 0.1em; /* 1.488px / 14.88px */
+    font-weight: 400;
     color: var(--color-orange); /* real text node 1:24318, orange fill */
     text-decoration: none;
   }
   .row-link:hover {
     text-decoration: underline;
-  }
-
-  .row-hover {
-    position: absolute;
-    inset: -1.5rem -2rem; /* bleeds past the row's own content into its padding-block, matching the design's band overshooting the row's normal text column */
-    z-index: 0;
-    border-radius: 1.5rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 500ms ease;
-    background-color: var(--color-ink-alt);
-    /* --hover-photo is set inline only on Xyma's row (Task 1's hover-photo-
-       xyma.png); every other row falls back to `none`, i.e. gradient only —
-       see frontmatter comment for the "identical band, no photo" adaptation. */
-    background-image: linear-gradient(
-        to top,
-        rgba(30, 30, 60, 0.92),
-        rgba(30, 30, 60, 0.55) 60%,
-        rgba(30, 30, 60, 0.25)
-      ),
-      var(--hover-photo, none);
-    background-size: cover;
-    background-position: center;
-  }
-  .row-hover-photo {
-    display: none; /* the <Image> exists only so Astro optimizes the asset; the visible paint is the CSS background-image above (identical source), not this <img> */
-  }
-  .row:hover .row-hover,
-  .row:focus-within .row-hover {
-    opacity: 1;
-  }
-
-  /* Recolor the SAME text nodes to white when the band is behind them —
-     see frontmatter comment on why this doesn't duplicate markup. */
-  .row:hover .row-tag,
-  .row:focus-within .row-tag {
-    background: var(--color-orange);
-    border-color: var(--color-orange);
-    color: var(--color-white);
-  }
-  .row:hover .row-name,
-  .row:focus-within .row-name,
-  .row:hover .row-sector,
-  .row:focus-within .row-sector,
-  .row:hover .row-desc,
-  .row:focus-within .row-desc {
-    position: relative;
-    z-index: 1;
-    color: var(--color-white);
-  }
-  .row:hover .row-sector .dot,
-  .row:focus-within .row-sector .dot {
-    background: var(--color-white);
-  }
-  .row:hover .row-link,
-  .row:focus-within .row-link {
-    position: relative;
-    z-index: 1;
-    color: var(--color-orange);
-  }
-  .row:hover .row-main,
-  .row:focus-within .row-main,
-  .row:hover .row-side,
-  .row:focus-within .row-side {
-    position: relative;
-    z-index: 1;
   }
 
   .empty-state {
