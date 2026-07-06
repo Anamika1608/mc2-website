@@ -166,7 +166,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   .eyebrow {
     margin: 0;
     font-family: var(--font-sans); /* corrected from Figma's reported Faculty Glyphic — see frontmatter comment */
-    font-size: 1.6919rem; /* 27.07px, node 1:25510 — identical to SectionHeading's own eyebrow size */
+    font-size: var(--text-hero-eyebrow); /* 27.07px, node 1:25510 — identical to SectionHeading's own eyebrow size — normalized to home hero scale per user directive 2026-07-06 */
     letter-spacing: 0.25em; /* 6.7675px / 27.07px, node 1:25510 */
     color: var(--color-gray); /* #949494 sampled, within noise of --color-gray #959595 */
   }
@@ -180,8 +180,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 5rem; /* 80px, nodes 1:25514/1:25515 */
-    line-height: 1.095; /* baseline delta 87.57px (506.69-419.12) / 80px, this page's own measurement */
+    font-size: var(--text-hero-h1); /* 80px, nodes 1:25514/1:25515 — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-h1-lh); /* baseline delta 87.57px (506.69-419.12) / 80px = 1.095, this page's own measurement — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt); /* #1e1e3e sampled, within noise of --color-ink-alt #1e1e3c */
   }
   h1 .line {
@@ -195,8 +195,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     max-width: 47.89rem; /* 766.26px, node 1:25516's own bounding width, matches H1's own column */
     margin: 1.4325rem auto 4.06rem; /* 22.92px H1-bottom→lede-top; 64.95px lede-bottom→info-bar-top, both this page's own measurements */
     font-family: var(--font-sans);
-    font-size: 1.9375rem; /* 31px — reused site-wide lede constant, see frontmatter comment */
-    line-height: 1.31;
+    font-size: var(--text-hero-lede); /* 31px — reused site-wide lede constant, see frontmatter comment — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-lede-lh); /* derived — see frontmatter comment — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt);
   }
 
@@ -248,7 +248,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
 
   @media (max-width: 1023.98px) {
     h1 {
-      font-size: clamp(2.4rem, 7vw, 5rem);
+      font-size: var(--text-hero-h1-fluid); /* was clamp(2.4rem, 7vw, 5rem) — normalized to home hero scale per user directive 2026-07-06 */
     }
     .lede {
       max-width: 90%;
