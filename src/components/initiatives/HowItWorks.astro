@@ -250,31 +250,17 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        tab's own depth plus a small clearance; verified at 1024 the overlap
        drops to 0 (tab tip now lands ~2px clear of the next card). */
     gap: max(1.44%, 1.55rem);
-    /* Per direct feedback (same fix already made to Home's Pillars.astro):
-       reserve this row's height PERMANENTLY at the active-card height,
-       decoupled from any single card, instead of forcing every active card
-       to share one height (see .step.is-active below). `align-items:
-       flex-end` (above) then lets collapsed cards float at the bottom with
-       empty space already held open above them, and an activated card just
-       grows to fill space that was already reserved — the row's own
-       rendered height is now a constant regardless of hover state, so the
-       down-chevron below never moves.
-       The old `.step.is-active` clamp (32.625rem-43.75rem) was fitted back
-       when O2 was permanently active by default, so it had to cover O2's
-       full expansion even at rest. Now that every card starts collapsed
-       (round 3) and only expands transiently on hover, that value would
-       leave 100-200px of dead space above the collapsed row — refit instead
-       against a fresh worst-of-all-four scrollHeight sweep (same method as
-       Pillars, `is-active` + `min-height:auto` forced, sampled 1024-1920px):
-       1024→502px, 1100→480, 1200→452, 1300-1440→429, 1536-1920→407 (O2
-       tallest throughout), each with a ~15-20px margin, as the same
-       two-segment `max()` piecewise shape Pillars uses. */
-    --step-active-height: clamp(
-      26rem,
-      max(46.286rem - 21.345vw, 32.1875rem - 4.583vw),
-      33rem
-    );
-    min-height: var(--step-active-height);
+    /* Per direct feedback: reverted to always-open cards (the permanent
+       `--step-active-height` reservation, and the min-height/hide-show
+       machinery it existed to protect, are gone — see .step and .step-body
+       below). That whole apparatus was defending against a real
+       reflow-thrashing bug from a card's box growing/shrinking on hover; now
+       that every card's body is always visible and never toggles, nothing
+       about layout ever changes on hover (only background-color and the
+       existing lift transform, neither of which affects layout), so there's
+       nothing left to protect against. The row simply sizes to its tallest
+       (permanently-shown) card via `align-items: flex-end` above, same as
+       any ordinary flex row. */
   }
 
   .step {
@@ -284,83 +270,28 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px navy, all four cards (e.g. 1:16078/1:16086/1:16200/1:16261) */
     background: var(--color-cream);
-    /* Round 3 (per direct feedback on Pillars.astro's identical issue): every
-       card, collapsed, now shares ONE short min-height — O1's own original value
-       (20.7825rem/332.52px, "title only," node 1:16076) — instead of each card
-       keeping its old always-content-visible height (O2 542.52px, O3 402.52px)
-       now that content is hidden until active. Those old values left O2/O3
-       rendering as tall, empty boxes at rest. All four collapsed cards now sit
-       at the same short height, "under the same vertical line." */
-    min-height: 20.7825rem; /* 332.52px, node 1:16076 — shared collapsed height for all four */
-    /* `overflow: hidden` used to sit here as a defensive clip in case content
-       ever exceeded the active min-height — removed (per direct feedback):
-       it was silently clipping the pointed V-tab connector (see .step-vtab
-       below), which is deliberately positioned to protrude past this card's
-       own right border, the same design element documented at length in the
-       frontmatter. `min-height` alone never causes real overflow to clip
-       against anyway (a floor only grows the box, it doesn't cap it), so
-       this rule was never protecting real content — it was only ever
-       breaking the V-tab. */
     transition:
       transform 250ms ease,
-      background-color 200ms ease,
-      min-height 200ms ease;
+      background-color 200ms ease;
   }
-  /* Exactly one card carries `.is-active` at a time — O2 by default (see its own
-     `is-active` class in the markup), swapped to whichever card is hovered by the
-     script below, same exclusive-state pattern as Programs.astro's `.card.is-active`.
-     Replaces what used to be a permanent `.step--o2` background + a `.step:hover` rule
-     that (wrongly, per the previous round) let every card go orange independently with
-     no relationship to its siblings.
-
-     CRITICAL FIX — reflow-thrashing bug (same root cause hit on Pillars.astro,
-     reported directly there: "hanging and making the whole website shaking"):
-     without a shared min-height here, whichever card reveals its body becomes the
-     row's tallest child (align-items: flex-end auto-sizes `.steps-row` to it),
-     growing the row and pushing the down-chevron below it further down the page.
-     A real mouse is never perfectly still — a sub-pixel jitter during that shove
-     is enough to move a different element under the cursor, firing another
-     mouseenter/mouseleave, causing another reflow, on and on. Headless Playwright
-     with a mathematically frozen cursor never reproduced it (no jitter to
-     retrigger the loop), which is why this looked fine when it was first built and
-     screenshotted. Fix: give every active card the exact same min-height, so the
-     row's rendered height is a hardcoded-per-viewport constant regardless of
-     which single card is active — hover can no longer move the chevron/anything
-     below the section at all.
-
-     Round 2 (per direct feedback on Pillars.astro's identical fix: a flat
-     43rem/688px at every width was way taller than these sections ever were —
-     replaced with a two-point vw clamp instead of one constant). Fitted to O2's
-     own real content need (the tallest of the four here, measured via
-     scrollHeight with min-height:auto, is-active forced): 676px at 1024px
-     viewport, 498px at 1920px+, +24px safety margin baked into both ends
-     (700px/522px) for font-loading/rounding variance and the 1366px midpoint
-     (524px needed there, comfortably inside the clamp's ~608px at that width).
-     <1024 switches to the always-visible grid layout below and doesn't use this
-     rule at all.
-
-     Round 3 (per direct feedback: no rule that every card must share one
-     height — shorter cards showed real dead space below their own text,
-     stretched to fit a budget sized for O2's own content): dropped the
-     forced min-height here entirely. The anti-shake fix never actually
-     depended on every ACTIVE CARD sharing one height — it depended on
-     `.steps-row` itself never resizing (see its own permanent min-height
-     above, carrying this exact clamp value forward). A flex row with
-     `align-items: flex-end` doesn't let one item's height affect another's,
-     so once the row's own footprint is pinned, each active card is free to
-     size to its own content via `.step`'s base `min-height: 20.7825rem`
-     (naturally exceeded once `.step-body` shows). O2 still ends up tallest
-     and still fits inside the row's reserved height; shorter cards now end
-     shortly after their own text instead of stretching to fill O2's space. */
+  /* Per direct feedback: all four cards are always open now (STEP header +
+     title + body always visible — see .step-body below), reverting the
+     collapsed/expand-on-hover interaction from earlier rounds. `.is-active`
+     (assigned by the script below on hover, none by default) now only ever
+     toggles `background` + the lift `transform` — nothing about height,
+     min-height, or visibility. That's safe specifically because nothing
+     about LAYOUT changes on hover anymore (translateY is a compositing
+     transform, not a layout one): the reflow-thrashing bug those earlier
+     rounds fought (a card's box growing/shrinking on hover, shoving the
+     down-chevron around) can't recur when a card's box never changes size
+     to begin with. Each card simply keeps its own natural height (STEP
+     header + title + body), like the original "staircase" heights (O1
+     332.52px / O2 542.52px / O3 402.52px / O4 338.02px), with `align-items:
+     flex-end` (on .steps-row) bottom-aligning them. */
   .step.is-active {
     background: var(--color-orange); /* #F37D2C, node 1:16086's own fill */
     transform: translateY(-0.75rem); /* 12px lift — matches Programs.astro's transition timing for consistency on this page */
   }
-  /* Card heights: the original "staircase" (O1 332.52px / O2 542.52px / O3
-     402.52px / O4 338.02px, bottom-aligned) only ever applied while every card's
-     content was permanently visible. Now that content is hidden until active
-     (round 3), collapsed height is the same 20.7825rem for all four (see base
-     `.step` rule above) — the staircase itself no longer applies at rest. */
 
   /* Figma's own box widths differ slightly per card (368.12px for O1/O2/O3's
      header-bearing box vs 349.01px for O4's, plus O1/O3 additionally split
@@ -478,18 +409,14 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     font-size: 1rem; /* 16px — reduced from 19px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
-    /* Exclusive active card (this task): only the active card's body ever shows (see
-       .step.is-active .step-body below) — hidden at rest for the other three, now that
-       every card has copy to reveal. display doesn't transition, so this pops in rather
-       than fading/sliding — the lift/background-color on .step.is-active is what's
-       animated; matches the same tradeoff made for Programs.astro's card-body reveal. */
-    display: none;
+    /* Always visible now (per direct feedback: all four cards are
+       permanently open, hover only changes background/text/notch color and
+       the existing lift — see .step's own comment above). */
   }
   .step.is-active .step-body {
-    display: block;
     /* On-orange body copy is navy, not gray (matches Pillars' .card--o3 .card-body) —
        applies uniformly since the active card is always the orange one, whichever card
-       that is (none by default — round 3 — see markup/script above). */
+       that is (none by default — see markup/script above). */
     color: var(--color-ink-alt);
   }
   .step--o2 .step-title,
@@ -523,20 +450,6 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     }
     .step {
       flex: initial;
-    }
-    .step--o1,
-    .step--o2,
-    .step--o3,
-    .step--o4 {
-      min-height: auto;
-    }
-    /* Hover doesn't really exist as a concept below 1024 (stacked grid, likely
-       touch) — show every card's body unconditionally instead, same pattern as
-       Programs.astro's mobile view. Specificity has to match/beat `.step.is-active
-       .step-body` (0,3,0) in case a real mouse (trackpad on a narrow window,
-       etc.) does leave one card `.is-active` here too. */
-    .steps-row .step .step-body {
-      display: block;
     }
     /* The pointed arrow connectors express left-to-right succession in the
        desktop 4-across row; in the stacked 2x2/1-col grid that reading no
