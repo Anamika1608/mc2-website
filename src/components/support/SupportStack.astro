@@ -73,65 +73,95 @@ const CARDS = [
 <section class="support-stack" aria-labelledby="support-stack-title">
   <h2 id="support-stack-title" class="sr-only">The MC²+ support stack</h2>
 
-  <div class="stage">
-    <div class="line line-v line-left" aria-hidden="true"></div>
-    <div class="line line-v line-mid" aria-hidden="true"></div>
-    <div class="line line-v line-right" aria-hidden="true"></div>
-    <div class="line line-h line-top" aria-hidden="true"></div>
-    <div class="line line-h line-one" aria-hidden="true"></div>
-    <div class="line line-h line-two" aria-hidden="true"></div>
-    <div class="line line-h line-three" aria-hidden="true"></div>
+  <div class="stage" data-support-stage>
+    <div class="stage-artboard" data-support-artboard>
+      <div class="line line-v line-left" aria-hidden="true"></div>
+      <div class="line line-v line-mid" aria-hidden="true"></div>
+      <div class="line line-v line-right" aria-hidden="true"></div>
+      <div class="line line-h line-top" aria-hidden="true"></div>
+      <div class="line line-h line-one" aria-hidden="true"></div>
+      <div class="line line-h line-two" aria-hidden="true"></div>
+      <div class="line line-h line-three" aria-hidden="true"></div>
 
-    {
-      ["a", "b", "c", "d", "e", "f"].map((id) => (
-        <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
-      ))
-    }
+      {
+        ["a", "b", "c", "d", "e", "f"].map((id) => (
+          <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
+        ))
+      }
 
-    <Image
-      src={CapitalArt}
-      alt=""
-      class="art art-capital"
-      widths={[469, 938]}
-      sizes="469px"
-    />
-    <Image
-      src={ExpertiseArt}
-      alt=""
-      class="art art-expertise"
-      widths={[253, 506]}
-      sizes="253px"
-    />
-    <Image
-      src={InfrastructureArt}
-      alt=""
-      class="art art-infrastructure"
-      widths={[247, 494]}
-      sizes="247px"
-    />
-    <Image
-      src={PilotingArt}
-      alt=""
-      class="art art-piloting"
-      widths={[443, 886]}
-      sizes="443px"
-    />
+      <Image
+        src={CapitalArt}
+        alt=""
+        class="art art-capital"
+        widths={[469, 938]}
+        sizes="469px"
+      />
+      <Image
+        src={ExpertiseArt}
+        alt=""
+        class="art art-expertise"
+        widths={[253, 506]}
+        sizes="253px"
+      />
+      <Image
+        src={InfrastructureArt}
+        alt=""
+        class="art art-infrastructure"
+        widths={[247, 494]}
+        sizes="247px"
+      />
+      <Image
+        src={PilotingArt}
+        alt=""
+        class="art art-piloting"
+        widths={[443, 886]}
+        sizes="443px"
+      />
 
-    {CARDS.map((card) => (
-      <article class={`support-card support-card-${card.key}`}>
-        <p class="card-eyebrow">{card.eyebrow}</p>
-        <h3>{card.title}</h3>
-        <p class="subtitle">{card.subtitle}</p>
-        <p class="intro">{card.intro}</p>
-        <ul>
-          {card.bullets.map((bullet) => (
-            <li>{bullet}</li>
-          ))}
-        </ul>
-      </article>
-    ))}
+      {CARDS.map((card) => (
+        <article class={`support-card support-card-${card.key}`}>
+          <p class="card-eyebrow">{card.eyebrow}</p>
+          <h3>{card.title}</h3>
+          <p class="subtitle">{card.subtitle}</p>
+          <p class="intro">{card.intro}</p>
+          <ul>
+            {card.bullets.map((bullet) => (
+              <li>{bullet}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
   </div>
 </section>
+
+<script is:inline>
+  (() => {
+    const stage = document.querySelector("[data-support-stage]");
+    if (!stage) return;
+
+    const baseWidth = 1757.92;
+    const baseHeight = 2688;
+    const desktopQuery = window.matchMedia("(min-width: 1200px)");
+
+    const syncStage = () => {
+      window.requestAnimationFrame(() => {
+        if (!desktopQuery.matches) {
+          stage.style.removeProperty("--support-stage-scale");
+          stage.style.removeProperty("--support-stage-height");
+          return;
+        }
+
+        const scale = Math.min(1, stage.getBoundingClientRect().width / baseWidth);
+        stage.style.setProperty("--support-stage-scale", String(scale));
+        stage.style.setProperty("--support-stage-height", `${baseHeight * scale}px`);
+      });
+    };
+
+    syncStage();
+    window.addEventListener("resize", syncStage, { passive: true });
+  })();
+</script>
 
 <style>
   .support-stack {
@@ -142,9 +172,19 @@ const CARDS = [
 
   .stage {
     position: relative;
-    max-width: 109.87rem; /* 1757.92px, node 1:19227/1:19947 combined width */
-    height: 168rem; /* 2688px, support stack top to bottom */
+    width: min(calc(100% - 2.5rem), 109.87rem); /* 1757.92px, node 1:19227/1:19947 combined width */
+    height: var(--support-stage-height, 168rem); /* 2688px, support stack top to bottom */
     margin-inline: auto;
+  }
+
+  .stage-artboard {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 109.87rem;
+    height: 168rem;
+    transform: translateX(-50%) scale(var(--support-stage-scale, 1));
+    transform-origin: top center;
   }
 
   .line {
@@ -366,13 +406,20 @@ const CARDS = [
     transform: rotate(45deg);
   }
 
-  @media (max-width: 1759.98px) {
+  @media (max-width: 1199.98px) {
     .stage {
       width: min(100% - 2.5rem, 48rem);
+      height: auto;
+    }
+
+    .stage-artboard {
+      position: static;
+      width: 100%;
       height: auto;
       display: grid;
       gap: 4rem;
       padding-block: 2rem 5rem;
+      transform: none;
     }
 
     .line,
