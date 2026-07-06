@@ -1,75 +1,61 @@
 ---
-import { Image } from "astro:assets";
 import SparkOrange from "../../assets/home/spark-orange.svg";
-import Hpcl from "../../assets/home/sponsor-hpcl.png";
-import Ongc from "../../assets/home/sponsor-ongc.png";
-import IndianOil from "../../assets/home/sponsor-indianoil.png";
-import Bpcl from "../../assets/home/sponsor-bpcl.png";
-import Gail from "../../assets/home/sponsor-gail.png";
-import OilIndia from "../../assets/home/sponsor-oilindia.png";
-import Petronet from "../../assets/home/sponsor-petronet.png";
 
 // Order, captions and alt text per plan (Task 3 brief). Width/height are each
-// logo's design bbox in Figma (node 1:354's children) — see report for the
-// mapping — i.e. the DISPLAY size, unchanged by the merge below.
+// logo's design bbox in Figma (node 1:354's children), confirmed against
+// Figma metadata directly (node 1:194) to the pixel — i.e. the DISPLAY size.
 //
-// Merge reconciliation: these source PNGs were originally 1x exports (pixel
-// dimensions equal to the width/height below), so the `densities={[1,2]}`
-// request below had no real 2x data to draw from — the "2x" srcset candidate
-// was just an upscale of the 1x file (soft on retina screens). The about page
-// (src/assets/about/sponsor-*.png, e.g. gail 336x252) exported the same seven
-// logos at ~1.9x resolution; those files were copied over these paths (same
-// filenames, same import statements) so this component's code is unchanged —
-// only the underlying source resolution improved. The display width/height
-// below are untouched, so rendered size on the page is identical; the 1x
-// candidate is now a true downsample and the 2x candidate needs only a ~5%
-// upscale (1.9x source vs the exact 2x it's asked for) instead of a full 2x
-// upscale from a 1x source.
+// Sources swapped 2026-07-07 (user directive) from the old src/assets/home/
+// sponsor-*.png imports to new logo exports dropped directly in public/ —
+// their native pixel dimensions match these width/height values almost
+// exactly, confirmed via direct file inspection, so display size is
+// unchanged. Referenced as plain <img src="/...png"> (not astro:assets
+// <Image>) since public/ files aren't processed by that pipeline.
 const sponsors = [
   {
-    src: Hpcl,
+    src: "/hindustan-petroleum.png",
     width: 124,
     height: 161,
     caption: "Hindustan Petroleum",
     alt: "Hindustan Petroleum Corporation",
   },
   {
-    src: Ongc,
+    src: "/oil-naural-gas.png",
     width: 126,
     height: 126,
     caption: "Oil & Natural Gas",
     alt: "Oil and Natural Gas Corporation",
   },
   {
-    src: IndianOil,
+    src: "/indian-oil.png",
     width: 140,
     height: 149,
     caption: "Indian Oil Corp",
     alt: "Indian Oil Corporation",
   },
   {
-    src: Bpcl,
+    src: "/bharat-petroleum.png",
     width: 101,
     height: 126,
     caption: "Bharat Petroleum",
     alt: "Bharat Petroleum Corporation",
   },
   {
-    src: Gail,
+    src: "/gas-authority.png",
     width: 176,
     height: 132,
     caption: "Gas Authority",
     alt: "GAIL (India) Limited",
   },
   {
-    src: OilIndia,
+    src: "/oil-india.png",
     width: 104,
     height: 153,
     caption: "Oil India Ltd",
     alt: "Oil India Limited",
   },
   {
-    src: Petronet,
+    src: "/petronet-lng.png",
     width: 97,
     height: 129,
     caption: "Petronet LNG",
@@ -88,12 +74,11 @@ const sponsors = [
           <li>
             <figure class="logo">
               <span class="logo-frame">
-                <Image
+                <img
                   src={sponsor.src}
                   alt={sponsor.alt}
                   width={sponsor.width}
                   height={sponsor.height}
-                  densities={[1, 2]}
                 />
               </span>
               <figcaption>{sponsor.caption}</figcaption>
@@ -130,11 +115,18 @@ const sponsors = [
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    /* Was display:grid + grid-template-columns:repeat(7,1fr) -- that stretched
+       the row across the full .container width, inflating the gaps between
+       logos well past Figma's own layout (confirmed via get_screenshot on
+       node 1:194: the 7-logo group has a fixed natural width and sits
+       centered with consistent ~103px gaps, not spread edge-to-edge).
+       flex + a fixed gap keeps every logo at its own natural size and centers
+       the whole group instead of stretching it. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: start;
-    column-gap: 1.5rem;
-    row-gap: 2.5rem;
+    gap: 2.5rem 6.44rem; /* row-gap unchanged; column-gap = 103px, the average of the 6 measured Figma gaps (95.5-109.7px) -- documented simplification, same convention as other near-uniform Figma spacing elsewhere in this codebase */
   }
 
   .logo {
@@ -179,12 +171,16 @@ const sponsors = [
 
   @media (max-width: 1023.98px) {
     .logos {
+      /* Restores the pre-existing grid layout at this breakpoint -- untouched
+         by the desktop-only flex change above. */
+      display: grid;
       grid-template-columns: repeat(4, 1fr);
     }
   }
 
   @media (max-width: 559.98px) {
     .logos {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
   }
