@@ -107,7 +107,7 @@ const DIRECTORS = [
   .eyebrow {
     margin: 0 0 1.3rem;
     font-family: var(--font-display);
-    font-size: 1.69rem; /* 27.07px, node 1:12888 */
+    font-size: 1.375rem; /* 22px — reduced from the Figma 27.07px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     letter-spacing: 0.25em; /* same tracking formula as TeamHero's eyebrow, node 1:13353 */
     color: var(--color-orange-bright);
     text-align: center;
@@ -119,7 +119,7 @@ const DIRECTORS = [
   h2 {
     margin: 0 0 1.5rem;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:12889 */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     color: var(--color-ink-alt);
     text-align: center;
   }
@@ -136,7 +136,7 @@ const DIRECTORS = [
     max-width: 44.64rem;
     margin: 0 auto 4.5rem;
     font-family: var(--font-sans);
-    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667; /* derived — see comment above */
     color: var(--color-gray);
     text-align: center;
@@ -249,7 +249,7 @@ const DIRECTORS = [
   .meta h3 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.5rem; /* 24px — reduced from 30px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
   }
@@ -276,14 +276,14 @@ const DIRECTORS = [
   .desc {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
   }
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));

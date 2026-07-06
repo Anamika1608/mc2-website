@@ -89,7 +89,7 @@ const TEAM = [
   .eyebrow {
     margin: 0 0 1.3rem;
     font-family: var(--font-display);
-    font-size: 1.69rem; /* 27.07px, node 1:13349 */
+    font-size: 1.375rem; /* 22px — reduced from the Figma 27.07px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--color-gray);
@@ -102,7 +102,7 @@ const TEAM = [
   h2 {
     margin: 0 0 4rem;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:13350 */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     color: var(--color-ink-alt);
     text-align: center;
   }
@@ -208,7 +208,7 @@ const TEAM = [
   .card h3 {
     margin: 0 0 1.875rem;
     font-family: var(--font-display);
-    font-size: 2.48rem; /* 39.7px */
+    font-size: 2rem; /* 32px — reduced from 39.7px per user directive 2026-07-06 */
     line-height: 1.18;
     color: #1e1e3e;
   }
@@ -243,14 +243,14 @@ const TEAM = [
   .desc {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1.54rem; /* 24.66px, derived — see comment above */
+    font-size: 1.25rem; /* 20px — reduced from the derived 24.66px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
   }
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
