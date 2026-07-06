@@ -344,7 +344,7 @@ const CARDS = [
   .card-eyebrow {
     margin: 0 0 0.28rem;
     font-family: var(--font-display);
-    font-size: 1.1406rem; /* 18.25px, text nodes 1:19371/1:19738/1:20104/1:20466 */
+    font-size: 1.375rem; /* 22px — increased from 18.25px per user directive 2026-07-07, this was actually smaller than the eyebrow scale used everywhere else on the site */
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #949494;
@@ -353,7 +353,7 @@ const CARDS = [
   h3 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 2.7006rem; /* 43.21px, card title text nodes */
+    font-size: 2rem; /* 32px — reduced from 43.21px per user directive 2026-07-07, was larger than any comparable secondary heading elsewhere on the site */
     font-weight: 400;
     line-height: 1.3;
     color: var(--color-orange);
@@ -362,7 +362,7 @@ const CARDS = [
   .subtitle {
     margin: -0.15rem 0 0;
     font-family: var(--font-display);
-    font-size: 1.6919rem; /* 27.07px, card subtitle text nodes */
+    font-size: 1.375rem; /* 22px — reduced from 27.07px per user directive 2026-07-07, matches the standard label cut used everywhere else */
     line-height: 1.3;
     color: var(--color-ink-alt);
   }
@@ -371,7 +371,7 @@ const CARDS = [
     max-width: 35.1rem;
     margin: 4.85rem 0 0;
     font-family: var(--font-sans);
-    font-size: 1.23rem;
+    font-size: 1.0625rem; /* 17px — reduced from 19.68px per user directive 2026-07-07 */
     line-height: 1.33;
     color: #1e1e3e;
   }
@@ -384,7 +384,7 @@ const CARDS = [
     padding: 0;
     list-style: none;
     font-family: var(--font-sans);
-    font-size: 1.18rem;
+    font-size: 1.0625rem; /* 17px — reduced from 18.88px per user directive 2026-07-07 */
     line-height: 1.28;
     color: #1e1e3e;
   }
@@ -478,11 +478,11 @@ const CARDS = [
 
   @media (max-width: 559.98px) {
     h3 {
-      font-size: clamp(2rem, 10vw, 2.7006rem);
+      font-size: clamp(1.75rem, 8vw, 2rem); /* ceiling/floor both reduced to match the new 32px desktop size per user directive 2026-07-07 */
     }
 
     .subtitle {
-      font-size: clamp(1.25rem, 6vw, 1.6919rem);
+      font-size: clamp(1.125rem, 5vw, 1.375rem); /* ceiling/floor both reduced to match the new 22px desktop size per user directive 2026-07-07 */
     }
 
     .intro,
