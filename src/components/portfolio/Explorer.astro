@@ -381,12 +381,13 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   }
 
   @media (max-width: 1023.98px) {
-    .row-main,
-    .row-side {
-      flex: 1 1 100%;
+    .row-body {
+      grid-template-columns: 1fr; /* was 48% 52% at all widths -- the previous flex:1 1 100% on .row-main/.row-side was dead code since .row-body is a grid, not a flex, container */
+      row-gap: 1.25rem;
     }
     .row-name {
       font-size: clamp(2.4rem, 6vw, 2.625rem); /* ceiling was still the original 65px, never updated when desktop was first cut to 52px */
+      overflow-wrap: break-word; /* guards single long unbroken words (e.g. "Aerostrovilos") from overflowing past the row on narrow phones */
     }
     .row-spark {
       display: none;
