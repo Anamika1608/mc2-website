@@ -140,8 +140,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         <div class="card-head">
           <p class="card-num">O1</p>
           <p class="card-label">
-            <span class="line">FOR RESEARCHERS</span>
-            <span class="line">SOLVING INDUSTRY PROBLEMS</span>
+            <span class="line">FOR RESEARCHERS</span> <span class="line">SOLVING INDUSTRY PROBLEMS</span>
           </p>
         </div>
         <h3 class="card-title">Grand Challenges</h3>
@@ -203,8 +202,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         <div class="card-head">
           <p class="card-num">O2</p>
           <p class="card-label">
-            <span class="line">FOR FOUNDERS</span>
-            <span class="line">BUILDING FROM SCRATCH</span>
+            <span class="line">FOR FOUNDERS</span> <span class="line">BUILDING FROM SCRATCH</span>
           </p>
         </div>
         <h3 class="card-title card-title--split">
@@ -252,8 +250,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         <div class="card-head">
           <p class="card-num">O3</p>
           <p class="card-label">
-            <span class="line">EXISTING VENTURES</span>
-            <span class="line">READY TO SCALE</span>
+            <span class="line">EXISTING VENTURES</span> <span class="line">READY TO SCALE</span>
           </p>
         </div>
         <h3 class="card-title">Accelerator</h3>
@@ -331,8 +328,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         <div class="card-head">
           <p class="card-num">O4</p>
           <p class="card-label">
-            <span class="line">AFFILIATED,</span>
-            <span class="line">GROWTH-STAGE CAPITAL</span>
+            <span class="line">AFFILIATED,</span> <span class="line">GROWTH-STAGE CAPITAL</span>
           </p>
         </div>
         <h3 class="card-title">
@@ -619,21 +615,12 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   .card.is-active .card-num {
     color: var(--color-orange);
   }
-  /* O4's numeral is a sequence-completion (see markup comment) — hidden in the desktop
-     collage (the composite shows none; the source's own label geometry occupies its
-     spot), shown <1024. visibility (not display) keeps the head's flex height equal to
-     the other cards' so the title row stays aligned.
-     Hover-to-expand (this task): also shown once O4 is active — the collapsed-only
-     source positioning below (label pulled left, overlapping O3) has no design
-     precedent for an EXPANDED O4 (Figma never shows this card open), so active O4 just
-     reverts to the same normal numeral+label header every other active card already
-     uses — same override already used for <1024 below, applied here too. */
-  .card--o4 .card-num {
-    visibility: hidden;
-  }
-  .card--o4.is-active .card-num {
-    visibility: visible;
-  }
+  /* O4's numeral used to be hidden at rest (a collage-accurate reproduction of the
+     source composite, which shows no numeral there — its own label geometry occupied
+     that spot instead, see the markup comment and .card--o4 .card-label history
+     below). Per direct feedback, O4 now always shows its numeral, matching O1/O2/O3 —
+     a deliberate departure from the Figma composite in favor of a readable header on
+     every card, not just the active one. */
   .card-label {
     margin: 0;
     font-family: var(--font-sans); /* plain sans on zoomed screenshot, despite Figma reporting Faculty on the wrapping wrapper — site-wide correction */
@@ -647,26 +634,50 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     line-height: 1.27; /* 25.33px measured line-top gap / 20px */
     color: var(--color-ink-alt); /* navy on every card, including O1's orange-bordered one */
   }
-  .card-label .line {
+  /* Per direct feedback (screenshot showed O3's own label merging with O4's
+     peeking fragment): even after fixing O4's own bleed offset above,
+     direct measurement (getBoundingClientRect, swept 1024-1920px) showed
+     O3's own label extends past the start of O3's OWN notch cutout by
+     3-22px at every width — part of O3's label was being clipped away by
+     its own card's clip-path, with O4's peeking content showing through in
+     that exact freed-up space, which is what reads as "merged" text. Only
+     the collapsed/narrow state has this problem (the active/WIDE card has
+     plenty of room).
+
+     First attempt shrank the font-size here instead — reverted per direct
+     feedback (too small to read comfortably). The actual fix: let the
+     label WRAP instead of shrinking. `.card-label .line` below is
+     `display: block` (forcing each phrase onto its own single, unwrapped
+     line) only for the ACTIVE state, where the design's manual 2-line
+     break is verified correct and there's width to spare; collapsed cards
+     get `min-width: 0` (required for a flex child to shrink below its own
+     text's natural width — flex items default to `min-width: auto`, which
+     blocks wrapping entirely) plus a `max-width` that stops before the
+     notch, so the same full-size text wraps onto as many lines as it
+     needs instead of overflowing into the notch or shrinking illegibly.
+     `max-width` is derived the same way the notch offsets themselves are
+     (a fraction of the card's own width, so it compresses in lockstep at
+     every viewport) — re-verified after this change: zero overlap/self-
+     clip at every sampled width from 1024-1920px, same as the font-shrink
+     version, but at full, unshrunk text size. */
+  .card:not(.is-active) .card-label {
+    min-width: 0;
+    max-width: 45%;
+  }
+  .card.is-active .card-label .line {
     display: block;
   }
-  /* O4's desktop header label at the source's own offsets (see markup comment: content
-     1:15831 spans card-local x-56.2..180.1, ink-top y26.8). nowrap keeps the design's
-     2-line layout; the left overhang hides under O3 (z2 > z1), the right end stops 11px
-     short of O4's own notch cut, and narrower viewports clip it at the cut via the
-     card's own clip-path — all emergent. Anchored to .card (nearest positioned
-     ancestor). top 21.6px = 26.8px ink-top minus the line box's half-leading + ascender
-     inset at this size (~5.2px), verified against the composite crop. */
-  .card--o4 .card-label {
-    position: absolute;
-    left: -18.383%; /* -56.2px / 305.72 card width — % so the overhang compresses with the card like the notches do */
-    top: 1.35rem;
-    white-space: nowrap;
-  }
-  .card--o4.is-active .card-label {
-    position: static;
-    white-space: normal;
-  }
+  /* O4's header label used to be absolutely positioned at the source's own
+     collage offsets (bleeding left under O3, peeking through O3's notch,
+     nowrap) — reproducing the composite exactly, at the cost of only ever
+     showing a fragment of its own heading until hovered. Per direct
+     feedback, O4 now uses the same normal in-flow header as O1/O2/O3
+     (no position override, no nowrap), so its full "AFFILIATED,
+     GROWTH-STAGE CAPITAL" label is always readable at rest, wrapping via
+     the shared `.card:not(.is-active) .card-label` rule above like every
+     other collapsed card. This is a deliberate departure from the source
+     composite (which never shows O4's full heading unhovered) in favor of
+     consistent readability. */
 
   .card-title {
     margin: 1.6719rem 2.36rem 0; /* 26.75px, header block bottom to title top */
@@ -777,7 +788,10 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     font-family: var(--font-sans);
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920, same glyph-cap-height evidence + viewport scale/floor as the header label */
     line-height: 1;
-    text-transform: uppercase; /* Figma renders all chip labels uppercase (node 1:15905, e.g. "LAB RESIDENCY") */
+    /* Per direct feedback: chips now render in normal sentence case (the
+       markup's own text, e.g. "Themed briefs"), not the Figma-matched
+       uppercase transform this used to apply — same for active and
+       inactive cards. */
     letter-spacing: 0.04em;
     background: var(--color-line); /* #e8e6da — Figma's visible light-tan fill (sampled #E7E5D8), NOT the page-matching cream that made these pills invisible */
     color: var(--color-ink-alt);
@@ -865,16 +879,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     }
     .card-title {
       font-size: 3.1806rem;
-    }
-    /* O4 rejoins the normal header pattern in the unstacked layout: numeral shown,
-       label back in flex flow (its desktop absolute position is a collage-only
-       reproduction of the source's own scattered geometry). */
-    .card--o4 .card-num {
-      visibility: visible;
-    }
-    .card--o4 .card-label {
-      position: static;
-      white-space: normal;
     }
   }
 
