@@ -4,6 +4,7 @@
 // 1:13475, scroll chevron 1:13354. See exact derivations in style block below.
 import HeroCurves from "../../assets/team/hero-curves.svg";
 import ScrollArrow from "../../assets/team/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -11,17 +12,32 @@ import ScrollArrow from "../../assets/team/scroll-arrow.svg";
     <HeroCurves class="curves" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">TEAM &amp; GOVERNANCE</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line">Leadership</span>
-      <span class="line">built for <span class="accent">speed</span></span>
-      <span class="line">and <span class="accent">accountability</span>.</span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Leadership</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">built for <span class="accent">speed</span></span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">and <span class="accent">accountability</span>.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-3-lines">
       A board that carries national gravitas, an advisory bench deep in
       energy and deep-tech, and an operating team that moves like a startup.
     </p>

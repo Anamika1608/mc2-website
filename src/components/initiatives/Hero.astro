@@ -25,6 +25,7 @@ import NoticeIcon from "../../assets/initiatives/notice-icon.svg";
 // download as byte-identical path data to src/assets/home/scroll-arrow.svg — reuse,
 // no separate initiatives asset exists (see init-task-1-report.md).
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -34,16 +35,26 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     <SparkBurstB class="spark spark-b" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">INITIATIVES</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line">Built for <span class="accent">every builder</span></span>
-      <span class="line">in India&rsquo;s energy story.</span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Built for <span class="accent">every builder</span></span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">in India&rsquo;s energy story.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-2-lines">
       Whether you are an early-stage aspiring entrepreneur, a researcher with
       a lab-stage IP, or an institution ready to co-build the next decade of
       energy technology, MC&sup2;+ is for you.

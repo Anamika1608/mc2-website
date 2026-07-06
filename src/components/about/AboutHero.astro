@@ -3,6 +3,7 @@
 // lede 1:9508, curves+sparks group 1:9164. See exact derivations in style block below.
 import HeroCurves from "../../assets/about/hero-curves.svg";
 import ScrollArrow from "../../assets/about/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -10,17 +11,32 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     <HeroCurves class="curves" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">ABOUT</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line">Where India&rsquo;s</span>
-      <span class="line accent">Energy Innovation</span>
-      <span class="line">gets built.</span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Where India&rsquo;s</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text"><span class="accent">Energy Innovation</span></span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">gets built.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-3-lines">
       MC&sup2;+ exists with a single mandate: to catalyse Indian energy
       innovation and accelerate the country&rsquo;s energy security and
       transition.

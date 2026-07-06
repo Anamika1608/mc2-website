@@ -39,6 +39,7 @@ import HeroCurves from "../../assets/portfolio/hero-curves.svg";
 import SparkA from "../../assets/portfolio/spark-a.svg";
 import SparkB from "../../assets/portfolio/spark-b.svg";
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -48,16 +49,26 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     <SparkB class="spark spark-b" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">PORTFOLIO</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line">The builders</span>
-      <span class="line">we&rsquo;re <span class="accent">backing</span>.</span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">The builders</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">we&rsquo;re <span class="accent">backing</span>.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-2-lines">
       Our individual partners have been backing energy innovations for
       years. Now, we are all coming together to do it.
     </p>

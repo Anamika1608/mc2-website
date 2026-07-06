@@ -5,6 +5,7 @@
 import { Image } from "astro:assets";
 import HeroOrbit from "../../assets/support/hero-orbit.png";
 import ScrollArrow from "../../assets/about/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="support-hero">
@@ -17,17 +18,34 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     sizes="100vw"
   />
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">SUPPORT</p>
     <div class="rule" aria-hidden="true"></div>
 
     <h1>
-      <span>Everything an</span>
-      <span>energy venture needs,</span>
-      <span><span class="accent">under one roof</span><span class="period">.</span></span>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Everything an</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">energy venture needs,</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text"
+            ><span class="accent">under one roof</span><span class="period">.</span></span
+          >
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-3-lines">
       Capital is rarely the whole problem. MC<sup>2</sup>+ pairs funding with
       the expertise, infrastructure and market access that energy hardware
       actually needs to reach industrial scale.
@@ -96,7 +114,12 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     color: #1e1e3e;
   }
 
-  h1 span {
+  /* Scoped to .reveal-line specifically, not a bare `h1 span` tag selector:
+     the latter would also match the new .reveal-line-box/.reveal-line-text
+     spans nested inside (Astro's scoping attribute makes component-local
+     rules beat the shared global.css rules at equal specificity), clobbering
+     their required inline-block display. */
+  h1 .reveal-line {
     display: block;
     white-space: nowrap;
   }
@@ -150,7 +173,7 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
       font-size: var(--text-hero-h1-fluid); /* was clamp(2.65rem, 7vw, 5rem) — normalized to home hero scale per user directive 2026-07-06 */
     }
 
-    h1 span {
+    h1 .reveal-line {
       white-space: normal;
     }
 
