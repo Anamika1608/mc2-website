@@ -239,7 +239,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
 
   .steps-row {
     display: flex;
-    align-items: flex-end; /* all four cards' boxes share the same bottom edge, Figma y1983.93 — same bottom-alignment technique as Home's Pillars.astro */
+    align-items: stretch; /* per direct feedback: every card must be the exact same height — flexbox's own default cross-axis behavior already does this natively (every item stretches to the row's tallest), replacing the previous flex-end bottom-alignment that let cards keep their own differing natural heights. Fully responsive with no magic numbers: the row's height is simply whichever card needs the most room at the CURRENT viewport, recalculated by the browser at every width. */
     /* 21.87px avg / 1518.98px total row width (1:16075) — percentage so it
        scales with the row, same technique as Pillars' own row gap. Task 6
        fidelity pass (carried item 2): at 1024 the percentage gap (13.56px)
@@ -258,13 +258,13 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        that every card's body is always visible and never toggles, nothing
        about layout ever changes on hover (only background-color and the
        existing lift transform, neither of which affects layout), so there's
-       nothing left to protect against. The row simply sizes to its tallest
-       (permanently-shown) card via `align-items: flex-end` above, same as
-       any ordinary flex row. */
+       nothing left to protect against. */
   }
 
   .step {
     position: relative;
+    display: flex; /* per direct feedback (equal card heights): lets .step-foot (below) grow to fill whatever extra height `align-items: stretch` (above) now gives this card. */
+    flex-direction: column;
     flex: 1 1 0%;
     min-width: 0;
     box-sizing: border-box;
@@ -381,6 +381,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   }
 
   .step-foot {
+    flex: 1 1 auto; /* per direct feedback (equal card heights): grows to absorb whatever extra height .step's own stretch gives it, so a shorter card's body just gets blank space below it instead of the whole card being shorter. */
     padding: 1.8rem 1.2rem 1.6rem;
     text-align: center;
   }
@@ -440,12 +441,13 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     }
 
     /* Responsive rule: below 1024, drop the bottom-aligned offset collage for
-       a normal 2x2 grid (same pattern as Home's Pillars.astro) — no card is
-       forced taller/shorter than its own content. */
+       a normal 2x2 grid (same pattern as Home's Pillars.astro). `align-items`
+       left at its grid default (stretch, per direct feedback on equal card
+       heights) rather than the earlier `start` override, so each row of this
+       2x2 (O1+O2, then O3+O4) still matches heights within itself. */
     .steps-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      align-items: start;
       gap: 2rem;
     }
     .step {

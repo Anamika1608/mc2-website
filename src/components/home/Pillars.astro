@@ -209,7 +209,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
 
   .pillars-row {
     display: flex;
-    align-items: flex-end; /* shared bottom baseline (all four cards' boxes end at Figma y2218.1) — this alone produces O3's "sits higher" and O1's short tab */
+    align-items: stretch; /* per direct feedback: every card must be the exact same height — flexbox's own default cross-axis behavior already does this natively (every item stretches to the row's tallest), replacing the previous flex-end bottom-alignment that let cards keep their own differing natural heights. Fully responsive with no magic numbers: the row's height is simply whichever card needs the most room at the CURRENT viewport, recalculated by the browser at every width, same as the rest of this flex layout already works. */
     gap: 3.47%; /* 61.45px / 1772.2px total row width (1:1068) — percentage so the gap scales with the row instead of the fixed-width cards overflowing narrower desktop viewports */
     /* Per direct feedback: reverted to always-open cards (round 7's permanent
        `--pillar-active-height` reservation, and the min-height/hide-show
@@ -218,13 +218,13 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
        reflow-thrashing bug from a card's box growing/shrinking on hover; now
        that every card's content is always visible and never toggles, nothing
        about layout ever changes on hover (only background-color, a paint
-       property), so there's nothing left to protect against. The row simply
-       sizes to its tallest (permanently-shown) card via `align-items:
-       flex-end` above, same as any ordinary flex row. */
+       property), so there's nothing left to protect against. */
   }
 
   .card {
     position: relative;
+    display: flex; /* per direct feedback (equal card heights): lets .card-content (below) grow to fill whatever extra height `align-items: stretch` (above) now gives this card, so the icon can be pushed to the card's own bottom instead of leaving a random gap wherever the content happens to end. */
+    flex-direction: column;
     flex: 1 1 0%;
     min-width: 0;
     box-sizing: border-box;
@@ -304,6 +304,9 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      cards are permanently open, hover only changes background color — see
      .card's own comment above). */
   .card-content {
+    display: flex; /* per direct feedback (equal card heights): grows to fill whatever extra height .card's own stretch now gives it (flex: 1 below), then stacks its own children in a column so .card-illus (below) can be pushed to the bottom via margin-top: auto instead of leaving a random gap whichever card happens to have less body text. */
+    flex-direction: column;
+    flex: 1 1 auto;
     margin-top: 0.6rem;
     margin-left: 0.89rem; /* divider inset (37.82px) minus the card's own left padding (23.53px) */
     padding-left: 1.5rem; /* per direct feedback + Figma node 1:1200: text must start flush with the horizontal rule's own left edge, not indented further right — measured live, rule sits 64.4px from the card border while this padding used to put the body text at 78.5px, a visible extra gap the rule itself doesn't have. 1.5rem puts text at ~63.8px, matching the rule to within a pixel. */
@@ -346,6 +349,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     width: auto;
     max-width: 100%;
     margin-left: 2.1rem; /* illustrations sit right of the body-text column (Figma insets vary ~34px beyond the body text's own inset, per card) */
+    margin-top: auto; /* per direct feedback (equal card heights): pushes the icon to .card-content's own bottom edge, so the extra height every card now gets (to match the tallest) shows up as breathing room above the icon, not a gap after it. */
   }
 
   /* :global — this SVG is injected via set:html (it's shared, colour-swapped
@@ -429,12 +433,16 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     }
 
     /* Responsive rule (brief step 2): below 1024, drop the bleed/offset
-       collage for a normal 2x2 grid — O1 is no longer pushed off-canvas, and
-       no card is forced taller/shorter than its own content. */
+       collage for a normal 2x2 grid — O1 is no longer pushed off-canvas.
+       `align-items` left at its grid default (stretch, per direct feedback
+       on equal card heights) rather than the earlier `start` override, so
+       each row of this 2x2 (O1+O2, then O3+O4) still matches heights within
+       itself, the same equal-height treatment as the desktop row, just
+       applied per grid row instead of across all four at once now that
+       they're paired up instead of side-by-side. */
     .pillars-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      align-items: start;
       gap: 2rem;
     }
     .card {
