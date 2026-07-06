@@ -1,6 +1,8 @@
 ---
-// Figma 1:29036 (form card) + 1:29237/1:29318 (enquiry column). H2 "Send us a
-// message" 1:29037 (Faculty 50px). Static form UI (no submission backend wired).
+// Figma 1:29036 form card + 1:29237/1:29318 enquiry column. All sizes/spacing
+// from get_metadata; fonts/fills from get_design_context + pixel-sampling.
+// Card 913.3px / info 478.1px, gap 122px. Labels are Faculty 18.53px @0.25em
+// (1:29110/29111), NOT Sora. Static form UI (no submission backend wired).
 const ROLES = ["FOUNDER", "RESEARCHER", "INSTITUTION", "CORPORATE / INVESTOR", "PRESS"];
 
 const CONTACTS = [
@@ -47,14 +49,14 @@ const CONTACTS = [
 
       <div class="field">
         <label for="help">HOW CAN WE HELP?</label>
-        <textarea id="help" name="message" rows="5" placeholder="Tell us what you&rsquo;re building or exploring…"></textarea>
+        <textarea id="help" name="message" placeholder="Tell us what you&rsquo;re building or exploring…"></textarea>
       </div>
 
       <button type="submit" class="submit">
-        <span>Send Message</span>
+        <span class="submit-label">Send Message</span>
         <span class="arrow" aria-hidden="true">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
-            <path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+          <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
+            <path d="M3 10h12M10 4.5 15.5 10 10 15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </span>
       </button>
@@ -85,45 +87,53 @@ const CONTACTS = [
 <style>
   .contact-section {
     background: var(--color-cream);
-    padding-block: 2rem 6rem;
+    /* Last section before footer: owns both gaps. Figma: top = card y2178.6 −
+       banner bottom 2048 ≈ 131px = 8.16rem; bottom = footer y3233 − card bottom
+       3121 ≈ 112px = 7rem. */
+    padding-block: 8.16rem 7rem;
   }
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 57rem) minmax(0, 30rem);
-    gap: 4rem;
+    /* card 913.3px = 57.06rem, info 478.1px = 29.88rem, gap 122px = 7.625rem */
+    grid-template-columns: minmax(0, 57.06rem) minmax(0, 29.88rem);
+    gap: 7.625rem;
+    justify-content: center;
     align-items: start;
   }
 
-  /* Form card — folded top-right corner (notch) per the design. */
+  /* Form card — folded top-right corner. */
   .card {
     background: var(--color-white);
     border: 1px solid var(--color-line);
-    padding: 2.5rem;
-    clip-path: polygon(0 0, calc(100% - 1.75rem) 0, 100% 1.75rem, 100% 100%, 0 100%);
+    padding: 2.25rem 2.5rem 3.75rem; /* 36 / 40 / 60px, from H2/content/submit insets */
+    clip-path: polygon(0 0, calc(100% - 1.25rem) 0, 100% 1.25rem, 100% 100%, 0 100%);
   }
   h2 {
     font-family: var(--font-display);
     font-size: 3.125rem; /* 50px, node 1:29037 */
     color: var(--color-ink-alt);
-    margin: 0 0 2rem;
+    margin: 0 0 4.24rem; /* H2 bottom 2279 → "I AM A" y2346.8 ≈ 68px */
   }
 
+  /* All form labels: Faculty 18.53px, 0.25em tracking, navy (nodes 1:29110/29111). */
   .chips {
     border: 0;
-    margin: 0 0 1.75rem;
+    margin: 0 0 2.69rem; /* chips row bottom 2473.7 → FULL NAME y2516.7 ≈ 43px */
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.84rem 1.49rem; /* row 13.4px / col 23.9px */
+  }
+  .chips legend,
+  .field label {
+    font-family: var(--font-display);
+    font-size: 1.158rem; /* 18.53px */
+    letter-spacing: 0.25em; /* 4.6325 / 18.53 */
+    color: #1e1e3e;
+    padding: 0;
   }
   .chips legend {
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    color: var(--color-ink-alt);
-    padding: 0;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.75rem;
     width: 100%;
   }
   .chip input {
@@ -132,18 +142,20 @@ const CONTACTS = [
     pointer-events: none;
   }
   .chip span {
-    display: inline-block;
-    padding: 0.5rem 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    height: 2.43rem; /* 38.9px */
+    padding: 0 1.6rem;
     border-radius: 999px;
     background: var(--color-cream);
     color: var(--color-ink-alt);
     font-family: var(--font-sans);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: background 120ms ease, color 120ms ease;
   }
   .chip input:checked + span {
-    background: var(--color-orange);
+    background: var(--color-orange); /* #f37d2c, sampled */
     color: var(--color-white);
   }
   .chip input:focus-visible + span {
@@ -153,32 +165,32 @@ const CONTACTS = [
 
   .row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    grid-template-columns: 476fr 334fr; /* FULL NAME 476.3px / EMAIL 334.3px */
+    gap: 2.04rem; /* 32.6px */
   }
   .field {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2.2rem;
     display: flex;
     flex-direction: column;
   }
   .field label {
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    color: var(--color-ink-alt);
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.63rem; /* ~10px */
   }
   .field input,
   .field textarea {
     font-family: var(--font-sans);
     font-size: 1rem;
     color: var(--color-ink);
-    background: #e8e4d9; /* warm-gray input fill, sampled from the design form */
+    background: #e7e5d8; /* pixel-sampled input fill */
     border: 1px solid var(--color-line);
     border-radius: 0.6rem;
-    padding: 0.85rem 1rem;
+    padding: 0 1rem;
+    height: 2.61rem; /* 41.8px */
     width: 100%;
+  }
+  .field textarea {
+    height: 9.27rem; /* 148.3px */
+    padding: 0.75rem 1rem;
     resize: vertical;
   }
   .field input::placeholder,
@@ -194,49 +206,52 @@ const CONTACTS = [
   .submit {
     display: inline-flex;
     align-items: center;
-    gap: 0.9rem;
-    margin: 1rem auto 0;
+    justify-content: space-between;
+    margin: 3.44rem auto 0; /* textarea bottom 2929 → submit y2984.5 ≈ 55px */
+    width: 22.3rem; /* 356.9px */
+    height: 4.75rem; /* 76px */
+    padding-left: 2.25rem;
     background: var(--color-ink);
     color: var(--color-white);
     font-family: var(--font-sans);
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     border: 0;
     border-radius: 999px;
-    padding: 0.6rem 0.7rem 0.6rem 1.75rem;
     cursor: pointer;
   }
   .submit .arrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.4rem;
-    height: 2.4rem;
+    display: grid;
+    place-content: center;
+    width: 4.75rem; /* full button height, orange circle 1:29218 (76px) */
+    height: 4.75rem;
     border-radius: 999px;
-    background: var(--color-orange);
+    background: var(--color-orange-bright); /* #ff7400, sampled */
     color: var(--color-white);
+    flex: none;
     transition: transform 150ms ease;
   }
   .submit:hover .arrow {
-    transform: translateX(3px);
+    transform: translateX(2px);
   }
 
-  /* Enquiry column */
+  /* Enquiry column — offset down at desktop so it aligns with the form fields
+     (info top y2498 vs card top y2178.6 ≈ 319px = 19.94rem). */
   .info {
+    margin-top: 19.94rem;
     display: grid;
-    gap: 1.75rem;
-    padding-top: 1rem;
+    gap: 3rem; /* ~48px between the blocks */
   }
   .info-label {
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    letter-spacing: 0.14em;
+    font-family: var(--font-display);
+    font-size: 1.158rem; /* 18.53px, Faculty, node 1:29239 */
+    letter-spacing: 0.1em; /* 1.853 / 18.53 */
     color: var(--color-gray);
-    margin: 0 0 0.4rem;
+    margin: 0 0 0.5rem;
   }
   .info-email {
     font-family: var(--font-sans);
-    font-size: 1.25rem;
-    color: var(--color-orange);
+    font-size: 1.6rem; /* ~25px, sampled */
+    color: var(--color-orange); /* #f37d2c */
     text-decoration: none;
   }
   .info-email:hover {
@@ -244,7 +259,7 @@ const CONTACTS = [
   }
   .info-office {
     font-family: var(--font-sans);
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     line-height: 1.5;
     color: var(--color-ink-alt);
     margin: 0;
@@ -252,13 +267,16 @@ const CONTACTS = [
 
   @media (max-width: 1023.98px) {
     .grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 57.06rem);
       gap: 3rem;
+    }
+    .info {
+      margin-top: 0;
     }
   }
   @media (max-width: 559.98px) {
     .card {
-      padding: 1.75rem;
+      padding: 1.75rem 1.5rem 2.5rem;
     }
     .row {
       grid-template-columns: 1fr;
@@ -266,6 +284,10 @@ const CONTACTS = [
     }
     h2 {
       font-size: clamp(2.2rem, 9vw, 3.125rem);
+      margin-bottom: 2.5rem;
+    }
+    .submit {
+      width: 100%;
     }
   }
 </style>

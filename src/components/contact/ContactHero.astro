@@ -100,17 +100,17 @@ import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
   }
 
   .lede {
-    max-width: 47.58rem;
-    margin: 1.43rem auto 0;
+    max-width: 50.31rem; /* 804.9px, lede group 1:29719 width (was wrongly 47.58) */
+    margin: 1.54rem auto 0; /* 24.7px, H1 line-3 bottom 698.1 → lede top 722.8 */
     font-family: var(--font-sans);
-    font-size: 1.9375rem; /* 31px, derived from the outlined lede (same as TeamHero) */
-    line-height: 1.31;
+    font-size: 1.9375rem; /* 31px, derived from the outlined lede (cap-height 22.6/0.73) */
+    line-height: 1.3; /* baseline delta 40.4px / 31px */
     color: #1e1e3e; /* literal, matches the lede's baked SVG fill */
   }
 
   .scroll {
     display: block;
-    margin: 6rem auto 0;
+    margin: 8.54rem auto 0; /* 136.7px, lede bottom 826.9 → scroll chevron 963.6 (node 1:29713) */
   }
 
   @media (max-width: 1023.98px) {

@@ -1,7 +1,9 @@
 ---
-// Figma 1:28677 network section: H2 1:28682, hub-and-spoke diagram group
-// 1:28755 (exported to /public/network-map.svg — text baked as vectors for an
-// exact match), expansion banner 1:28683.
+// Figma 1:28677 network section: H2 1:28682 (Faculty 65px), hub-and-spoke
+// diagram 1:28755 (exported to /public/network-map.svg — text baked as vectors
+// for a pixel-exact match), expansion banner 1:28683/1:28684. All spacing/sizes
+// derived from get_metadata; banner fill pixel-sampled (#e77628, a source orange
+// rendered through mix-blend-multiply over the cream page).
 const LOCATIONS = [
   {
     kind: "HUB",
@@ -42,7 +44,7 @@ const LOCATIONS = [
       height="533"
     />
 
-    <ul class="locations" aria-hidden="false">
+    <ul class="locations">
       {
         LOCATIONS.map((l) => (
           <li class:list={["loc", l.kind === "HUB" && "hub"]}>
@@ -65,25 +67,27 @@ const LOCATIONS = [
 <style>
   .network {
     background: var(--color-cream);
-    padding-block: 6rem;
+    /* Single-ownership vertical rhythm (like About/Team): this section owns its
+       top gap only. Figma: network H2 y1169 − hero content-bottom (chevron) y984
+       ≈ 185px = 11.56rem. Bottom owned by the following form section. */
+    padding-block: 11.56rem 0;
     text-align: center;
   }
   h2 {
     font-family: var(--font-display);
     font-size: 4.0625rem; /* 65px, node 1:28682 */
     color: var(--color-ink-alt);
-    margin: 0 0 3rem;
+    margin: 0 0 5.06rem; /* H2 bottom 1253 → map top 1334 ≈ 81px */
   }
   .map {
     display: block;
     width: 100%;
-    max-width: 80.25rem; /* 1284px, the diagram's own width (1:28755) */
+    max-width: 80.21rem; /* 1283.3px, diagram 1:28755 */
     height: auto;
     margin-inline: auto;
   }
 
-  /* Mobile fallback: the diagram's baked text is unreadable when the 1284px
-     SVG shrinks below ~768px, so swap it for a stacked, readable location list. */
+  /* Mobile fallback (the 1283px diagram's baked text is unreadable when shrunk). */
   .locations {
     display: none;
     list-style: none;
@@ -128,15 +132,15 @@ const LOCATIONS = [
   }
 
   .banner {
-    margin: 3rem auto 0;
-    max-width: 43.75rem; /* 700px, node 1:28683 */
-    background: var(--color-orange);
+    margin: 4.69rem auto 0; /* map bottom 1867 → banner top 1942 ≈ 75px */
+    max-width: 43.44rem; /* 695.2px, node 1:28683 */
+    background: #e77628; /* pixel-sampled render (source orange × mix-blend-multiply) */
     color: var(--color-cream);
     font-family: var(--font-sans);
     font-size: 1.1rem;
     line-height: 1.45;
-    padding: 1.25rem 2.5rem;
-    border-radius: 999px;
+    padding: 1.63rem 5.06rem; /* 26px / 81px, banner box vs text box (1:28683 vs 1:28685) */
+    border-radius: 999px; /* pill; banner h106 → radius 53px */
   }
 
   @media (max-width: 767.98px) {
@@ -148,9 +152,11 @@ const LOCATIONS = [
     }
     h2 {
       font-size: clamp(2.2rem, 8vw, 4.0625rem);
+      margin-bottom: 2.5rem;
     }
     .banner {
       border-radius: 1.25rem;
+      padding: 1.25rem 1.75rem;
     }
   }
 </style>
