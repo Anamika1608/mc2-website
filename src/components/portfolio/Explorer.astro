@@ -386,7 +386,7 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
       row-gap: 1.25rem;
     }
     .row-name {
-      font-size: clamp(2.4rem, 6vw, 2.625rem); /* ceiling was still the original 65px, never updated when desktop was first cut to 52px */
+      font-size: clamp(1.75rem, 7vw, 2.25rem); /* 28-36px -- reduced from clamp(2.4rem, 6vw, 2.625rem) per user directive 2026-07-07, that floor locked to a flat 38.4px on every real phone width and still read as oversized */
       overflow-wrap: break-word; /* guards single long unbroken words (e.g. "Aerostrovilos") from overflowing past the row on narrow phones */
     }
     .row-spark {
