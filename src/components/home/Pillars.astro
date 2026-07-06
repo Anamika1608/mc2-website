@@ -1,6 +1,5 @@
 ---
 import PillButton from "../PillButton.astro";
-import IllusCapital from "../../assets/home/illus-capital.svg";
 import IllusMentorship from "../../assets/home/illus-mentorship.svg";
 import IllusMarket from "../../assets/home/illus-market.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
@@ -87,7 +86,11 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
             Structured access to seed funding for early validation and
             scale-up capital for ventures demonstrating commercial traction.
           </p>
-          <IllusCapital class="card-illus" aria-hidden="true" />
+          <img
+            src="/Icons.png"
+            alt=""
+            class="card-illus card-illus--raster"
+          />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -452,13 +455,23 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     height: 5.5625rem; /* 89px, matching O3's illus-mentorship native height */
     width: auto;
   }
-  /* O1's icon (round 5, public/Globe-Gray.png) — a raster PNG, not a src/assets
-     SVG, so it needs its own rule rather than the shared `.card-illus` base
-     (height:auto would render it at its native 3300x2550px otherwise). Same
-     height cap as O4's icon above, for visual consistency across all three
-     illustrated cards. */
+  /* O1's icon (round 5, public/Globe-Gray.png) and O2's icon (round 10,
+     public/Icons.png) — raster PNGs, not src/assets SVGs, so they need their
+     own rule rather than the shared `.card-illus` base (height:auto would
+     render them at their native pixel dimensions otherwise). Same height cap
+     as O4's icon above, for visual consistency across all four cards. */
   .card-illus--raster {
     height: 5.5625rem; /* 89px, matches .card--o4 .card-illus above */
+    width: auto;
+  }
+  /* O2's icon (public/Icons.png) has a lot of built-in transparent padding
+     around the actual glyph (1080x1080 canvas, glyph occupies only the
+     middle ~11% of it), so the shared raster cap above renders it barely
+     visible. Sized up on top of that base rule, per direct feedback, so the
+     glyph itself reads at roughly the same visual weight as the other three
+     cards' icons. */
+  .card--o2 .card-illus--raster {
+    height: 9rem;
     width: auto;
   }
 
