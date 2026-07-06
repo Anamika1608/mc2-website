@@ -3,6 +3,11 @@
 // from get_metadata; fonts/fills from get_design_context + pixel-sampling.
 // Card 913.3px / info 478.1px, gap 122px. Labels are Faculty 18.53px @0.25em
 // (1:29110/29111), NOT Sora. Static form UI (no submission backend wired).
+// Submit button (1:29215): pill body #1E1E3E, arrow circle #FF7400, navy arrow
+// glyph, ~32px label — node-for-node the same pill as PillButton.astro, reused
+// here via its type="submit" (button) mode rather than reimplemented.
+import PillButton from "../PillButton.astro";
+
 const ROLES = ["FOUNDER", "RESEARCHER", "INSTITUTION", "CORPORATE / INVESTOR", "PRESS"];
 
 const CONTACTS = [
@@ -17,49 +22,53 @@ const CONTACTS = [
   <div class="container grid">
     <!-- Form card -->
     <form class="card" action="#" novalidate>
-      <h2>Send us a message</h2>
+      <div class="card-header">
+        <h2>Send us a message</h2>
+      </div>
+      <svg class="fold" viewBox="0 0 49.51 78.62" fill="none" aria-hidden="true">
+        <path
+          d="M49.51 0.01V78.62L47.72 59.82C46.73 49.39 38.32 41.21 27.86 40.51L0 38.65L28.1 36.48C38.4 35.69 46.66 27.63 47.72 17.35L49.5 0L49.51 0.01Z"
+          fill="var(--color-gray)"></path>
+      </svg>
 
-      <fieldset class="chips">
-        <legend>I AM A</legend>
-        {
-          ROLES.map((role, i) => (
-            <label class="chip">
-              <input type="radio" name="role" value={role} checked={i === 0} />
-              <span>{role}</span>
-            </label>
-          ))
-        }
-      </fieldset>
+      <div class="card-body">
+        <fieldset class="chips">
+          <legend>I AM A</legend>
+          {
+            ROLES.map((role, i) => (
+              <label class="chip">
+                <input type="radio" name="role" value={role} checked={i === 0} />
+                <span>{role}</span>
+              </label>
+            ))
+          }
+        </fieldset>
 
-      <div class="row">
-        <div class="field">
-          <label for="full-name">FULL NAME</label>
-          <input id="full-name" name="full-name" type="text" placeholder="Your name" />
+        <div class="row">
+          <div class="field">
+            <label for="full-name">FULL NAME</label>
+            <input id="full-name" name="full-name" type="text" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="email">EMAIL</label>
+            <input id="email" name="email" type="email" placeholder="you@company.com" />
+          </div>
         </div>
+
         <div class="field">
-          <label for="email">EMAIL</label>
-          <input id="email" name="email" type="email" placeholder="you@company.com" />
+          <label for="org">ORGANISATION</label>
+          <input id="org" name="organisation" type="text" placeholder="Company, lab or institution" />
+        </div>
+
+        <div class="field">
+          <label for="help">HOW CAN WE HELP?</label>
+          <textarea id="help" name="message" placeholder="Tell us what you&rsquo;re building or exploring…"></textarea>
+        </div>
+
+        <div class="submit-row">
+          <PillButton label="Send Message" type="submit" variant="filled" />
         </div>
       </div>
-
-      <div class="field">
-        <label for="org">ORGANISATION</label>
-        <input id="org" name="organisation" type="text" placeholder="Company, lab or institution" />
-      </div>
-
-      <div class="field">
-        <label for="help">HOW CAN WE HELP?</label>
-        <textarea id="help" name="message" placeholder="Tell us what you&rsquo;re building or exploring…"></textarea>
-      </div>
-
-      <button type="submit" class="submit">
-        <span class="submit-label">Send Message</span>
-        <span class="arrow" aria-hidden="true">
-          <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
-            <path d="M3 10h12M10 4.5 15.5 10 10 15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </span>
-      </button>
     </form>
 
     <!-- Enquiry column -->
@@ -101,18 +110,36 @@ const CONTACTS = [
     align-items: start;
   }
 
-  /* Form card — folded top-right corner. */
+  /* Form card (1:29038): plain rectangle, no fill — the cream page shows
+     through — with a gray hairline border. There is no clipped corner; that
+     look comes entirely from the .fold flourish below, which sits on the
+     header/body divider (1:29040) at the card's top-right corner. */
   .card {
-    background: var(--color-white);
-    border: 1px solid var(--color-line);
-    padding: 2.25rem 2.5rem 3.75rem; /* 36 / 40 / 60px, from H2/content/submit insets */
-    clip-path: polygon(0 0, calc(100% - 1.25rem) 0, 100% 1.25rem, 100% 100%, 0 100%);
+    position: relative;
+    background: none;
+    border: 1px solid var(--color-gray);
+  }
+  .card-header {
+    padding: 2.23rem 2.5rem 1.85rem; /* H2 top inset 35.75px; H2-bottom→divider gap 29.6px */
+    border-bottom: 1px solid var(--color-gray); /* the divider, node 1:29040 */
   }
   h2 {
     font-family: var(--font-display);
     font-size: 3.125rem; /* 50px, node 1:29037 */
     color: var(--color-ink-alt);
-    margin: 0 0 4.24rem; /* H2 bottom 2279 → "I AM A" y2346.8 ≈ 68px */
+    margin: 0;
+  }
+  /* Fold flourish (1:29041): flush to the card's right edge, vertically
+     centered on the header/body divider line. */
+  .fold {
+    position: absolute;
+    top: 5.73rem; /* 91.65px, card top → flourish top */
+    right: 0;
+    width: 3.09rem; /* 49.51px */
+    height: 4.91rem; /* 78.62px */
+  }
+  .card-body {
+    padding: 2.36rem 2.5rem 3.75rem; /* divider → "I AM A" gap 37.8px; sides/bottom unchanged */
   }
 
   /* All form labels: Faculty 18.53px, 0.25em tracking, navy (nodes 1:29110/29111). */
@@ -147,7 +174,11 @@ const CONTACTS = [
     height: 2.43rem; /* 38.9px */
     padding: 0 1.6rem;
     border-radius: 999px;
-    background: var(--color-cream);
+    /* Figma fill is --color-cream with mix-blend-multiply over the cream page
+       (node 1:29082) — self-multiplied that's ~#e7e6d9, matching the input
+       fill literal below almost exactly, so reused here for consistency. Flat
+       color now that the card itself has no background for it to blend against. */
+    background: #e7e5d8;
     color: var(--color-ink-alt);
     font-family: var(--font-sans);
     font-size: 0.95rem;
@@ -181,9 +212,9 @@ const CONTACTS = [
     font-family: var(--font-sans);
     font-size: 1rem;
     color: var(--color-ink);
-    background: #e7e5d8; /* pixel-sampled input fill */
-    border: 1px solid var(--color-line);
-    border-radius: 0.6rem;
+    background: #e7e5d8; /* fill #E7E5D8, node 1:29114 raw SVG */
+    border: 1px solid var(--color-gray); /* #949494 stroke, same raw SVG — was wrongly --color-line (#e8e6da), nearly invisible against the fill */
+    border-radius: 999px; /* pill — radius = height/2 exactly (21.38px of 42.76px tall), not a subtle rounded-rect */
     padding: 0 1rem;
     height: 2.61rem; /* 41.8px */
     width: 100%;
@@ -191,6 +222,7 @@ const CONTACTS = [
   .field textarea {
     height: 9.27rem; /* 148.3px */
     padding: 0.75rem 1rem;
+    border-radius: 1.1rem; /* 17.66px fixed radius, node 1:29153 raw SVG — not a pill at this height */
     resize: vertical;
   }
   .field input::placeholder,
@@ -203,35 +235,10 @@ const CONTACTS = [
     outline-offset: 1px;
   }
 
-  .submit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 3.44rem auto 0; /* textarea bottom 2929 → submit y2984.5 ≈ 55px */
-    width: 22.3rem; /* 356.9px */
-    height: 4.75rem; /* 76px */
-    padding-left: 2.25rem;
-    background: var(--color-ink);
-    color: var(--color-white);
-    font-family: var(--font-sans);
-    font-size: 1.4rem;
-    border: 0;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-  .submit .arrow {
-    display: grid;
-    place-content: center;
-    width: 4.75rem; /* full button height, orange circle 1:29218 (76px) */
-    height: 4.75rem;
-    border-radius: 999px;
-    background: var(--color-orange-bright); /* #ff7400, sampled */
-    color: var(--color-white);
-    flex: none;
-    transition: transform 150ms ease;
-  }
-  .submit:hover .arrow {
-    transform: translateX(2px);
+  .submit-row {
+    margin-top: 3.44rem; /* textarea bottom 2929 → submit y2984.5 ≈ 55px */
+    display: flex;
+    justify-content: center;
   }
 
   /* Enquiry column — offset down at desktop so it aligns with the form fields
@@ -275,7 +282,10 @@ const CONTACTS = [
     }
   }
   @media (max-width: 559.98px) {
-    .card {
+    .card-header {
+      padding: 1.75rem 1.5rem 1.5rem;
+    }
+    .card-body {
       padding: 1.75rem 1.5rem 2.5rem;
     }
     .row {
@@ -284,10 +294,6 @@ const CONTACTS = [
     }
     h2 {
       font-size: clamp(2.2rem, 9vw, 3.125rem);
-      margin-bottom: 2.5rem;
-    }
-    .submit {
-      width: 100%;
     }
   }
 </style>

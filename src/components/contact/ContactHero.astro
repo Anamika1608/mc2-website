@@ -43,6 +43,13 @@ import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
          the hero band, mirroring TeamHero. */
       min-height: 63.25rem;
     }
+    /* Each h1 span is one authored Figma line (916/798/552px) — the browser's
+       Faculty Glyphic metrics render a hair wider than Figma's own, so at the
+       container's exact 57.25rem width "A unique hub-and-spoke" wraps to two
+       lines without this; nowrap keeps the authored 3-line break exact. */
+    h1 .line {
+      white-space: nowrap;
+    }
   }
 
   /* Curves + spark: 1:29819 exports as one 1920x1012 SVG that bakes in its
@@ -65,7 +72,7 @@ import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
   .hero-inner {
     position: relative;
     z-index: 1;
-    max-width: 60rem; /* widest H1 line "A unique hub-and-spoke" = 916px (1:29716) */
+    max-width: 57.25rem; /* widest H1 line "A unique hub-and-spoke" = 916px (1:29716); re-verified against fresh get_design_context, was wrongly 60rem */
     margin-inline: auto;
     padding-inline: 1.25rem;
     text-align: center;
