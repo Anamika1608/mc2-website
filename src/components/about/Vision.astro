@@ -3,6 +3,7 @@
 // (1:8262, x235.64 w326) left column, body paragraph group (1:8263, x600.82
 // w1080.71) right column. See exact derivations in the style block below.
 import VideoFeature from "./VideoFeature.astro";
+import SparkOrange from "../../assets/about/spark-orange.svg";
 ---
 
 <section class="vision">
@@ -30,17 +31,57 @@ import VideoFeature from "./VideoFeature.astro";
       </p>
     </div>
   </div>
+  <div class="flourish-v" aria-hidden="true"></div>
+  <div class="flourish-h" aria-hidden="true"></div>
+  <SparkOrange class="flourish-spark" aria-hidden="true" />
 </section>
 
-<VideoFeature />
+{/* <VideoFeature /> */}
 
 <style>
   .vision {
+    position: relative;
     background: var(--color-cream);
     /* Figma gap Vision-top (1506.06) − Mission-bottom (1404.60, node 1:8065)
        ≈ 101.46px = 6.34rem. Bottom is 0 — the Vision-to-Video gap is owned by
        VideoFeature's own padding-block-start (see VideoFeature.astro). */
     padding-block: 6.34rem 0;
+  }
+
+  /* Decorative flourish, far right of the page — same missing-decoration gap
+     as Mission's own flourish (see its comment), found the same way via the
+     full-page metadata: nodes 1:9488 (spark, 45.92px), 1:9489 (h-line,
+     786.97px) and 1:9490 (v-line, 327.29px), all #F37D2C. This one spans
+     from just above this section's own top (Figma: starts 109.66px before
+     Vision's own y=1506.06) down into the first paragraph, so .flourish-v's
+     top is a small negative offset — safe since .vision has no
+     overflow:hidden to clip it. Figma's own h-line bleeds past the page's
+     right edge (to 102.11% of 1920px); clamped to 98% instead to avoid the
+     horizontal-overflow bug the literal bleed caused on Scale.astro's stats
+     row. Desktop-only per user request. */
+  .flourish-v,
+  .flourish-h {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  .flourish-v {
+    top: -0.51rem;
+    left: 91.38%;
+    width: 1px;
+    height: 20.46rem;
+  }
+  .flourish-h {
+    top: 3.41rem;
+    left: 61.12%;
+    right: 2%;
+    height: 1px;
+  }
+  .flourish-spark {
+    position: absolute;
+    top: 2rem;
+    left: 90.21%;
+    width: 2.87rem;
+    height: 2.87rem;
   }
 
   /* Column widths from node 1:8261 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
@@ -101,6 +142,11 @@ import VideoFeature from "./VideoFeature.astro";
     }
     h2 {
       font-size: clamp(2.4rem, 6vw, 3.25rem);
+    }
+    .flourish-v,
+    .flourish-h,
+    .flourish-spark {
+      display: none;
     }
   }
 

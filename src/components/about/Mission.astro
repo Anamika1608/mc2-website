@@ -2,6 +2,7 @@
 // Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:8065: heading "Our Mission" (1:8066,
 // x201.65 w360) left column, body paragraph group (1:8067, x600.79 w673.66) right
 // column. See exact derivations in style block below.
+import SparkOrange from "../../assets/about/spark-orange.svg";
 ---
 
 <section class="mission">
@@ -13,10 +14,14 @@
       access.
     </p>
   </div>
+  <div class="flourish-v" aria-hidden="true"></div>
+  <div class="flourish-h" aria-hidden="true"></div>
+  <SparkOrange class="flourish-spark" aria-hidden="true" />
 </section>
 
 <style>
   .mission {
+    position: relative;
     background: var(--color-cream);
     /* Was 15.39rem (246.25px), derived as Figma's Mission-top − Hero-bottom
        (node 1:9499's scroll-chevron) gap. That assumed hero's own box ended
@@ -30,6 +35,47 @@
        Bottom is 0 — the Mission-to-Vision gap is owned by Vision's own
        padding-block-start (see Vision.astro). */
     padding-block: 3rem 0;
+    /* Needed for the flourish below to actually show: .mission's own
+       content-driven height (~124px, just the heading + 3-line paragraph)
+       is shorter than the flourish's v-line, whose tip sits 211px down from
+       this section's top — without this, Vision's own opaque background
+       (painted right after, in DOM order) covers that overflow, hiding the
+       flourish entirely despite it being correctly positioned. */
+    min-height: 13.2rem;
+  }
+
+  /* Decorative flourish beside the heading — previously missing entirely
+     (unreachable via the normal per-component Figma export: these are loose
+     sibling vectors, not nested inside this section's own group). Found via
+     the full-page metadata: nodes 1:9492 (spark, 45.92px), 1:9493 (h-line,
+     299.75px) and 1:9494 (v-line, 167.94px), all #F37D2C — same "spark marks
+     a line intersection" pattern used everywhere else in this file. Values
+     below are each node's Figma position converted to an offset from this
+     section's own top edge (padding-block-start 3rem + (figma_y - 1230.41,
+     the heading's own Figma y)). Desktop-only per user request. */
+  .flourish-v,
+  .flourish-h {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  .flourish-v {
+    top: 2.69rem;
+    left: 8.05%;
+    width: 1px;
+    height: 10.5rem;
+  }
+  .flourish-h {
+    top: 9.9rem;
+    left: 3.82%;
+    width: 15.61%;
+    height: 1px;
+  }
+  .flourish-spark {
+    position: absolute;
+    top: 8.5rem;
+    left: 6.88%;
+    width: 2.87rem;
+    height: 2.87rem;
   }
 
   /* Column widths from node 1:8065 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
@@ -80,6 +126,11 @@
     }
     h2 {
       font-size: clamp(2.4rem, 6vw, 3.25rem);
+    }
+    .flourish-v,
+    .flourish-h,
+    .flourish-spark {
+      display: none;
     }
   }
 
