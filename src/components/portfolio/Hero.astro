@@ -1,0 +1,275 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, node 1:23922 ("Desktop", Portfolio frame).
+// Hero region nodes (canvas y, from get_metadata on content group 1:23924):
+//   eyebrow 1:25510 "PORTFOLIO" (y311.55, real text, reported Faculty Glyphic but a
+//     5x zoomed get_screenshot shows plain sans strokes, no serifs on P/O/R/T/F/L —
+//     the same "wrapping-group misreports Faculty" correction used site-wide;
+//     corrected to --font-sans here), underline 1:25509 (y391.67, w188.25 — BYTE-
+//     IDENTICAL width to About/Initiatives' own hairline underlines, same shared
+//     construction, reused numbers), chevron 1:25511 (down arrow, path data
+//     BYTE-IDENTICAL to src/assets/home/scroll-arrow.svg — reused directly, no new
+//     asset).
+//   H1 1:25514 "The builders" (y419.12) / 1:25515 "we're backing." (y506.69, curly
+//     apostrophe verified in the node's own characters string) — get_design_context
+//     shows the accent span covers only the word "backing" (not the trailing
+//     period), fill #ff7400 (--color-orange-bright, the same accent token About/
+//     Team already use for H1/eyebrow accents). Base fill #1e1e3e ~= --color-ink-alt
+//     (#1e1e3c), within this file's usual Illustrator-import noise.
+//   Lede 1:25516 (y633.61, outlined/no real text) "Our individual partners have
+//     been backing energy innovations for years. Now, we are all coming together
+//     to do it." — font-size/line-height reuse the site's established 1.9375rem/
+//     1.31 constant (independently re-derived via Sora-glyph-metrics on About's and
+//     Initiatives' own ledes and confirmed to always converge on the same value
+//     for this weight/face; this page's own 3-line frame height is consistent with
+//     that constant within the usual outlined-bbox ink-only-bounds slack).
+//   Info bar 1:25367 (y809.11, bordered pill, border 1:25368 stroke #1e1e3c i.e.
+//     --color-ink-alt): badge 1:25504 (orange circle w/ navy ring, flattened
+//     raster-in-context but trivially a CSS circle — no asset needed, verified via
+//     get_design_context) overlaps the pill's own left rounded end by 49.26px
+//     (badge x483 vs pill-border x532.26, both sharing the same right edge
+//     1475.72); "i" glyph 1:25507 (real text, y823.71, centered in the badge);
+//     paragraph 1:25369 (y829.52, outlined) "Ventures backed across the energy
+//     majors. A selection of companies incubated through the energy majors'
+//     programmes. MC²+ Cohort 1 onboards from August 2026." — copy verified via
+//     get_design_context screenshot.
+//   Decor: hero-curves.svg (Task 1 export, combined from nodes 1:25612 + 1:25614,
+//     converted from each node's own local path coords into one shared 1920-wide
+//     canvas frame) + spark-a.svg (node 1:25616) / spark-b.svg (node 1:25615).
+import HeroCurves from "../../assets/portfolio/hero-curves.svg";
+import SparkA from "../../assets/portfolio/spark-a.svg";
+import SparkB from "../../assets/portfolio/spark-b.svg";
+import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+---
+
+<section class="hero">
+  <div class="orbit" aria-hidden="true">
+    <HeroCurves class="curves" />
+    <SparkA class="spark spark-a" />
+    <SparkB class="spark spark-b" />
+  </div>
+
+  <div class="hero-inner">
+    <p class="eyebrow">PORTFOLIO</p>
+    <div class="underline" aria-hidden="true"></div>
+
+    <h1>
+      <span class="line">The builders</span>
+      <span class="line">we&rsquo;re <span class="accent">backing</span>.</span>
+    </h1>
+
+    <p class="lede">
+      Our individual partners have been backing energy innovations for
+      years. Now, we are all coming together to do it.
+    </p>
+
+    <div class="info-bar">
+      <div class="info-badge" aria-hidden="true">i</div>
+      <p class="info-text">
+        Ventures backed across the energy majors. A selection of companies
+        incubated through the energy majors&rsquo; programmes. MC&sup2;+
+        Cohort 1 onboards from August 2026.
+      </p>
+    </div>
+
+    <ScrollArrow class="scroll" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-cream);
+    /* padding-top derived from the design's own header height (node 1:25617,
+       y0.14-110.79, i.e. 110.65px) vs the live shared header's own rendered
+       height (90.1875px, getBoundingClientRect — the same constant Home/
+       Initiatives' Hero.astro already cite for this identical component):
+       eyebrow (1:25510, canvas y311.55) sits 311.55-110.65 = 200.9px below
+       the design's own header bottom, so the live page needs that same
+       200.9px of clearance after the live header ends (algebraic value
+       12.556rem). A headless-Chrome render at 1920 with that value landed
+       the eyebrow ink 6px low (anti-aliased cap-height detection offset,
+       not a real spacing error); tightened by that same 6px (0.375rem) to
+       12.18rem, verified pixel-exact (row 291 = target 291) at 1920. */
+    padding-top: 12.18rem;
+    padding-bottom: 4rem;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      /* Design's own hero band (eyebrow y311.55 to chevron ~y940) doesn't need
+         the header-offset treatment Initiatives' hero required (that page's own
+         curve canvas sat BEHIND the header at canvas y0 — this page's curve
+         canvas (1:25612/1:25614) starts at y34.71, already clear of the header
+         in normal flow), so this follows Home's simpler min-height-only pattern:
+         a fluid band sized off the curve box's own ~1085px height at the 1920
+         reference (1085/1920 = 56.51vw), floored for legibility. */
+      min-height: clamp(40rem, 56.51vw, 67.8rem);
+    }
+  }
+
+  /* Curves + sparks: decorative, absolutely positioned behind copy. Sparks are
+     separate sibling nodes (1:25616/1:25615, Task 1 export), positioned as
+     percentages of the curves SVG's own 1920x1086 box so they stay locked to
+     the curve intersections at any viewport width (same technique as Home's/
+     Initiatives' own Hero.astro). */
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .curves {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .spark {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .spark-a {
+    /* node 1:25616: center (565.0, 311.12) / (1920, 1086) box */
+    left: 29.43%;
+    top: 28.65%;
+    width: 5.0rem; /* 80.13px natural size, applied at ~83% for legibility parity with other pages' sparks */
+    height: 4.19rem;
+  }
+  .spark-b {
+    /* node 1:25615: center (1860.7, 324.68) / (1920, 1086) box */
+    left: 96.91%;
+    top: 29.9%;
+    width: 3.32rem; /* 53.13px natural size */
+    height: 2.69rem;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 51rem; /* 47.89rem (766.26px, H1/lede's own shared column width, nodes 1:25512/1:25516) + safety buffer, same technique as other Hero.astro's buffer-above-widest-line */
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-sans); /* corrected from Figma's reported Faculty Glyphic — see frontmatter comment */
+    font-size: 1.6919rem; /* 27.07px, node 1:25510 — identical to SectionHeading's own eyebrow size */
+    letter-spacing: 0.25em; /* 6.7675px / 27.07px, node 1:25510 */
+    color: var(--color-gray); /* #949494 sampled, within noise of --color-gray #959595 */
+  }
+  .underline {
+    width: 11.77rem; /* 188.25px, node 1:25509 — byte-identical to About/Initiatives' own hairline underline */
+    height: 1px;
+    margin: 2.82rem auto 1.72rem; /* 45.12px eyebrow-bottom→underline; 27.45px underline→H1-top, both this page's own measurements */
+    background: #000; /* one-off literal, node 1:25509's own sampled stroke (black, not a token) */
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 5rem; /* 80px, nodes 1:25514/1:25515 */
+    line-height: 1.095; /* baseline delta 87.57px (506.69-419.12) / 80px, this page's own measurement */
+    color: var(--color-ink-alt); /* #1e1e3e sampled, within noise of --color-ink-alt #1e1e3c */
+  }
+  h1 .line {
+    display: block;
+  }
+  h1 .accent {
+    color: var(--color-orange-bright); /* #ff7400 exact match, node 1:25515's own "backing" span fill */
+  }
+
+  .lede {
+    max-width: 47.89rem; /* 766.26px, node 1:25516's own bounding width, matches H1's own column */
+    margin: 1.4325rem auto 4.06rem; /* 22.92px H1-bottom→lede-top; 64.95px lede-bottom→info-bar-top, both this page's own measurements */
+    font-family: var(--font-sans);
+    font-size: 1.9375rem; /* 31px — reused site-wide lede constant, see frontmatter comment */
+    line-height: 1.31;
+    color: var(--color-ink-alt);
+  }
+
+  .info-bar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 62.045rem; /* 992.72px, node 1:25367 */
+    margin-inline: 3.079rem 0; /* clears space for the badge's own left overhang (49.26px, see below) so the whole component still centers under the copy column */
+    border: 0.125rem solid var(--color-ink-alt); /* 2px, node 1:25368's own sampled stroke color; house convention for bordered pills (PillButton.ghost) uses the same 2px weight */
+    border-radius: 999px;
+    padding: 0 2.971rem 0 3.817rem; /* 47.53px right / 61.07px left, node 1:25369's own inset from the pill border (1:25368) */
+    min-height: 5.28rem; /* 84.51px, node 1:25368 */
+  }
+  .info-badge {
+    position: absolute;
+    left: -3.079rem; /* -49.26px, node 1:25504's own left edge vs the pill border's left edge (1:25368) — the badge overlaps the pill's left rounded end */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5.344rem; /* 85.5px diameter, node 1:25504 */
+    height: 5.344rem;
+    border-radius: 50%;
+    background: var(--color-orange);
+    border: 0.125rem solid var(--color-ink-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display); /* node 1:25507 reports Faculty Glyphic; genuinely serif on screenshot (matches the "i" glyph's own visible serif foot) */
+    font-size: 2.747rem; /* 43.95px, node 1:25507 */
+    color: var(--color-ink-alt); /* screenshot shows navy ink (matches the badge's own ring), not the wrapper-reported black */
+    flex-shrink: 0;
+  }
+  .info-text {
+    margin: 0;
+    max-width: 52.18rem; /* 834.86px, node 1:25369's own bounding width */
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* 20px — the site's established secondary-text size (Programs.astro precedent), consistent with this outlined paragraph's own ~2-line frame height */
+    line-height: 1.27;
+    color: var(--color-ink-alt);
+    text-align: left;
+  }
+
+  .scroll {
+    display: block;
+    position: relative;
+    z-index: 1;
+    margin: 3rem auto 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    h1 {
+      font-size: clamp(2.4rem, 7vw, 5rem);
+    }
+    .lede {
+      max-width: 90%;
+    }
+    .spark {
+      display: none; /* sanctioned adaptation, same rationale as Initiatives Hero: sparks drift onto copy below the design's own desktop breakpoint */
+    }
+    .info-bar {
+      /* Sanctioned adaptation (design is desktop-only): the wide fixed pill
+         can't survive a narrow viewport, so it collapses to a stacked card,
+         same treatment as Initiatives' own notice bar. */
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 90%;
+      margin-inline: auto;
+      border-radius: 1.5rem;
+      padding: 1.75rem 1.5rem;
+      gap: 1rem;
+    }
+    .info-badge {
+      position: static;
+      transform: none;
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .info-bar {
+      max-width: 100%;
+    }
+  }
+</style>
