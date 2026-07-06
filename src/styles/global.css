@@ -22,6 +22,20 @@
   --font-display: var(--font-faculty), Georgia, serif;
   --font-sans: var(--font-sora), system-ui, sans-serif;
 
+  /* Type scale — canonical values = the Home page's rendering (user directive
+     2026-07-06: home typography is the site-wide reference; supersedes
+     per-page Figma sizes for these roles). */
+  --text-hero-eyebrow: 1.25rem;      /* 20px  — home Hero eyebrow */
+  --text-hero-h1: 3.25rem;           /* 52px  — home Hero H1 (Figma 1:23/1:1876) */
+  --text-hero-h1-lh: 1.173;          /* 61/52 */
+  --text-hero-h1-fluid: clamp(2.1rem, 5vw, 3.25rem);  /* <1024 */
+  --text-hero-lede: 1.25rem;         /* 20px */
+  --text-hero-lede-lh: 1.4;          /* 28/20 */
+  --text-body-lg: 1.4375rem;         /* 23px — section paragraph (home CtaBand, wrap-verified) */
+  --text-body: 1.25rem;              /* 20px */
+  --text-body-sm: 1rem;              /* 16px */
+  --text-caption: 0.75rem;           /* 12px — sponsor captions */
+
   /* Layout */
   --container-gutter: clamp(1.25rem, 4vw, 5rem); /* .container's inline padding — extracted to a token (Initiatives Task 1) so Pillars' O1 bleed calc (src/components/home/Pillars.astro) can consume the identical value instead of duplicating the literal */
 }

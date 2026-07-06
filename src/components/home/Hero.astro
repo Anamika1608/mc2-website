@@ -117,7 +117,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   .eyebrow {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1.25rem; /* 20px */
+    font-size: var(--text-hero-eyebrow); /* 20px */
     /* Real page eyebrow is navy, verified against the page export (1:995/1:997) —
        corrects the plan/trial-frame value #676767 (trial node 1:26). */
     color: var(--color-ink-alt);
@@ -132,8 +132,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 3.25rem; /* 52px */
-    line-height: 1.173; /* 61/52 */
+    font-size: var(--text-hero-h1); /* 52px */
+    line-height: var(--text-hero-h1-lh); /* 61/52 */
     color: var(--color-ink-alt);
   }
   h1 .line {
@@ -148,8 +148,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     max-width: 38.8125rem; /* 621px */
     margin: 1.5rem auto 0;
     font-family: var(--font-sans);
-    font-size: 1.25rem; /* 20px */
-    line-height: 1.4; /* 28/20 */
+    font-size: var(--text-hero-lede); /* 20px */
+    line-height: var(--text-hero-lede-lh); /* 28/20 */
     /* Final-review fix: the plan's own transcription of the trial-frame
        paragraph node (1:27, native text — the real page's own paragraph is
        an outlined vector with no fill data to read) is `#1e1e3a`, i.e.
@@ -166,7 +166,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
 
   @media (max-width: 1023.98px) {
     h1 {
-      font-size: clamp(2.1rem, 5vw, 3.25rem);
+      font-size: var(--text-hero-h1-fluid); /* clamp(2.1rem, 5vw, 3.25rem) */
     }
     .lede {
       max-width: 90%;
