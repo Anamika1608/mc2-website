@@ -1,0 +1,338 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, node 1:23922. Filter chips + venture list.
+// Task 3: static markup only (all 50 rows rendered, everything visible in the
+// default All/All state) — filtering/hover interactivity is Task 4.
+//
+// Filter chips (get_metadata on content group 1:23924, y1185-1420; get_design_context
+// on 1:23936/1:24017 for chip anatomy): "BACKED BY" 1:24015 (y1185.38, real text)
+// and "SECTOR" 1:24198 (y1296.06, real text) each head a row of pill chips
+// (Group frames, h=38.51px uniform). Chip labels/counts are OUTLINED (no text
+// nodes found by name search) — copy verified via get_screenshot: chip order is
+// exactly BACKED BY[All 50, HPCL 6, ONGC 8, IndianOil 8, BPCL 9, GAIL 9 (selected,
+// orange fill), Oil India 7, Petronet 3] / SECTOR[All 50 (selected, orange),
+// Industrial AI 6, Robotics & Inspection 7, Carbon & Emissions 5, Hydrogen & Fuel
+// Cells 5, Sensors & IoT 4, Energy Storage 6, E-Mobility 7, Solar & Power 4,
+// Bio-energy 4, Water & Waste 2] — matches BACKERS/SECTORS from Task 1's
+// ventures.ts exactly, both order and counts. Unselected fill sampled #e8e6da
+// (--color-line, reused as a chip bg — not previously used this way, but an
+// exact token match); selected fill #f37d2c (--color-orange), white label.
+//
+// Venture rows (get_metadata y1451-1950 region on row 1 "H2E Power" + row 2
+// "Xyma Analytics"; get_design_context on the tag chip 1:24299 and description
+// group 1:24206): each row is BACKED-BY-tag (outlined pill, bordered navy,
+// "BACKED BY {BACKER}" — per-row, using that venture's OWN backer, verified via
+// the captured GAIL state showing "BACKED BY GAIL" on all 9 visible rows) +
+// hairline divider (0.87px, sampled fill #f37d2c — the divider itself is orange,
+// distinct from the tag's navy border) + spark (node 1:24203, Task 3 export
+// spark-row.svg, 60.78px, positioned straddling the divider's right end) above;
+// venture name (real text, e.g. 1:24205 "H2E Power") + sector (dot #959595 +
+// label, real text) below-left; description (outlined) + "Visit Page" (real
+// text, node 1:24318, orange, arrow via a plain glyph like the site's other
+// text-links, e.g. Initiatives Hero's notice-link) on the right. Name font-size
+// derived by cap-height ratio against the Hero H1 (known 80px/cap-height 62.06px
+// measured ratio 0.776): venture name cap-height measures 50.66px →
+// 50.66/0.776 = 65.3px, matching the site's own established 65px Faculty H2
+// scale (SectionHeading.astro) almost exactly — reused rather than a new value.
+// Row width (name-left-edge 221.87 to divider-right-end 1816.4) = 1594.53px,
+// narrower than `.container`'s own 1760px max-width — same "built-in row-width/
+// container-width mismatch" already accepted in Programs.astro; name/desc
+// column split (767.7/826.83 = 48.14%/51.86% of the row) reproduced as flex-
+// basis percentages of `.container` directly, accepting that same mismatch.
+//
+// Hover band (rounded-rect 1:23932, Task 1's hover-photo-xyma.png export):
+// markup placeholder only here — Task 4 adds the script + hover CSS.
+import { BACKERS, SECTORS, VENTURES } from "../../data/ventures";
+import SparkRow from "../../assets/portfolio/spark-row.svg";
+---
+
+<section class="explorer" aria-label="Venture explorer">
+  <div class="container">
+    <div class="filters">
+      <div class="filter-group">
+        <p class="filter-label">BACKED BY</p>
+        <div class="chip-row" role="group" aria-label="Filter by backer">
+          {
+            BACKERS.map((b) => (
+              <button
+                type="button"
+                class="chip"
+                data-filter="backer"
+                data-value={b.label}
+                aria-pressed={b.label === "All" ? "true" : "false"}
+              >
+                {b.label} <span class="count">{b.count}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="filter-group">
+        <p class="filter-label">SECTOR</p>
+        <div class="chip-row" role="group" aria-label="Filter by sector">
+          {
+            SECTORS.map((s) => (
+              <button
+                type="button"
+                class="chip"
+                data-filter="sector"
+                data-value={s.label}
+                aria-pressed={s.label === "All" ? "true" : "false"}
+              >
+                {s.label} <span class="count">{s.count}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <p class="results-count" aria-live="polite">Showing all {VENTURES.length} ventures</p>
+
+    <div class="rows">
+      {
+        VENTURES.map((v) => (
+          <article class="row" data-backer={v.backer} data-sector={v.sector}>
+            <div class="row-divider" aria-hidden="true">
+              <span class="row-tag">Backed by {v.backer}</span>
+              <SparkRow class="row-spark" />
+            </div>
+            <div class="row-body">
+              <div class="row-main">
+                <h3 class="row-name">{v.name}</h3>
+                <p class="row-sector">
+                  <span class="dot" aria-hidden="true" />
+                  {v.sector}
+                </p>
+              </div>
+              <div class="row-side">
+                <p class="row-desc">{v.desc}</p>
+                {v.url ? (
+                  <a href={v.url} class="row-link" target="_blank" rel="noopener">
+                    Visit Page <span aria-hidden="true">&rarr;</span>
+                  </a>
+                ) : (
+                  <span class="row-link">
+                    Visit Page <span aria-hidden="true">&rarr;</span>
+                  </span>
+                )}
+              </div>
+              <div class="row-hover" aria-hidden="true" />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <p class="empty-state" hidden>No ventures in this combination yet.</p>
+  </div>
+</section>
+
+<style>
+  .explorer {
+    background: var(--color-cream);
+    padding-block: 2rem 6rem;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem; /* eyebrow-to-chip-row gap, node 1:24015/1:24016 (1185.38+24=1209.38 to chip-row top 1221.33 ~ tight; using the site's established eyebrow gap scale) */
+  }
+  .filter-label {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: var(--color-ink-alt);
+    font-weight: 600;
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem; /* chip-to-chip gap, approximate from row metadata */
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    height: 2.407rem; /* 38.51px, uniform chip height across both filter rows */
+    padding-inline: 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--color-line); /* #e8e6da sampled exactly, node metadata */
+    color: var(--color-ink-alt);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chip .count {
+    font-weight: 400;
+    color: var(--color-gray);
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--color-orange);
+    color: var(--color-white);
+  }
+  .chip[aria-pressed="true"] .count {
+    color: var(--color-white);
+    opacity: 0.85;
+  }
+
+  .results-count {
+    margin: 2.5rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-gray);
+  }
+
+  .rows {
+    margin-top: 1rem;
+  }
+
+  .row {
+    position: relative;
+    padding-block: 2.5rem 2rem;
+  }
+  .row-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 1px;
+    background: var(--color-orange); /* 0.87px hairline, sampled #f37d2c */
+    margin-bottom: 2.7rem; /* divider-to-name gap, node measurement (~62.89px) */
+  }
+  .row-tag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 2.407rem; /* 38.51px, same uniform pill height as filter chips */
+    padding-inline: 1.5rem;
+    margin-inline-start: 0;
+    border: 0.125rem solid var(--color-ink-alt);
+    border-radius: 999px;
+    background: var(--color-cream);
+    color: var(--color-ink-alt);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .row-spark {
+    position: absolute;
+    right: 4rem; /* approximate inset from the row's own right edge, node 1:24203 */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.8rem; /* 60.78px */
+    height: 3.8rem;
+    pointer-events: none;
+  }
+
+  .row-body {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem 3rem;
+  }
+  .row-main {
+    flex: 1 1 48%;
+    min-width: 18rem;
+  }
+  .row-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px — matches the site's established Faculty H2 scale, see frontmatter derivation */
+    line-height: 1.07; /* site-wide constant for 65px Faculty text */
+    font-weight: 400;
+    color: var(--color-ink-alt);
+  }
+  .row-sector {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.7rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-gray);
+  }
+  .row-sector .dot {
+    width: 0.7rem; /* 11.94px, node 1:24316 */
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--color-gray); /* #959595 sampled */
+    flex-shrink: 0;
+  }
+
+  .row-side {
+    flex: 1 1 51%;
+    min-width: 18rem;
+    padding-top: 0.6rem;
+  }
+  .row-desc {
+    margin: 0;
+    max-width: 42rem; /* 671.88px, node 1:24206's own bounding width */
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* the site's established secondary-text size */
+    line-height: 1.4;
+    color: var(--color-ink-alt);
+  }
+  .row-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-orange); /* real text node 1:24318, orange fill */
+    text-decoration: none;
+  }
+  .row-link:hover {
+    text-decoration: underline;
+  }
+
+  .row-hover {
+    /* Task 4 fills this in: absolutely-positioned dark band + Xyma photo on
+       hover/focus-within, per node 1:23932. Empty in this static-markup task. */
+    display: none;
+  }
+
+  .empty-state {
+    margin: 3rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-gray);
+    text-align: center;
+  }
+
+  @media (max-width: 1023.98px) {
+    .row-main,
+    .row-side {
+      flex: 1 1 100%;
+    }
+    .row-name {
+      font-size: clamp(2.4rem, 6vw, 4.0625rem);
+    }
+    .row-spark {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .row-tag {
+      font-size: 0.875rem;
+      padding-inline: 1rem;
+    }
+    .row-desc,
+    .row-link {
+      font-size: 1.0625rem;
+    }
+  }
+</style>
