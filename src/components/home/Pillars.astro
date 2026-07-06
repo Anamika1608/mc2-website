@@ -251,7 +251,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px, all four cards (1:1070 etc.) */
     background: var(--color-cream);
-    padding: 0.8rem 1.47rem 1.5rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards) */
+    padding: 0.8rem 1.47rem 1rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards); bottom trimmed from 1.5rem (round 8, per direct feedback: every card carries this same fixed padding regardless of content, so shaving it here reduces the leftover space below every card's icon once the shared active height is refitted, see .pillars-row's comment) */
     /* Round 3 (per direct feedback — rounds 1 and 2 both still shook the page and
        looked nothing like the original design): every card, collapsed, now shares
        ONE short min-height — O1's own original value (6.5663rem/105px, "title
@@ -393,9 +393,11 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     padding-left: 2.3rem; /* body-text inset (74.62px) minus the divider's own inset (37.82px) */
     /* Round 3 (direct feedback: give the text below the horizontal rule some top
        breathing room) — this used to be 0, so the body text's own line-height
-       started flush against the divider/rule with no gap at all. */
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+       started flush against the divider/rule with no gap at all. Kept (just
+       trimmed slightly) in round 8 — the bottom padding below is where that
+       round's leftover-space reduction actually comes from, not this. */
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem; /* trimmed from 1rem (round 8) — see .card's own comment above */
     border-left: 0.125rem solid var(--color-ink-alt);
     display: none;
   }
@@ -404,7 +406,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
   }
 
   .card-body {
-    margin: 0 0 1rem;
+    margin: 0 0 0.6rem; /* bottom trimmed from 1rem (round 8) — see .card's own comment */
     max-width: 15.5rem; /* approximates the design's line breaks (outlined vectors, no text node — sized off the screenshot's 5-line wrap) */
     font-family: var(--font-sans);
     /* Body copy is outlined vectors in Figma (no text-node metrics). Size
