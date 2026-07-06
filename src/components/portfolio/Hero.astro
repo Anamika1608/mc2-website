@@ -157,7 +157,18 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   .hero-inner {
     position: relative;
     z-index: 1;
-    max-width: 51rem; /* 47.89rem (766.26px, H1/lede's own shared column width, nodes 1:25512/1:25516) + safety buffer, same technique as other Hero.astro's buffer-above-widest-line */
+    /* Was 51rem (sized only for H1/lede's own 766.26px column). The info-bar
+       (node 1:25367) is measurably WIDER — 992.72px — and since .info-badge is
+       position:absolute (removed from flex flow) plus .info-bar's own 49.26px
+       left margin reserving room for the badge overhang, a 51rem wrapper only
+       left 726.75px available (measured live), squeezing the info-bar's text
+       to 3 lines instead of Figma's 2 and making the correctly-sized badge
+       read as oversized next to a visibly cramped pill. 67.65rem clears
+       992.72 + 49.26(margin) + 40(padding) = 1081.98px with a small buffer;
+       H1's lines are pre-broken per-line spans and .lede has its own
+       independent max-width+auto margins, so neither is affected by widening
+       this shared wrapper. */
+    max-width: 67.65rem;
     margin-inline: auto;
     padding-inline: 1.25rem;
     text-align: center;
@@ -204,10 +215,19 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     position: relative;
     display: inline-flex;
     align-items: center;
-    max-width: 62.045rem; /* 992.72px, node 1:25367 */
+    width: 62.045rem; /* 992.72px, node 1:25367 — was max-width only, which let the bar shrink-to-fit its content (text+padding, ~944px) below Figma's fixed box size since inline-flex never grows past what content needs; explicit width forces the exact figma size regardless */
+    max-width: 100%;
     margin-inline: 3.079rem 0; /* clears space for the badge's own left overhang (49.26px, see below) so the whole component still centers under the copy column */
     border: 0.125rem solid var(--color-ink-alt); /* 2px, node 1:25368's own sampled stroke color; house convention for bordered pills (PillButton.ghost) uses the same 2px weight */
-    border-radius: 999px;
+    /* Asymmetric, not a uniform stadium shape: the pill's raw SVG path (node
+       1:25368) shows a full semicircular cap on the right (radius 42.5, half
+       the pill height) but a distinctly SMALLER, tighter curve on the left
+       (~36.24px radius) — the pill's own left edge is shaped to nest around
+       the badge circle, not a plain rounded end. border-radius:999px on both
+       corners (a normal pill) left the true corner curve peeking out past the
+       badge in a screenshot comparison; matching the tighter left radius
+       tucks it fully behind the badge instead. */
+    border-radius: 2.265rem 999px 999px 2.265rem;
     padding: 0 2.971rem 0 3.817rem; /* 47.53px right / 61.07px left, node 1:25369's own inset from the pill border (1:25368) */
     min-height: 5.28rem; /* 84.51px, node 1:25368 */
   }
@@ -233,7 +253,13 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     margin: 0;
     max-width: 52.18rem; /* 834.86px, node 1:25369's own bounding width */
     font-family: var(--font-sans);
-    font-size: 1.25rem; /* 20px — the site's established secondary-text size (Programs.astro precedent), consistent with this outlined paragraph's own ~2-line frame height */
+    /* 20px matches node 1:25369's own cap-height exactly (re-verified via get_metadata
+       glyph heights, ~13.76px caps / 0.7 ratio ≈ 19.7px), and the box is Figma-exact
+       834.86px — but at 20px, this site's Sora rendering wraps to 3 lines instead of
+       Figma's 2 (a real web-font-metric difference, not a wrong number: Figma's own
+       glyphs fit 2 lines at this exact width). Tested 20/19/18.5/18px directly via
+       Playwright line-count; 19px is the first size that reproduces the 2-line wrap. */
+    font-size: 1.1875rem; /* 19px */
     line-height: 1.27;
     color: var(--color-ink-alt);
     text-align: left;
