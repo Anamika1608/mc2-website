@@ -63,13 +63,16 @@ const STATS = [
 <style>
   .scale {
     background: var(--color-cream);
-    /* Figma gap Scale-top (3409.04, node 1:9173 — the full section incl. the
-       stat-cards group 1:9305, not just the heading sub-group 1:9174) −
-       Sponsor-bottom (3221.27, node 1:8931) ≈ 187.77px = 11.74rem. Bottom:
-       Footer-top (4103) − Scale-bottom (4033.50, node 1:9173) ≈ 69.5px =
-       4.34rem — Scale is the last section before the footer, so it owns both
-       edges of its surrounding gaps. */
-    padding-block: 11.74rem 4.34rem;
+    /* Was 11.74rem, treating the full Scale-top(3409.04) − Sponsor-bottom
+       (3221.27) gap as this section's own padding. That double-counted: a
+       spark (node 1:9495) sits inside that same 187.77px gap, ~63px below
+       the pills and ~75px above this section's own eyebrow — its size/margin
+       are now accounted for on SponsorStrip's own .divider-spark, so this
+       padding should only cover the remaining spark-to-eyebrow portion:
+       75.0px = 4.6875rem. Bottom: Footer-top (4103) − Scale-bottom (4033.50,
+       node 1:9173) ≈ 69.5px = 4.34rem — Scale is the last section before the
+       footer, so it owns both edges of its surrounding gaps. */
+    padding-block: 4.6875rem 4.34rem;
     text-align: center;
   }
 

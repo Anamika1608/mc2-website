@@ -146,15 +146,15 @@ const SPONSORS = [
     flex-wrap: wrap;
   }
 
-  /* No exact position/size could be confirmed for the spark: get_screenshot on
-     1:8931 crops flush to the pills at its bottom edge, so the spark (visually
-     "below the pills" per the brief) sits outside this node's own bounding box
-     in the Figma file and wasn't reachable via this section's node id. Kept at
-     the starter template's conservative decorative size/spacing. */
+  /* Found via the parent frame's metadata (node 1:9495, x935.23 y3284.5
+     w49.54 h49.54, centered on the 1920px canvas) — previously unreachable
+     because get_screenshot on 1:8931 cropped flush to the pills, so this was
+     guessed at 1.5rem/2rem. Real size is 49.54px = 3.1rem; real gap from the
+     pills' bottom (3221.27) to the spark's top (3284.5) is 63.23px = 3.95rem. */
   .divider-spark {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: 2rem auto 0;
+    width: 3.1rem;
+    height: 3.1rem;
+    margin: 3.95rem auto 0;
   }
 
   @media (max-width: 1023.98px) {
