@@ -1,0 +1,627 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, region y2239.6-2846.8 (node group "1:15778", the
+// giant content group, direct children — no wrapping "Programs section" group and no
+// eyebrow/H2 exists for this region: get_metadata found no text nodes between
+// HowItWorks' own chevron (1:16816, bottom y2086.17) and the first card's own top
+// (y2239.6-2239.9) — the stack starts directly, unlike Hero/HowItWorks which both have
+// a SectionHeading).
+//
+// FOUR program cards (O1-O4) OVERLAP HORIZONTALLY like a fan of folders, all sharing the
+// same top y (2239.6-2239.9, 0.3px jitter) and the same height (606.86-607.13px, same
+// jitter) — a single row, NOT the bottom-aligned "waterfall" of differing heights used by
+// HowItWorks/Pillars. Card frames + their REAL (unclipped) border/fill vector, downloaded
+// as raw SVG per card (get_design_context flattens these to <img>, so only
+// download_assets exposes the actual path + stroke color):
+//   O1 (frontmost, fully visible): frame 1:16449 (x122.47, incl. decorative spark below),
+//     card border/fill 1:16451 x190.15 w572.54 stroke="#F37D2C" (orange)
+//   O2: frame 1:16405 x639.68, border 1:16447 w533.12 stroke="#1E1E3C" (navy), OPEN path
+//     (left/bottom edges omitted in the source — already hidden behind O1, never drawn)
+//   O3: frame 1:15781 x1058.18, border 1:15817 — reports w659.82 on the GROUP but the
+//     border/fill vector's OWN width is only 468.97 (x1058.18-1527.15): O3's real card
+//     stops there, which is why O4 peeks out to its own right past that point. stroke
+//     navy, open path.
+//   O4: frame 1:15820 x1412.28, border 1:15826 w305.72, stroke navy, open path.
+// Z-order (front-to-back) O1 > O2 > O3 > O4, evidenced by the border paths themselves
+// (the source cards are all fill="none", so fill stacking proves nothing — an earlier
+// revision of this comment wrongly claimed it did): every rear card's outline is an OPEN
+// path omitting exactly the edges hidden behind its front neighbor. O2 (1:16447,
+// `M0 1H418.5L437.57 88.96H533.12V607.86H111.93`) omits its left edge and the bottom run
+// x<111.93 (hidden behind O1, which overlaps to x123); O3 (1:15817) omits left + bottom
+// x<114.62 (= O2's overlap exactly); O4 (1:15826) omits left + bottom x<113.74 (≈ O3's
+// 114.87px overlap); O1 (1:16451) alone is a complete closed outline (`...Z`) — nothing
+// sits in front of it.
+// Reproduced here with REAL DOM stacking (z-index + negative-margin overlap from the
+// measured geometry below) — each card gets its OWN complete rectangle border; the
+// occlusion emerges naturally because the front card's opaque `--color-cream` background
+// paints over the back card's extra edge, exactly like the source file's own open paths
+// (which just never bothered drawing the part that's permanently hidden). Nothing here is
+// pre-clipped text.
+//
+// Row-relative percentages (same technique as Pillars'/HowItWorks' own "gap: X% of the
+// design's own row width" — applied to a flex row that fills 100% of `.container`,
+// accepting the same built-in row-width/container-width mismatch those precedents already
+// ship with). Row span = O1's card-left (190.15) to O4's card-right (1718.0) = 1527.85px:
+//   O1 width 572.54/1527.85 = 37.47%      | z-index 4
+//   O2 width 533.12/1527.85 = 34.90%      | z-index 3 | margin-left -8.05%  (overlap 123.01px = O1 right 762.69 - O2 left 639.68)
+//   O3 width 468.97/1527.85 = 30.69%      | z-index 2 | margin-left -7.50%  (overlap 114.62px = O2 right 1172.8 - O3 left 1058.18)
+//   O4 width 305.72/1527.85 = 20.01%      | z-index 1 | margin-left -7.52%  (overlap 114.87px = O3 real-right 1527.15 - O4 left 1412.28)
+// (widths sum to 123.07%; minus the three overlaps = 100.00% exactly — the row fills
+// `.container` edge to edge with no remainder, unlike the design's own small asymmetric
+// insets against its page canvas, an accepted simplification.)
+import SparkFlourishO1 from "../../assets/initiatives/spark-flourish-o1.svg";
+
+// Corner "flag" cut — the top-right corner of EVERY card (O1-O4 alike) is carved AWAY by
+// a short diagonal (all four raw border paths: e.g. O1's `H458.921 L477.991 89.5801
+// H573.542` — top edge stops 114.62px before the right edge, diagonal 19.07px right over
+// a ~88px drop, flat stub to the right edge, then down). The offsets are IDENTICAL across
+// all four cards regardless of their differing widths (114.62px cut start / 95.55px cut
+// end / 19.07px diagonal span, all from each card's own right edge); only the depth
+// jitters (89.58/88.96/86.76/86.96px), unified to the 88.07px mean — HowItWorks' V-tab
+// jitter-averaging precedent.
+//
+// CRITICAL (fix round 1): the notch is a real CUTOUT — a WINDOW through which the card
+// behind shows — not a decorative corner drawing. Evidence: (a) the border paths above
+// literally exclude the corner region from each card's shape; (b) O2's numeral (1:16438,
+// canvas x676.1-762.1) sits entirely INSIDE O1's notch region (x648.07-762.69) and is
+// fully visible in the composite; (c) O2's notch left edge (1172.8-114.62 = 1058.18)
+// equals O3's card-left EXACTLY — the design aligned the window to frame the next card's
+// corner; (d) O4's header fragment ("TED,/H-STAGE CAPITAL", mask window x1418.55-1604.06)
+// sits inside O3's notch (x1412.53-1527.15) + the strip beyond O3. An earlier revision
+// drew the flag as an opaque cream rect + diagonal, which wrongly COVERED the rear card's
+// content (garbling O4's header) and hid O2/O3's numerals.
+// Construction: clip-path on .card cuts the notch out of the card's own box (removing
+// background AND the CSS border's corner in one stroke — rear card shows through the
+// void), and this stroke-only overlay redraws the two border segments the clip leaves
+// unpainted (diagonal + flat stub) — the polygon boundary in the .card rule below runs
+// along this stroke's OUTER edge (centerline +1px outward) so the 2px stroke survives the
+// clip intact. Same two-path split philosophy as HowItWorks' vTab()/Pillars' notch().
+// SVG box (see .card-flag CSS): right edge on the border-box's own right edge, top on
+// its top edge, width = the card's own --cut percentage + 1px, so the viewBox's x axis
+// stretches by exactly the same factor as the %-based clip polygon (they're derived from
+// the same design px over the same card width) — svg-local x1 lands on the diagonal
+// centerline start, y1 on the top border centerline, and the stub ends at svg x114.62 =
+// right border centerline (W-1). y is never scaled (fixed CSS height = viewBox height).
+// vector-effect keeps the stroke a true 2px on screen despite the anisotropic x-stretch.
+function cornerFlag(stroke: string) {
+  return `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 1 L20.07 88.07 H114.62" stroke="${stroke}" stroke-width="2" fill="none" vector-effect="non-scaling-stroke" />
+  </svg>`;
+}
+const FLAG_ORANGE = cornerFlag("#F37D2C");
+const FLAG_NAVY = cornerFlag("#1E1E3C");
+---
+
+<section class="programs">
+  <div class="container">
+    <div class="programs-row">
+      <!--
+        O1 "Grand Challenges" — fully visible, front-most card. Verbatim per brief/plan:
+        header 1:16456 ("O1" 1:16495, real text, 57.58px Faculty/orange) + outlined
+        2-line label (1:16457, screenshot-verified "FOR RESEARCHERS" / "SOLVING INDUSTRY
+        PROBLEMS", plain sans on zoom despite Figma reporting Faculty on the wrapper —
+        same wrapping-group-misreports-font correction used site-wide); title 1:16781
+        "Grand Challenges" (real text, 50.89px Faculty, #F37D2C); subtitle 1:16782
+        (outlined, screenshot "ENERGY-MAJOR-DEFINED PROBLEM BRIEFS"); body 1:16497
+        (outlined, the exact paragraph below); three chips 1:16723/1:16738/1:16761, all
+        confirmed FULLY visible (no truncation) via a fresh get_design_context render of
+        the whole card group (1:16496) — "THEMED BRIEFS", "CASH AWARDS + PILOTS",
+        "OPERATING-SITE ACCESS", pill fill #F37D2C (node 1:16724's own raw SVG), white text.
+        Decorative spark (1:16453, x122.47 — 67.68px left of the card's own left edge,
+        67.68 = two paths: a thin flourish line + a 4-point sparkle, both fill #F37D2C) —
+        a Task-1 asset-audit gap (Task 1's report explicitly said "no other spark/starburst
+        nodes found on programs/CTA/how-it-works," missed because it's scattered outside
+        O1's own card frame like the other occlusion-adjacent content on this page) —
+        exported now as `spark-flourish-o1.svg`, cited here since it's this task's find.
+      -->
+      <article class="card card--o1">
+        <SparkFlourishO1 class="o1-spark" aria-hidden="true" />
+        <div class="card-head">
+          <p class="card-num">O1</p>
+          <p class="card-label">
+            <span class="line">FOR RESEARCHERS</span>
+            <span class="line">SOLVING INDUSTRY PROBLEMS</span>
+          </p>
+        </div>
+        <h3 class="card-title">Grand Challenges</h3>
+        <p class="card-subtitle">ENERGY-MAJOR-DEFINED PROBLEM BRIEFS</p>
+        <p class="card-body">
+          Real problems, posted by the people who own the assets. Energy majors
+          publish challenge briefs tied to live operational needs, and
+          researchers solving a specific, industry-relevant problem respond.
+          Winners earn pilots, awards and a fast track into the Accelerator.
+        </p>
+        <div class="card-footer">
+          <div class="chips">
+            <span class="chip">Themed briefs</span>
+            <span class="chip">Cash awards + pilots</span>
+            <span class="chip">Operating-site access</span>
+          </div>
+        </div>
+        <Fragment set:html={FLAG_ORANGE} />
+      </article>
+
+      <!--
+        O2 "Entrepreneur-in-Residence" — tucked behind O1. Header 1:16406 ("O2" 1:16438
+        real text, navy + outlined label, screenshot-verified in full since it sits ABOVE
+        the overlap zone: "FOR FOUNDERS" / "BUILDING FROM SCRATCH", matches brief exactly,
+        not truncated). Title: TWO real text nodes 1:16444 "Entrepreneur-" / 1:16445
+        "in-Residence" (both full strings straight from the node data regardless of the
+        visual clip showing only "ntrepreneur-" / "-Residence" — real text nodes always
+        carry their own complete `characters` string independent of any mask). Chips: the
+        visible composite showed only fragments ("…20 FELLOWS A YEAR", "…+ SEED",
+        "LAB RESIDENCY"); recovered FULL strings by downloading the raw content asset
+        behind each chip's clip mask directly (bypassing get_design_context's
+        already-mask-flattened preview image) and rendering it standalone — the underlying
+        vector art extends well past the visible clip window in every case:
+          chip 1:15867/1:15869 (asset content, viewBox 0 0 276.55×13.97) → "AROUND 20 FELLOWS A YEAR"
+          chip 1:15890/1:15892 (viewBox 0 0 147.21×13.95) → "STIPEND + SEED"
+          chip 1:15905/1:15907 (viewBox 0 0 146.33×13.97) → "LAB RESIDENCY" (already fully visible)
+        Pill fill confirmed #F3F2EB (node 1:15868's own raw SVG path) — i.e. exactly
+        `--color-cream`, navy text; these three chips sit in group 1:15862 (x764.96,
+        entirely within O2's own unoccluded band x639.68-1172.8, confirming card membership
+        by geometry even though the XML nests them as siblings elsewhere in the tree, same
+        "scattered by clip region, not by logical card" pattern as O1's own "Accelerator"
+        word sitting inside O3's node subtree). No body paragraph exists for O2 in the file
+        (its card frame 1:16405 has exactly 3 children: header row, title clip, border —
+        nothing else) — not an extraction failure, genuinely absent from the source.
+      -->
+      <article class="card card--o2">
+        <div class="card-head">
+          <p class="card-num">O2</p>
+          <p class="card-label">
+            <span class="line">FOR FOUNDERS</span>
+            <span class="line">BUILDING FROM SCRATCH</span>
+          </p>
+        </div>
+        <h3 class="card-title card-title--split">
+          <span class="line">Entrepreneur-</span>
+          <span class="line">in-Residence</span>
+        </h3>
+        <div class="card-footer">
+          <div class="chips">
+            <span class="chip">Around 20 fellows a year</span>
+            <span class="chip">Stipend + seed</span>
+            <span class="chip">Lab residency</span>
+          </div>
+        </div>
+        <Fragment set:html={FLAG_NAVY} />
+      </article>
+
+      <!--
+        O3 "Accelerator" — tucked behind O2. Header 1:15782 (outlined, screenshot-verified
+        in full: "EXISTING VENTURES" / "READY TO SCALE", above the overlap zone, matches
+        brief). Title 1:15815 "Accelerator" (real text, 50.89px, navy — confirmed by a
+        direct get_design_context render of 1:15811, its own clip-path group). Chips
+        (group 1:15920, x1174.82, O3's own unoccluded band 1172.8-1412.28): visible
+        fragments were "…RES", "SIX MONTHS", "…L" — same raw-asset-download recovery:
+          chip 1:15925/1:15927 (viewBox 0 0 167.09×13.97) → "8 TO 12 VENTURES" ("VENTU-RES")
+          chip 1:15941/1:15943 (viewBox 0 0 147.76×13.96) → "SIX MONTHS" (already fully visible)
+          chip 1:15957/1:15959 (viewBox 0 0 118.3×13.97) → "PILOT + CAPITAL" ("CAPITA-L")
+        No body paragraph in the source (card frame 1:15781 has exactly 4 children: header
+        vector, the Accelerator clip group, border, "O3" text — nothing else).
+      -->
+      <article class="card card--o3">
+        <div class="card-head">
+          <p class="card-num">O3</p>
+          <p class="card-label">
+            <span class="line">EXISTING VENTURES</span>
+            <span class="line">READY TO SCALE</span>
+          </p>
+        </div>
+        <h3 class="card-title">Accelerator</h3>
+        <div class="card-footer">
+          <div class="chips">
+            <span class="chip">8 to 12 ventures</span>
+            <span class="chip">Pilot + capital</span>
+            <span class="chip">Six months</span>
+          </div>
+        </div>
+        <Fragment set:html={FLAG_NAVY} />
+      </article>
+
+      <!--
+        O4 "Energy" — backmost card, tucked behind O3 (O3's real card only spans to local
+        x468.97 = design x1527.15, so O4's own right ~191px sits past that and is never
+        covered by anything). Title 1:15825 "Energy" (real text, 50.89px, navy) — its OWN
+        bbox width (170px) exactly matches just this one word, confirming the FULL title
+        really is the single word "Energy", not a truncation (brief's "…nergy" fragment
+        fully resolved). Header: the visible fragment was "…TED, / H-STAGE CAPITAL"
+        (node 1:15827's clip mask). get_design_context on the card flattens this to an
+        already-clipped raster image (same as the visible fragment — no better than the
+        composite), so recovered it the same way as the O2/O3 chips: downloaded the RAW
+        content asset behind the mask directly and rendered it standalone. Its own viewBox
+        (0 0 236.29×38.84 — much wider than the ~76px visible remainder) contains the FULL
+        two-line header: "AFFILIATED, GROWTH-STAGE CAPITAL".
+        Fix round 1 — O4's header LAYOUT is also unique in the source: the label content
+        (1:15831, canvas x1356.1-1592.4 from its own inset percentages, cross-checked
+        against the mask-position offset 1418.55-62.4 = 1356.15) starts 56.2px LEFT of
+        O4's own card border (x1412.28) and there is no numeral beside it — the label
+        occupies the numeral's usual spot and hangs out under O3. Its right end (card-
+        local 180.1) stops ~11px short of O4's own notch cut (191.1). Reproduced at
+        desktop as an absolutely-positioned nowrap 2-line label at those exact offsets:
+        O3's opaque card covers the left overhang (like the source's mask edge at
+        card-local 6.3, ±6px), O3's notch window reveals the "TED,/H-STAGE CAPITAL" band,
+        and O4's own clip-path cuts anything crossing its own notch — all emergent, no
+        pre-clipped text.
+        "O4" numeral: UNRECOVERABLE — no text or vector node bearing this content exists
+        anywhere in the file. The label geometry above occupies the numeral's expected
+        position, i.e. the source genuinely never drew one (its spot is taken), rather
+        than it being lost in import. Kept in the markup as literal "O4" text — completing
+        the self-evident sequential label (O1, O2, O3, O4), same category of fix as
+        HowItWorks' O3 body-copy completion, not invented copy — but visibility:hidden in
+        the desktop collage (≥1024): the composite shows NO numeral there, and rendering
+        one would both diverge from the composite and overprint the source-positioned
+        label. It shows in the <1024 unstacked layout, where each card presents its full
+        readable pattern. (visibility, not display, so O4's header keeps the same flex
+        height as the other cards' heads and the title row stays aligned.)
+        No body paragraph in the source (card frame 1:15820 has exactly 3 children: the
+        Energy clip group, border, header clip — nothing else, and no chips group was
+        found in this card's unoccluded band either).
+      -->
+      <article class="card card--o4">
+        <div class="card-head">
+          <p class="card-num">O4</p>
+          <p class="card-label">
+            <span class="line">AFFILIATED,</span>
+            <span class="line">GROWTH-STAGE CAPITAL</span>
+          </p>
+        </div>
+        <h3 class="card-title">Energy</h3>
+        <Fragment set:html={FLAG_NAVY} />
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .programs {
+    background: var(--color-cream);
+    /* Canvas fill sampled directly (1:15780, the page's own background vector) is
+       #F2F1E9 — 1-2 units off `--color-cream` (#F3F2EB) in every channel, within this
+       file's usual Illustrator-import rounding noise (not a deliberate distinct shade).
+       Hero.astro/HowItWorks.astro both already paint their own section backgrounds as
+       `--color-cream` rather than this raw sample, so this section matches its neighbors
+       instead of introducing a barely-perceptible seam. */
+    overflow-x: hidden; /* contains the O1 spark's small left bleed, see .o1-spark below */
+    /* Placeholder pending Task 6's whole-page pass (CtaBand, the next section, isn't
+       built yet to measure the real gap against) — same "reconciled later" pattern as
+       HowItWorks' own padding-bottom. Gap from HowItWorks' chevron bottom (1:16816,
+       y2086.17) to this row's own top (y2239.6-2239.9) is ~153px; HowItWorks already
+       contributes 6rem/96px of that via its own padding-bottom, leaving ~57px here. */
+    padding-top: 3.59rem;
+    padding-bottom: 6rem;
+  }
+
+  .programs-row {
+    display: flex;
+    align-items: flex-start; /* all four cards share one top y in the design — no bottom-alignment waterfall needed here, unlike HowItWorks/Pillars */
+  }
+
+  .card {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border: 0.125rem solid var(--color-ink-alt); /* 2px navy default; O1 overrides to orange below */
+    background: var(--color-cream);
+    min-height: 37.93rem; /* 606.86px, shared by all four cards' own frames (606.86-607.13px jitter) */
+    /* The corner-flag notch as a REAL cutout (see cornerFlag() frontmatter comment for
+       the full evidence that it's a window, not a drawing). This polygon removes the
+       top-right notch from the card — background, border corner and any content crossing
+       it (e.g. O4's source-positioned header label) all clip at the cut, and the card
+       behind shows through the void, which is what makes the rear numerals/header
+       fragments visible exactly as in the composite.
+       --cut/--cut-end hold the design's own cut offsets (114.62px/95.55px from each
+       card's right edge) as PERCENTAGES of each card's own design width (values in the
+       per-card rules below) rather than fixed px: the cards are %-of-row columns that
+       compress with the viewport, and a fixed-px notch on a shrinking card ate a growing
+       share of it (39% of O3 at 1024 vs the design's 24%), pushing the cards' own header
+       labels through their own notch. As percentages the notch compresses in lockstep
+       with its card, so every text-vs-notch relationship measured at 1920 holds across
+       the desktop range (fonts scale with vw, cards with row %, both ~linear in
+       viewport). At 1920 the percentages reproduce the design px exactly.
+       Boundary = the redrawn stroke's OUTER edge (design centerline +1px outward,
+       small-angle approximation; stub edge 87.07 = 88.07-1). The overlay stroke in
+       .card-flag below is centered 1px inside this line, so the clip leaves it intact
+       (the fixed 1px offset vs the scaled geometry drifts sub-pixel, ~0.4px at 1024 —
+       absorbed by anti-aliasing). The -80px/+2px outer points keep everything else
+       unclipped, including O1's spark overhanging at -67.68px and both borders. */
+    --cut: 114.62px; /* fallback (also restored <1024 where cards are full-width) */
+    --cut-end: 95.55px;
+    clip-path: polygon(
+      -80px -2px,
+      calc(100% - var(--cut) + 1px) -2px,
+      calc(100% - var(--cut-end) + 1px) 87.07px,
+      calc(100% + 2px) 87.07px,
+      calc(100% + 2px) calc(100% + 2px),
+      -80px calc(100% + 2px)
+    );
+  }
+  /* Per-card notch percentages: 114.62px and 95.55px over each card's own design width
+     (572.54 / 533.12 / 468.97 / 305.72 — the flag offsets are constant px in the design,
+     so the narrower the card, the larger its notch share). */
+  .card--o1 {
+    width: 37.47%; /* 572.54 / 1527.85px row span, see frontmatter */
+    z-index: 4;
+    border-color: #f37d2c;
+    --cut: 20.02%; /* 114.62 / 572.54 */
+    --cut-end: 16.689%; /* 95.55 / 572.54 */
+  }
+  .card--o2 {
+    width: 34.9%; /* 533.12 / 1527.85px */
+    z-index: 3;
+    margin-left: -8.05%; /* 123.01px overlap with O1 */
+    --cut: 21.5%; /* 114.62 / 533.12 */
+    --cut-end: 17.923%; /* 95.55 / 533.12 */
+  }
+  .card--o3 {
+    width: 30.69%; /* 468.97 / 1527.85px — O3's own real card width, not the group's inflated bbox */
+    z-index: 2;
+    margin-left: -7.5%; /* 114.62px overlap with O2 */
+    --cut: 24.441%; /* 114.62 / 468.97 */
+    --cut-end: 20.374%; /* 95.55 / 468.97 */
+  }
+  .card--o4 {
+    width: 20.01%; /* 305.72 / 1527.85px */
+    z-index: 1;
+    margin-left: -7.52%; /* 114.87px overlap with O3's real (not group) right edge */
+    --cut: 37.492%; /* 114.62 / 305.72 */
+    --cut-end: 31.254%; /* 95.55 / 305.72 */
+  }
+
+  /* Corner-flag stroke overlay (see cornerFlag() frontmatter comment for the cutout
+     construction). Fixed px, anchored to the card's own top-right corner regardless of
+     the card's fluid width — the notch's offsets-from-right-edge are constant in the
+     design regardless of card width, so % sizing would wrongly stretch it. Absolute
+     children position against the PADDING box, so -0.125rem (the border width) puts the
+     svg's top/right edges on the border-box's own outer edges — giving the svg-local ↔
+     border-box mapping the frontmatter comment derives. */
+  .card :global(.card-flag) {
+    position: absolute;
+    top: -0.125rem;
+    right: -0.125rem;
+    width: calc(var(--cut) + 1px); /* the card's own notch % + the 1px centerline inset — x-stretches the viewBox by the same factor as the clip polygon, see frontmatter */
+    height: 5.6294rem; /* 90.07px, fixed: card heights don't scale, only widths do */
+    pointer-events: none;
+  }
+
+  /* O1's decorative spark (see frontmatter comment) — positioned so its own right edge
+     (where the sparkle sits, per the raw SVG's own local x68.5-81.79 hot zone) lands
+     beside the "O1" numeral, matching the screenshot; left of that trails the thin
+     flourish line, bleeding slightly past the card's own left border (contained by
+     `.programs`'s own overflow-x:hidden above). */
+  .card--o1 .o1-spark {
+    position: absolute;
+    left: -4.23rem; /* 67.68px — group 1:16449's own left inset ahead of the card border (1:16453 at x122.47 vs card at x190.15) */
+    top: 4.04rem; /* 64.62px — 1:16453's own y (2304.44) minus card top (2239.64) */
+    width: 10.25rem; /* 164px */
+    height: 3.4375rem; /* 55px */
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center; /* numeral and 2-line label share one visual center (2285.99 vs 2284.67px, ~1px apart) */
+    gap: 1.26rem; /* 20.12px, O1's own numeral-to-label gap (293.9 to 314.02) */
+    padding: 0.5531rem 2.36rem 0; /* 8.85px top — O1's own card-top-to-numeral-top gap */
+    /* 66.43px = 8.85px padding + the numeral's design line box (57.58px). Pinning the
+       head to its design height (instead of letting it shrink with the vw-scaled
+       numeral) keeps every card's title top at the design's fixed card-local y (93.2px
+       flow position, ink ~110) — BELOW the notch depth (~88px) at every desktop width.
+       Without this, at 1024 the shrunken head let the titles rise into the notch band,
+       where the notch voids sliced their ascenders (caught on a zoomed 1024 crop). At
+       1920 the numeral fills this height exactly, so nothing changes there. */
+    min-height: 4.1519rem;
+  }
+  /* Desktop type scale (fix round 1): the cards are %-width (they compress with the
+     viewport) but the type was fixed px, so at 1024-1366 fixed-size single words
+     ("Accelerator") overflowed their own shrunken card onto the neighbor. All four core
+     sizes now scale with the viewport via vw (the row tracks the viewport near-linearly:
+     container = 100vw - 2 gutters), calibrated so 1920 renders the exact design px
+     (value*19.2 = design px), with floors that keep 1024 legible. The <1024 media block
+     restores the fixed design sizes for the unstacked full-width cards. */
+  .card-num {
+    margin: 0;
+    font-family: var(--font-display); /* genuinely serif on zoomed screenshot ("O1"/"O3"), same as HowItWorks' O-numerals */
+    font-size: clamp(2rem, 2.999vw, 3.5988rem); /* 57.58px at 1920 (2.999vw x 19.2 = 57.58), real text nodes 1:16495/1:16438/1:15819; 32px floor keeps 1024 legible while staying inside the notch windows (verified) */
+    line-height: 1;
+    color: var(--color-ink-alt);
+  }
+  .card--o1 .card-num {
+    color: #f37d2c;
+  }
+  /* O4's numeral is a sequence-completion (see markup comment) — hidden in the desktop
+     collage (the composite shows none; the source's own label geometry occupies its
+     spot), shown <1024. visibility (not display) keeps the head's flex height equal to
+     the other cards' so the title row stays aligned. */
+  .card--o4 .card-num {
+    visibility: hidden;
+  }
+  .card-label {
+    margin: 0;
+    font-family: var(--font-sans); /* plain sans on zoomed screenshot, despite Figma reporting Faculty on the wrapping wrapper — site-wide correction */
+    /* 20px at 1920 — cap-height of the outlined glyphs (~13.2-13.8px) / 0.73 ≈ 19-20px,
+       the site's established secondary-text size. The low 0.7rem floor (vs the usual
+       0.875) is deliberate: the labels must scale in near-lockstep with the %-based
+       cards/notches down to 1024 or they'd cross their own notch cut (measured: with a
+       14px floor O2's "BUILDING FROM SCRATCH" ends 27px past its notch at 1024; at the
+       vw-proportional ~11px it clears it by ~18px). <1024 restores the full 1.25rem. */
+    font-size: clamp(0.7rem, 1.0417vw, 1.25rem);
+    line-height: 1.27; /* 25.33px measured line-top gap / 20px */
+    color: var(--color-ink-alt); /* navy on every card, including O1's orange-bordered one */
+  }
+  .card-label .line {
+    display: block;
+  }
+  /* O4's desktop header label at the source's own offsets (see markup comment: content
+     1:15831 spans card-local x-56.2..180.1, ink-top y26.8). nowrap keeps the design's
+     2-line layout; the left overhang hides under O3 (z2 > z1), the right end stops 11px
+     short of O4's own notch cut, and narrower viewports clip it at the cut via the
+     card's own clip-path — all emergent. Anchored to .card (nearest positioned
+     ancestor). top 21.6px = 26.8px ink-top minus the line box's half-leading + ascender
+     inset at this size (~5.2px), verified against the composite crop. */
+  .card--o4 .card-label {
+    position: absolute;
+    left: -18.383%; /* -56.2px / 305.72 card width — % so the overhang compresses with the card like the notches do */
+    top: 1.35rem;
+    white-space: nowrap;
+  }
+
+  .card-title {
+    margin: 1.6719rem 2.36rem 0; /* 26.75px, header block bottom to title top */
+    font-family: var(--font-display);
+    /* 50.89px at 1920 (2.6505vw x 19.2 = 50.89), real text nodes on every card
+       (1:16781/1:16444+1:16445/1:15815/1:15825). Scaling fix (round 1, critical 2): at a
+       fixed 50.89px, O3's unwrappable "Accelerator" (~279px) overflowed its own ~213px
+       card box at 1024 and painted over O4's "Energy" — with the vw scale it measures
+       ~175px there and stays inside its own card at 1024/1366/1920 (glyph-crop verified
+       per width). */
+    font-size: clamp(2rem, 2.6505vw, 3.1806rem);
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--color-ink-alt);
+  }
+  .card--o1 .card-title {
+    color: #f37d2c; /* node 1:16781's own fill */
+  }
+  .card-title--split {
+    line-height: 1.08; /* 54.81px measured gap between O2's two real title-line nodes (1:16444/1:16445) / 50.89px */
+  }
+  .card-title .line {
+    display: block;
+  }
+
+  .card-subtitle {
+    /* O1 only — no equivalent node exists on O2/O3/O4 (see markup comments: their card
+       frames each have no children beyond header/title/border/chips). */
+    margin: 0.9788rem 2.36rem 0; /* 15.66px, title bottom to subtitle top */
+    font-family: var(--font-sans);
+    font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920 — subtitle's own outlined bbox height (13.78px) is numerically identical to the header label's own glyph cap-height above; same size + same scale/floor as the label */
+    letter-spacing: 0.04em; /* approximate — outlined, no exact tracking data; visually tracked-out like the site's eyebrows, less extreme than their 0.25em since this is a secondary in-card label */
+    color: var(--color-ink-alt);
+  }
+
+  .card-body {
+    /* O1 only, see markup comment. */
+    margin: 1.9238rem 2.36rem 0; /* 30.78px, subtitle bottom to body top */
+    max-width: 27.1rem; /* 433.64px, node 1:16497's own wrap column */
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* reused Pillars/HowItWorks secondary-body scale */
+    line-height: 1.4;
+    color: var(--color-gray);
+  }
+
+  .card-footer {
+    margin-top: auto; /* pins the divider+chips flush to the card's own bottom regardless of how much (or how little — O2/O3/O4 have no body) content precedes it, reproducing the design's fixed chip-row position at every card's own bottom */
+    border-top: 0.125rem solid var(--color-ink-alt);
+    padding: 2.4044rem 2.36rem 2.24rem; /* 38.47px divider-to-chip-row gap; 35.86px chip-row-to-card-bottom gap */
+  }
+  .card--o1 .card-footer {
+    border-top-color: #f37d2c;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8575rem 1.5781rem; /* 13.72px row-gap (O1's own two chip rows), 25.25px column-gap (O1's chip1-to-chip3 gap) */
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem; /* approximate — outlined pill, no exact node padding beyond the overall bbox; derived from pill height (~39px) minus an estimated text line-box */
+    font-family: var(--font-sans);
+    font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920, same glyph-cap-height evidence + viewport scale/floor as the header label */
+    line-height: 1;
+    background: #f37d2c; /* node 1:16724's own raw fill */
+    color: var(--color-white);
+  }
+  .card--o2 .chip,
+  .card--o3 .chip,
+  .card--o4 .chip {
+    /* #F3F2EB, node 1:15868's own raw fill — numerically `--color-cream`, i.e. the SAME
+       color as this section's own background (see .programs comment above): these three
+       cards' chips are genuinely low-contrast/washed-out by the design's own declared
+       fill, distinguished only by their text, not a visible pill boundary — a deliberate
+       recede-into-the-background treatment consistent with these being the tucked-behind
+       cards, not a bug. */
+    background: var(--color-cream);
+    color: var(--color-ink-alt);
+  }
+
+  /* Responsive rule (brief step 3): below 1024, the overlapping fan is a desktop-only
+     composition (occlusion existing purely to read as a stacked-folders collage) — drop
+     it for full-width sequential cards, each showing everything it actually has (O1 gets
+     its body paragraph; O2/O3/O4 don't, since they never had one in the source). */
+  @media (max-width: 1023.98px) {
+    .programs-row {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .card--o1,
+    .card--o2,
+    .card--o3,
+    .card--o4 {
+      width: 100%;
+      margin-left: 0;
+      min-height: auto;
+      /* Full-width cards: the %-notch would balloon (37% of a full-width O4) — restore
+         the design's own fixed px cut. */
+      --cut: 114.62px;
+      --cut-end: 95.55px;
+    }
+    .card-footer {
+      margin-top: 2.4044rem; /* no longer flex-pinned to the bottom once height is auto; same gap value as the divider-to-content spacing above */
+    }
+    /* Full-width cards: restore the fixed design type sizes (the desktop vw clamps
+       exist only because the collage's cards compress with the viewport — these don't). */
+    .card-num {
+      font-size: 3.5988rem;
+    }
+    .card-label,
+    .card-subtitle,
+    .chip {
+      font-size: 1.25rem;
+    }
+    .card-title {
+      font-size: 3.1806rem;
+    }
+    /* O4 rejoins the normal header pattern in the unstacked layout: numeral shown,
+       label back in flex flow (its desktop absolute position is a collage-only
+       reproduction of the source's own scattered geometry). */
+    .card--o4 .card-num {
+      visibility: visible;
+    }
+    .card--o4 .card-label {
+      position: static;
+      white-space: normal;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    /* Tightened single column: smaller type/padding so the numeral + 2-line label don't
+       crowd a narrow viewport (sanctioned adaptation, design is desktop-only). */
+    .programs-row {
+      gap: 1.5rem;
+    }
+    .card-head {
+      gap: 0.9rem;
+      padding-inline: 1.5rem;
+    }
+    .card-num {
+      font-size: 2.8rem;
+    }
+    .card-title,
+    .card-subtitle,
+    .card-body {
+      margin-left: 1.5rem;
+      margin-right: 1.5rem;
+    }
+    .card-footer {
+      padding-inline: 1.5rem;
+    }
+    .card-title {
+      font-size: 2.5rem;
+    }
+  }
+</style>
