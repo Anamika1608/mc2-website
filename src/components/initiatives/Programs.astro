@@ -318,11 +318,11 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         confirmed above) — hidden until `.is-active`, same as O2/O3.
         Title divergence: the reference build calls this card "India Energy Fund"
         everywhere, but Figma's own node here is bbox-verified to be exactly the one word
-        "Energy" (see above) — correct for the collapsed/notched width. Kept BOTH: the
-        collapsed state still reads "Energy" (unchanged, matches Figma), and swaps to the
-        fuller "India Energy Fund" only once this card is active/expanded, where there's
-        room for it (`.title-collapsed`/`.title-expanded`, toggled with the same
-        `.is-active` switch as everything else on this card).
+        "Energy" (see above). Originally shown only once active, matching Figma's short
+        form at rest — per direct feedback, now always shows the fuller "India Energy
+        Fund" unconditionally, same as O1-O3's titles, which never depended on
+        `.is-active` either (it wraps naturally inside the collapsed card the same way
+        O2's "Entrepreneur-in-Residence" already does — no extra CSS needed).
       -->
       <article class="card card--o4">
         <div class="card-head">
@@ -331,10 +331,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
             <span class="line">AFFILIATED,</span> <span class="line">GROWTH-STAGE CAPITAL</span>
           </p>
         </div>
-        <h3 class="card-title">
-          <span class="title-collapsed">Energy</span>
-          <span class="title-expanded">India Energy Fund</span>
-        </h3>
+        <h3 class="card-title">India Energy Fund</h3>
         <p class="card-subtitle">An affiliated fund, not run by MC²+</p>
         <p class="card-body">
           A proposed SEBI Category-II AIF, managed independently as an
@@ -716,19 +713,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   .card-title .line {
     display: block;
   }
-  /* O4's collapsed-vs-active title swap (see markup comment: Figma says "Energy", the
-     content-source reference build says "India Energy Fund"). Base state shows the
-     Figma-verified short form; `.is-active` swaps to the fuller name. */
-  .card--o4 .title-expanded {
-    display: none;
-  }
-  .card--o4.is-active .title-collapsed {
-    display: none;
-  }
-  .card--o4.is-active .title-expanded {
-    display: inline;
-  }
-
   /* O1 only used to have a subtitle/body — every card does now (this task, see markup
      comments), but they only ever SHOW on the active card; collapsed cards stay exactly
      as they looked before this task (header + title + chips only). */
