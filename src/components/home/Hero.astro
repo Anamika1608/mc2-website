@@ -2,7 +2,7 @@
 import HeroCurves from "../../assets/home/hero-curves.svg";
 import SparkOrange from "../../assets/home/spark-orange.svg";
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
-import LineRevealStar from "../../assets/home/line-reveal-star.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -13,34 +13,34 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
     <SparkOrange class="spark spark-c" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">Multiply · Collaborate · Create</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line line-1">
-        <span class="line-box">
-          <span class="line-text">Where ideas <span class="accent">multiply</span>,</span>
-          <LineRevealStar class="line-star" aria-hidden="true" />
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Where ideas <span class="accent">multiply</span>,</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
-      <span class="line line-2">
-        <span class="line-box">
-          <span class="line-text">industries <span class="accent">collaborate</span> and</span>
-          <LineRevealStar class="line-star" aria-hidden="true" />
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">industries <span class="accent">collaborate</span> and</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
-      <span class="line line-3">
-        <span class="line-box">
-          <span class="line-text"
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text"
             >visionaries <span class="accent">create</span> energy ventures.</span
           >
-          <LineRevealStar class="line-star" aria-hidden="true" />
+          <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-3-lines">
       India's flagship energy innovation platform, uniting seven of the
       country's largest energy majors to carry ventures from the lab bench to
       industrial scale.
@@ -160,133 +160,6 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
     color: var(--color-orange);
   }
 
-  /* Entrance animation: star-led line reveal, reference video (Canva) +
-     star asset from Figma node 8:29 (navy 4-point sparkle, fill #1e1e3c,
-     exported to src/assets/home/line-reveal-star.svg). Three constants
-     drive the whole sequence — LINE_STAGGER (0.35s, gap between each line's
-     own start), LINE_DURATION (1.1s, each line's own timeline — sped up
-     ~100ms from an initial 1.2s per user feedback), and the 90%-keyframe
-     split within LINE_DURATION (text/star finish moving at 90% of 1.1s =
-     ~0.99s in, then hold/linger for the remaining ~10% before the star
-     fades) — chosen to reproduce the reference's "lines overlap, staggered,
-     not strictly sequential" cascade and the star's brief pause before
-     fading once its line completes.
-     `.line-box` (inline-block) exists so `.line-text`'s clip-path and
-     `.line-star`'s left-position percentages are relative to the ACTUAL
-     rendered text width, not `.line`'s full-width block box (`.line` stays
-     block only to force each line onto its own row + inherit the section's
-     centered text-align). `.line-star` is a SIBLING of `.line-text`, not a
-     child — a descendant would be clipped by the same clip-path and never
-     show at all. */
-  .line-box {
-    position: relative;
-    display: inline-block;
-  }
-  .line-text {
-    display: inline-block;
-    /* Vertical inset is -0.3em, not 0: a 0 inset clips exactly at the
-       inline-block's own box edge, which cut off descenders (e.g. the "g"
-       in "energy") that render slightly past it — the negative value
-       expands the clip region outward so descenders/ascenders survive while
-       the horizontal reveal (right inset) is unaffected. */
-    clip-path: inset(-0.3em 100% -0.3em 0);
-    animation: line-reveal 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-  .line-1 .line-text {
-    animation-delay: 0s;
-  }
-  .line-2 .line-text {
-    animation-delay: 0.35s;
-  }
-  .line-3 .line-text {
-    animation-delay: 0.7s;
-  }
-  @keyframes line-reveal {
-    0% {
-      clip-path: inset(-0.3em 100% -0.3em 0);
-    }
-    90% {
-      clip-path: inset(-0.3em 0% -0.3em 0);
-    }
-    100% {
-      clip-path: inset(-0.3em 0% -0.3em 0);
-    }
-  }
-
-  .line-star {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    /* X-offset is a fixed gap (not -50%, which would center the star ON the
-       reveal boundary and overlap the last revealed glyph) — anchors the
-       star's own left edge just past the boundary instead. */
-    transform: translate(0.4rem, -50%);
-    opacity: 0;
-    pointer-events: none;
-    animation: star-travel 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-  /* Sizes decrease line-to-line, matching the reference video (line 1's
-     star reads noticeably larger than line 3's) — approximated by eye from
-     the captured frames, not a measured Figma value. */
-  .line-1 .line-star {
-    width: 2.6rem;
-    height: 2.6rem;
-    animation-delay: 0s;
-  }
-  .line-2 .line-star {
-    width: 2.1rem;
-    height: 2.1rem;
-    animation-delay: 0.35s;
-  }
-  .line-3 .line-star {
-    width: 1.7rem;
-    height: 1.7rem;
-    animation-delay: 0.7s;
-  }
-  @keyframes star-travel {
-    0% {
-      left: 0%;
-      opacity: 0;
-    }
-    8% {
-      opacity: 1;
-    }
-    90% {
-      left: 100%;
-      opacity: 1;
-    }
-    100% {
-      left: 100%;
-      opacity: 0;
-    }
-  }
-
-  /* Accent word settles into its final orange slightly AFTER the clip
-     boundary passes it (visible in the reference as "multiply" still pale
-     just after being revealed) — a longer-than-reveal duration on the same
-     delay does this without needing to know the accent word's exact
-     position within its line. */
-  .accent {
-    animation: accent-settle 1.3s ease forwards;
-  }
-  .line-1 .accent {
-    animation-delay: 0s;
-  }
-  .line-2 .accent {
-    animation-delay: 0.35s;
-  }
-  .line-3 .accent {
-    animation-delay: 0.7s;
-  }
-  @keyframes accent-settle {
-    0% {
-      color: #f0c9a3; /* one-off literal: an approximated pale/washed-out tint of --color-orange for the reveal effect, not a design token */
-    }
-    100% {
-      color: var(--color-orange);
-    }
-  }
-
   .lede {
     max-width: 38.8125rem; /* 621px */
     margin: 1.5rem auto 0;
@@ -300,53 +173,11 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
        near-identical (one value off in the blue channel); this corrects an
        undocumented token slip to match that node exactly. */
     color: var(--color-ink);
-    /* Rises + fades in once line 3 finishes revealing (delay 0.7s + 90% of
-       its own 1.1s duration = 1.69s) — the reference shows the paragraph
-       starting only after the H1 completes, not concurrently. */
-    opacity: 0;
-    transform: translateY(1.25rem);
-    animation: lede-rise 0.8s ease forwards;
-    animation-delay: 1.69s;
-  }
-  @keyframes lede-rise {
-    0% {
-      opacity: 0;
-      transform: translateY(1.25rem);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   .scroll {
     display: block;
     margin: 3rem auto 0;
-  }
-
-  /* First animation on the site — no existing prefers-reduced-motion
-     convention to follow, so this establishes the baseline: show the final
-     state immediately, no motion. */
-  @media (prefers-reduced-motion: reduce) {
-    .line-text,
-    .line-star,
-    .accent,
-    .lede {
-      animation: none !important;
-    }
-    .line-text {
-      clip-path: none;
-    }
-    .line-star {
-      display: none;
-    }
-    .accent {
-      color: var(--color-orange);
-    }
-    .lede {
-      opacity: 1;
-      transform: none;
-    }
   }
 
   @media (max-width: 1023.98px) {
@@ -355,50 +186,6 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
     }
     .lede {
       max-width: 90%;
-    }
-
-    /* Sanctioned adaptation: below the H1's own fixed-52px breakpoint, a
-       line can wrap onto multiple visual rows (clamp() font-size + a
-       narrower viewport), and a single clip-path on `.line-text` would clip
-       against its whole (multi-row) box, not per visual row — same category
-       of "desktop-only composition, drop for narrow viewports" adaptation
-       already used elsewhere (e.g. Portfolio Hero hides its sparks below
-       1024px). Falls back to a plain staggered fade + rise, no star. */
-    .line-text {
-      clip-path: none;
-      opacity: 0;
-      transform: translateY(0.75rem);
-      animation: line-fade 0.7s ease forwards;
-    }
-    .line-1 .line-text {
-      animation-delay: 0s;
-    }
-    .line-2 .line-text {
-      animation-delay: 0.2s;
-    }
-    .line-3 .line-text {
-      animation-delay: 0.4s;
-    }
-    .line-star {
-      display: none;
-    }
-    .accent {
-      animation: none;
-      color: var(--color-orange);
-    }
-    .lede {
-      animation-delay: 1.1s; /* line 3 delay (0.4s) + its fade duration (0.7s) */
-    }
-
-    @keyframes line-fade {
-      0% {
-        opacity: 0;
-        transform: translateY(0.75rem);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
   }
 </style>

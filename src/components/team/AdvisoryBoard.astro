@@ -12,6 +12,7 @@ import abhay from "../../assets/team/adv-abhay.png";
 import madhukar from "../../assets/team/adv-madhukar.png";
 import neelkanth from "../../assets/team/adv-neelkanth.png";
 import pawan from "../../assets/team/adv-pawan.png";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 
 // Copy verbatim from the task brief. Literal "&" is used here (not the
 // "&amp;" entity), same house convention as BoardOfDirectors.astro's DIRECTORS
@@ -45,11 +46,20 @@ const ADVISORS = [
 <section class="advisory">
   <div class="container">
     <p class="eyebrow">GUIDANCE</p>
-    <h2>Advisory Board</h2>
-    <p class="subheading">
-      Independent experts across energy, deep-tech research and public policy
-      who guide theme strategy and selection.
-    </p>
+    <div class="reveal">
+      <h2>
+        <span class="reveal-line">
+          <span class="reveal-line-box">
+            <span class="reveal-line-text">Advisory Board</span>
+            <RevealStar class="reveal-star" aria-hidden="true" />
+          </span>
+        </span>
+      </h2>
+      <p class="subheading reveal-rise reveal-rise--after-1-line">
+        Independent experts across energy, deep-tech research and public policy
+        who guide theme strategy and selection.
+      </p>
+    </div>
 
     <div class="grid">
       {ADVISORS.map((a) => (

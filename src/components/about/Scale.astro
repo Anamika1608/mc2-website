@@ -11,6 +11,7 @@
 //      gray-vs-navy correction SponsorStrip.astro already made for its
 //      caption text.
 import SparkOrange from "../../assets/about/spark-orange.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 
 const STATS = [
   { value: "4OO+", unit: "acres", desc: "Dedicated R&D campuses across the energy majors" },
@@ -21,10 +22,23 @@ const STATS = [
 ---
 
 <section class="scale">
-  <div class="container">
+  <div class="container reveal">
     <p class="eyebrow">THE SCALE BEHIND YOU</p>
-    <h2>The industrial weight behind<br />every venture.</h2>
-    <p class="intro">
+    <h2>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">The industrial weight behind</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">every venture.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+    </h2>
+    <p class="intro reveal-rise reveal-rise--after-2-lines">
       Seven energy majors contribute infrastructure, domain mentorship, pilot
       sites and anchor demand, assets no standalone incubator can replicate.
     </p>
@@ -85,6 +99,9 @@ const STATS = [
     font-size: 4.0625rem; /* 65px */
     color: var(--color-ink-alt);
     margin: 0 0 1.75rem;
+  }
+  h2 .reveal-line {
+    display: block;
   }
 
   /* Intro (group 1:9179) is a vectorized paragraph, not real text, so its

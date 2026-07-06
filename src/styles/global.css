@@ -108,3 +108,281 @@ a {
   white-space: nowrap;
   border: 0;
 }
+
+/* ============================================================
+   Star-led reveal system (shared across every Hero + selected section
+   headings, site-wide). Originally built bespoke, once, on Home's Hero/
+   Pillars/Audiences; centralized here so every other page can reuse it
+   without re-copying ~150 lines of CSS + a script block per component.
+   Star asset: src/assets/shared/reveal-star.svg (Figma node 8:29, navy
+   4-point sparkle) — reference behavior from a Canva-recorded demo video.
+
+   Contract for consumers:
+     <div class="reveal">                        (e.g. .hero-inner / .heading)
+       <h1 (or h2)>
+         <span class="{layout-class} reveal-line">
+           <span class="reveal-line-box">
+             <span class="reveal-line-text">Text <span class="accent">word</span></span>
+             <RevealStar class="reveal-star" aria-hidden="true" />
+           </span>
+         </span>
+         ... one .reveal-line per visual line (supports up to 3) ...
+       </h1>
+       <p class="reveal-rise reveal-rise--after-1-line | --after-2-lines | --after-3-lines">...</p>  (optional)
+     </div>
+   {layout-class} is whatever the component already uses to force each line
+   onto its own row (e.g. `.line`) — untouched, stays local to that
+   component's own scoped <style>. `.reveal-line` is the ONLY thing the
+   stagger below keys off (via :nth-of-type), so it must be the direct,
+   one-per-row wrapper immediately around each `.reveal-line-box`.
+
+   Trigger: one IntersectionObserver, registered once in BaseLayout.astro,
+   adds `.armed` to every `.reveal` on the page then `.in-view` once each
+   scrolls on-screen (fires ~immediately for elements already in the
+   viewport, so above-the-fold Heroes and below-the-fold headings both work
+   through this same single mechanism). No-JS / reduced-motion: without
+   `.armed` nothing is clipped, so the heading just renders normally —
+   progressive enhancement, not a requirement. */
+.reveal-line-box {
+  position: relative;
+  display: inline-block;
+}
+.reveal-line-text {
+  display: inline-block;
+}
+.reveal.armed .reveal-line-text {
+  /* -0.3em vertical inset, not 0: a flush 0 inset clips descenders (e.g.
+     the "g" in "energy") at the inline-block's own box edge. */
+  clip-path: inset(-0.3em 100% -0.3em 0);
+}
+.reveal.in-view .reveal-line-text {
+  animation: reveal-line 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.reveal-line:nth-of-type(1) .reveal-line-text {
+  animation-delay: 0s;
+}
+.reveal-line:nth-of-type(2) .reveal-line-text {
+  animation-delay: 0.29s;
+}
+.reveal-line:nth-of-type(3) .reveal-line-text {
+  animation-delay: 0.57s;
+}
+@keyframes reveal-line {
+  0% {
+    clip-path: inset(-0.3em 100% -0.3em 0);
+  }
+  90% {
+    clip-path: inset(-0.3em 0% -0.3em 0);
+  }
+  100% {
+    clip-path: inset(-0.3em 0% -0.3em 0);
+  }
+}
+
+.reveal-star {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  /* X-offset is a fixed gap (not -50%, which would center the star ON the
+     reveal boundary and overlap the last revealed glyph) — anchors the
+     star's own left edge just past the boundary instead. */
+  transform: translate(0.4rem, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.reveal.in-view .reveal-star {
+  animation: reveal-star-travel 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+/* Sizes decrease line-to-line, matching the original reference video (line
+   1's star reads noticeably larger than line 3's). */
+.reveal-line:nth-of-type(1) .reveal-star {
+  width: 2.6rem;
+  height: 2.6rem;
+  animation-delay: 0s;
+}
+.reveal-line:nth-of-type(2) .reveal-star {
+  width: 2.1rem;
+  height: 2.1rem;
+  animation-delay: 0.29s;
+}
+.reveal-line:nth-of-type(3) .reveal-star {
+  width: 1.7rem;
+  height: 1.7rem;
+  animation-delay: 0.57s;
+}
+@keyframes reveal-star-travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    left: 100%;
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Accent word settles in slightly after its own line's clip boundary passes
+   it. Generalized as an OPACITY settle (not a hardcoded pale-to-final-color
+   transition, which is what the original Home Hero build used) so it works
+   regardless of which accent color a given page uses (--color-orange vs
+   --color-orange-bright) without the shared file needing to know it. */
+.reveal.in-view .accent {
+  animation: reveal-accent-settle 1.05s ease forwards;
+}
+/* Whole-line accent (the accented word IS the entire line, e.g. About's
+   "Energy Innovation"): `.reveal-line-text` and `.accent` end up as the SAME
+   element instead of nested. Both classes independently declare a full
+   `animation` shorthand for that one element — only one can win the
+   cascade, which used to silently cancel the clip-path reveal (whichever
+   lost never ran, leaving the line either permanently clipped or never
+   accent-tinted). This combined selector (higher specificity: 4 classes vs
+   3) runs BOTH animations together via the comma-separated list form.
+   The single animation-delay value from the :nth-of-type overrides below
+   still applies to both listed animations (CSS repeats a short
+   animation-delay list to match animation-name's length), so no separate
+   stagger rule is needed for this combination. Nesting `.accent` inside
+   `.reveal-line-text` instead of combining classes was tried first and
+   reverted: Chromium's intrinsic-sizing pass for a nested inline-block
+   whose only child is another inline element measurably undersizes the
+   outer box at narrow (<1024px) viewports, so the un-wrapped word overflows
+   past its own reported box edge. Combining classes on one leaf element
+   sidesteps that sizing bug entirely. */
+.reveal.in-view .reveal-line-text.accent {
+  animation:
+    reveal-line 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards,
+    reveal-accent-settle 1.05s ease forwards;
+}
+.reveal-line:nth-of-type(1) .accent {
+  animation-delay: 0s;
+}
+.reveal-line:nth-of-type(2) .accent {
+  animation-delay: 0.29s;
+}
+.reveal-line:nth-of-type(3) .accent {
+  animation-delay: 0.57s;
+}
+@keyframes reveal-accent-settle {
+  0% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Optional trailing paragraph (Hero ledes, section intros) — rises + fades
+   in once the heading's lines finish revealing. Two pre-computed delay
+   variants cover every heading found on the site (max 3 lines), so
+   consumers don't hand-derive this math per instance.
+   The delay is read through a custom property (--reveal-rise-delay), NOT
+   set directly as `animation-delay` on the modifier classes: a modifier
+   class like `.reveal-rise--after-2-lines` (1 class, specificity 0,1,0)
+   is LOWER specificity than `.reveal.in-view .reveal-rise` (3 classes,
+   0,3,0), so a plain `animation-delay` there would always lose to the
+   shorthand's implicit `animation-delay: 0s` regardless of source order —
+   custom properties don't have this problem, since the shorthand just
+   reads whatever value cascaded to the property at match time. */
+.reveal-rise {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  --reveal-rise-delay: 0s;
+}
+.reveal.in-view .reveal-rise {
+  animation: reveal-rise 0.8s ease var(--reveal-rise-delay) forwards;
+}
+.reveal-rise--after-1-line {
+  --reveal-rise-delay: 0.81s; /* line 1's delay (0s) + 90% of its 0.9s duration */
+}
+.reveal-rise--after-2-lines {
+  --reveal-rise-delay: 1.1s; /* line 2's delay (0.29s) + 90% of its 0.9s duration */
+}
+.reveal-rise--after-3-lines {
+  --reveal-rise-delay: 1.38s; /* line 3's delay (0.57s) + 90% of its 0.9s duration */
+}
+@keyframes reveal-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* First-on-scroll-or-load animation on the site — establishes the baseline
+   reduced-motion behavior: show the final state immediately, no motion. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal.armed .reveal-line-text {
+    clip-path: none;
+  }
+  .reveal-star {
+    display: none;
+  }
+  .reveal .accent {
+    opacity: 1;
+    animation: none !important;
+  }
+  .reveal .reveal-rise {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+}
+
+/* Sanctioned adaptation below 1024px: a line can wrap onto multiple visual
+   rows at narrow widths, and a single clip-path on `.reveal-line-text`
+   would clip against its whole (multi-row) box, not per visual row — drop
+   the star + clip-reveal for a plain staggered fade + rise instead. */
+@media (max-width: 1023.98px) {
+  .reveal.armed .reveal-line-text {
+    clip-path: none;
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  .reveal.in-view .reveal-line-text {
+    animation: reveal-line-fade 0.57s ease forwards;
+  }
+  .reveal-line:nth-of-type(1) .reveal-line-text {
+    animation-delay: 0s;
+  }
+  .reveal-line:nth-of-type(2) .reveal-line-text {
+    animation-delay: 0.16s;
+  }
+  .reveal-line:nth-of-type(3) .reveal-line-text {
+    animation-delay: 0.33s;
+  }
+  .reveal-star {
+    display: none;
+  }
+  .reveal .accent {
+    animation: none;
+    opacity: 1;
+  }
+  .reveal-rise--after-1-line {
+    --reveal-rise-delay: 0.57s; /* line 1's delay (0s) + its fade duration (0.57s) */
+  }
+  .reveal-rise--after-2-lines {
+    --reveal-rise-delay: 0.73s; /* line 2's delay (0.16s) + its fade duration (0.57s) */
+  }
+  .reveal-rise--after-3-lines {
+    --reveal-rise-delay: 0.9s; /* line 3's delay (0.33s) + its fade duration (0.57s) */
+  }
+  @keyframes reveal-line-fade {
+    0% {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

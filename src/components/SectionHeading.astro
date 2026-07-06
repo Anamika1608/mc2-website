@@ -67,7 +67,8 @@ const { eyebrow } = Astro.props;
     line-height: 1.07; /* site-wide constant, see comment above */
     color: var(--color-ink-alt); /* #1e1e3c exact match, node 1:15971 */
   }
-  h2 :global(.line) {
+  h2 :global(.line),
+  h2 :global(.reveal-line) {
     display: block;
   }
 

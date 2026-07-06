@@ -4,6 +4,7 @@
 // Same hero pattern as TeamHero/AboutHero; style values shared with TeamHero.
 import HeroCurves from "../../assets/contact/hero-curves.svg";
 import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -11,17 +12,32 @@ import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
     <HeroCurves class="curves" />
   </div>
 
-  <div class="hero-inner">
+  <div class="hero-inner reveal">
     <p class="eyebrow">CONTACT</p>
     <div class="underline" aria-hidden="true"></div>
 
     <h1>
-      <span class="line">A unique hub-and-spoke</span>
-      <span class="line">model to <span class="accent">support you</span></span>
-      <span class="line"><span class="accent">where you are</span>.</span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">A unique hub-and-spoke</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">model to <span class="accent">support you</span></span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text"><span class="accent">where you are</span>.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
     </h1>
 
-    <p class="lede">
+    <p class="lede reveal-rise reveal-rise--after-3-lines">
       Founder, researcher, institution or investor, tell us who you are and
       we&rsquo;ll route you to the right initiative of MC&sup2;+.
     </p>

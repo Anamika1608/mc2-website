@@ -1,23 +1,23 @@
 ---
 import PillButton from "../PillButton.astro";
 import SparkOrange from "../../assets/home/spark-orange.svg";
-import LineRevealStar from "../../assets/home/line-reveal-star.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="audiences">
-  <div class="container heading">
+  <div class="container heading reveal">
     <p class="eyebrow">WHO IT’S FOR</p>
     <h2>
-      <span class="line line-1">
-        <span class="line-box">
-          <span class="line-text">Built for every builder</span>
-          <LineRevealStar class="line-star" aria-hidden="true" />
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Built for every builder</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
-      <span class="line line-2">
-        <span class="line-box">
-          <span class="line-text">in India’s energy story.</span>
-          <LineRevealStar class="line-star" aria-hidden="true" />
+      <span class="line reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">in India’s energy story.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
     </h2>
@@ -102,30 +102,6 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
   </div>
 </section>
 
-<script>
-  // Scroll-triggered line reveal — same pattern as Pillars.astro (see that
-  // file's script for the full rationale: `.armed`/`.in-view` gating,
-  // no-JS/reduced-motion safety).
-  const heading = document.querySelector<HTMLElement>(".audiences .heading");
-  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  if (heading && !prefersReducedMotion && "IntersectionObserver" in window) {
-    heading.classList.add("armed");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            heading.classList.add("in-view");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(heading);
-  }
-</script>
-
 <style>
   .audiences {
     /* Sampled from the screenshot background (244,243,237) — matches
@@ -170,94 +146,6 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
   }
   h2 .line {
     display: block;
-  }
-
-  /* Star-led line reveal, same mechanic/asset/timing as Hero.astro's H1 and
-     Pillars.astro's H2 (Figma node 8:29 star). This section also sits below
-     the fold, so it uses the same scroll-triggered `.armed`/`.in-view`
-     gating as Pillars — see that file's comment for the full rationale
-     (no-JS/reduced-motion safety, why 0 vertical inset clips descenders). */
-  .line-box {
-    position: relative;
-    display: inline-block;
-  }
-  .line-text {
-    display: inline-block;
-  }
-  .heading.armed .line-text {
-    clip-path: inset(-0.3em 100% -0.3em 0);
-  }
-  .heading.in-view .line-text {
-    animation: audiences-line-reveal 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-  .line-1 .line-text {
-    animation-delay: 0s;
-  }
-  .line-2 .line-text {
-    animation-delay: 0.35s;
-  }
-  @keyframes audiences-line-reveal {
-    0% {
-      clip-path: inset(-0.3em 100% -0.3em 0);
-    }
-    90% {
-      clip-path: inset(-0.3em 0% -0.3em 0);
-    }
-    100% {
-      clip-path: inset(-0.3em 0% -0.3em 0);
-    }
-  }
-
-  .line-star {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translate(0.4rem, -50%);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .heading.in-view .line-star {
-    animation: audiences-star-travel 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-  .line-1 .line-star {
-    width: 2.4rem;
-    height: 2.4rem;
-    animation-delay: 0s;
-  }
-  .line-2 .line-star {
-    width: 1.9rem;
-    height: 1.9rem;
-    animation-delay: 0.35s;
-  }
-  @keyframes audiences-star-travel {
-    0% {
-      left: 0%;
-      opacity: 0;
-    }
-    8% {
-      opacity: 1;
-    }
-    90% {
-      left: 100%;
-      opacity: 1;
-    }
-    100% {
-      left: 100%;
-      opacity: 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .heading.armed .line-text {
-      clip-path: none;
-    }
-    .heading.in-view .line-text,
-    .heading.in-view .line-star {
-      animation: none !important;
-    }
-    .line-star {
-      display: none;
-    }
   }
 
   .intro {
@@ -541,31 +429,6 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
     }
     .intro {
       max-width: 90%;
-    }
-
-    /* Sanctioned adaptation, same rationale as Hero.astro/Pillars.astro:
-       drop the star + clip-reveal below this breakpoint for a plain
-       fade + rise (a wrapped multi-row line would clip incorrectly). */
-    .heading.armed .line-text {
-      clip-path: none;
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-    .heading.in-view .line-text {
-      animation: audiences-line-fade 0.7s ease forwards;
-    }
-    .line-star {
-      display: none;
-    }
-    @keyframes audiences-line-fade {
-      0% {
-        opacity: 0;
-        transform: translateY(0.75rem);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     /* Responsive rule (brief step 2): 2x2 grid below 1024. The desktop decor
