@@ -237,9 +237,9 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
        both this rule and `.card.is-active`'s own min-height (below) reference it,
        instead of maintaining the same clamp expression in two places. */
     --pillar-active-height: clamp(
-      27rem,
-      max(92.2325rem - 65.5vw, 42.6875rem - 11.667vw),
-      51rem
+      26.5rem,
+      max(90.5431rem - 65.497vw, 41.0625rem - 11.667vw),
+      49rem
     );
     min-height: var(--pillar-active-height);
   }
@@ -326,7 +326,18 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      `--pillar-active-height` custom property so the two can't drift apart. An
      active card growing to this height was already guaranteed to fit within
      the row (the row IS this height, always, now) — nothing here changes
-     behaviorally, just where the number lives. */
+     behaviorally, just where the number lives.
+
+     Round 8 (per direct feedback: still visible empty space below the icon on
+     every card, not just O3): trimmed ~26-27px of fixed decorative
+     padding/margin off every card (see `.card`'s bottom padding and
+     `.card-content`/`.card-body`'s comments) and re-measured the same
+     worst-of-all-four scrollHeight sweep across the same eleven widths: 1024→763,
+     1100→679, 1200→623, 1300→567, 1366→539, 1440→474, 1536→446, 1600→446,
+     1700→418, 1800→418, 1920→418 (each roughly 26-27px below round 5's numbers,
+     confirming the trim landed evenly on every card rather than just O1). Refit
+     the same two-segment shape with a ~15px margin at each anchor; outer clamp
+     bounds also lowered (49rem ceiling, 26.5rem floor) to match. */
   .card.is-active {
     background: var(--color-orange); /* #F37D2C, Figma 1:1201 */
     min-height: var(--pillar-active-height);
