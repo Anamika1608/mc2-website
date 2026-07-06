@@ -58,10 +58,18 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
   @media (min-width: 1024px) {
     .hero {
-      /* Approximates the design's hero band from the curves group (1:9164,
-         h=1039.81px) plus text column; exact cross-section fit is verified
-         once this component is wired into the page. */
-      min-height: 62rem;
+      /* Was 62rem (matching the curves group, 1:9164, h=1039.81px) — sized
+         for the pre-normalization hero text. After the type-scale
+         normalization (user directive 2026-07-06) shrunk the text, content
+         (eyebrow→scroll-arrow) ends ~525px in, leaving dead space before
+         Mission's own separately-owned top gap. User directive: don't crop
+         the curve backdrop's 4 baked-in sparks — the lowest one (Vector_7)
+         bottoms out at y=904.55, which is the hard floor for this value.
+         56.7rem (907.2px) clears it with a ~2.65px buffer; the unfilled
+         arc's own tail (Vector_3 runs to y=1039.81, a thin stroke, not a
+         spark) crops a little more than before, per the site's allow-crop
+         rule for non-spark decoration. */
+      min-height: 56.7rem;
     }
   }
 
