@@ -15,13 +15,18 @@ const Tag = href ? "a" : "button";
 <Tag class:list={["pill", variant]} href={href} type={href ? undefined : type}>
   <span class="pill-label">{label}</span>
   <span class="pill-arrow" aria-hidden="true">
-    <svg viewBox="0 0 16 16" fill="none">
+    <!-- Exact path from Figma nodes 1:992 (home), 1:8938 (about ghost) and 1:8959/about
+         filled — byte-identical across all three, confirmed via raw SVG fetch, so this
+         is the one universal icon, not a per-variant treatment. Filled shape (fill:
+         currentColor), not a stroked line — the previous stroke-based glyph was thinner
+         and smaller than Figma's bold, wide arrowhead. -->
+    <svg viewBox="0 0 44.9099 24.3499" fill="none">
       <path
-        d="M2 8h11M9 3.5 13.5 8 9 12.5"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"></path>
+        d="M0 12.1699L41.62 9.84009V14.51L0 12.1699Z"
+        fill="currentColor"></path>
+      <path
+        d="M29.4399 0C35.4099 3.05 40.2699 7.47992 44.9099 12.1699C40.2799 16.8799 35.4199 21.3099 29.4399 24.3499C32.1299 19.0599 35.88 14.68 39.97 10.53V13.8301C35.89 9.66008 32.1399 5.29001 29.4399 0.0100098V0Z"
+        fill="currentColor"></path>
     </svg>
   </span>
 </Tag>
@@ -58,23 +63,33 @@ const Tag = href ? "a" : "button";
    * label at full desktop size (32px font, 76px circle), which reads as
    * cramped and broken on phones (verified via Playwright viewport emulation,
    * not the CLI screenshot tool — that tool doesn't set a real CSS viewport
-   * and produces false "cut off" renders at mobile widths). clamp() shrinks
-   * every dimension together down to a 375px-ish reference instead of
-   * changing at a single breakpoint, matching --container-gutter's existing
-   * pattern. Floors keep min font-size at 1rem (legibility) and the arrow
-   * circle at 2.75rem/44px (>=44px WCAG 2.5.5 touch-target minimum).
+   * and produces false "cut off" renders at mobile widths).
+   *
+   * Each clamp() is a two-point linear interpolation deliberately anchored so
+   * the MAX is reached at exactly 1024px viewport width — this site's own
+   * shared desktop breakpoint (`@media (min-width: 1024px)` used throughout
+   * every other component) — not some incidental crossover point above it.
+   * An earlier version of these formulas hit their ceiling around 1160–1290px
+   * instead, which left the button measurably smaller than Figma's exact
+   * desktop spec (re-verified fresh against node 1:21003, "Explore
+   * initiatives" on /support) at very common non-maximized browser widths
+   * like 1024–1280px — confirmed by hand-solving each formula's crossover.
+   * MIN is the same 375px-reference mobile floor already screenshot-verified
+   * (320–428px): 1rem font (legibility), 2.75rem/44px arrow circle (WCAG
+   * 2.5.5 touch-target minimum). Below 375px, clamp holds flat at MIN.
    */
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: clamp(0.9rem, 0.55rem + 1.4vw, 1.6rem); /* 25.6px desktop, node 1:1479 */
+    overflow: hidden; /* backstop: nothing here is meant to extend past the pill's own rounded edge, including the arrow circle on :hover */
+    gap: clamp(0.9rem, 0.842rem + 0.2465vw, 1rem); /* 16px at >=1024px — further user-requested reduction from 21.6px, scaled down with the rest of the button */
     font-family: var(--font-sans);
-    font-size: clamp(1rem, 0.55rem + 2vw, 2rem); /* 32px desktop — verified equal across 1:1479, 1:8953, 1:8932, see block comment above */
+    font-size: clamp(1rem, 0.856rem + 0.616vw, 1.25rem); /* 20px at >=1024px — further user-requested reduction from 27px, see block comment above */
     font-weight: 400; /* regular — stroke widths measured pixel-identical across all 3 nodes, not 600 */
     line-height: 1.25; /* breathing room if a long label wraps to 2 lines on the smallest phones */
     text-decoration: none;
     border-radius: 999px;
-    padding: 0.4rem 0 0.4rem clamp(1.25rem, 0.65rem + 2.7vw, 2.875rem); /* 46px left inset desktop, node 1:1479; about's nodes measured 42-45px, same shared value within noise */
+    padding: 0.2rem 0 0.2rem clamp(1.1rem, 0.869rem + 0.986vw, 1.5rem); /* 24px left inset at >=1024px — further user-requested reduction from 32px */
     border: none;
     margin: 0;
     cursor: pointer;
@@ -84,14 +99,15 @@ const Tag = href ? "a" : "button";
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: clamp(2.75rem, 1.85rem + 3.6vw, 4.75rem); /* 76px desktop — arrow-circle diameter exactly equals pill height in 1:1479, 1:8953 and 1:8932; floor is 44px, the WCAG 2.5.5 touch-target minimum */
-    height: clamp(2.75rem, 1.85rem + 3.6vw, 4.75rem);
+    width: clamp(2.75rem, 2.606rem + 0.616vw, 3rem); /* 48px at >=1024px — further user-requested reduction from 64px, now close to the 44px WCAG 2.5.5 touch-target floor, which is not reduced further */
+    height: clamp(2.75rem, 2.606rem + 0.616vw, 3rem);
+    margin-right: 0.1875rem; /* 3px, exactly matching the :hover translateX below — reserves the room that motion needs so the circle lands flush with the pill's edge on hover instead of overflowing past it */
     border-radius: 999px;
     transition: transform 150ms ease;
   }
   .pill-arrow svg {
-    width: 42%; /* 32/76, the icon's original fixed-px ratio to the circle — scales with the clamp() above instead of a hardcoded 32px */
-    height: 42%;
+    width: 59%; /* 44.91/76, icon's exact Figma ratio to the circle (nodes 1:992/1:8938/1:8959) — was wrongly 42%, a guessed square ratio */
+    height: 32%; /* 24.35/76 — icon is ~1.84:1, not square, so width/height scale independently */
   }
   .pill:hover .pill-arrow {
     transform: translateX(3px);
@@ -103,7 +119,21 @@ const Tag = href ? "a" : "button";
     color: var(--color-white);
   }
   .pill.filled .pill-arrow {
-    background: var(--color-orange);
+    /* Raw SVG for the circle (node 1:20985 etc.) is two paths: an outer navy ring
+       flush to the full 76px slot (radius 38) and an inset ORANGE circle of radius
+       36.5 (diameter 73px, ~96% of the slot) — not solid orange edge-to-edge like a
+       flat background would produce. The radial-gradient hard-stop at 96% paints
+       orange out to that radius and leaves the outer ~2% transparent, revealing the
+       pill's own navy behind it as a thin ring — confirmed by zooming into a 6x
+       upscaled Figma render, which shows exactly this margin around the circle. */
+    /* MUST be closest-side, not the bare "circle" keyword: .pill-arrow is a 76x76
+       square, and an unqualified `circle` gradient defaults to farthest-corner
+       sizing — the half-diagonal (~53.7px), not the 38px radius that's actually
+       visible once border-radius:999px clips it to a circle. Against that wrong
+       53.7px denominator the 96% stop lands at ~51.6px, past the visible 38px
+       edge entirely, so nothing was actually cut off — confirmed by re-screenshotting
+       and finding no real margin despite the previous version of this rule. */
+    background: radial-gradient(circle closest-side, var(--color-orange) 96%, transparent 96%);
     /* Both 1:1479 (home) and 1:8953 (about) show a NAVY arrow glyph on the orange
        disc on direct pixel inspection, not white — home's original build (this
        component, filled-only) used white; corrected during merge. */
