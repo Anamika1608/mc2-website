@@ -301,5 +301,16 @@ const DIRECTORS = [
     .photo-wrap {
       width: 13.5rem;
     }
+    .h-line {
+      /* .h-line's left/width are calibrated for the desktop side-by-side card
+         (bridging from the photo into the text column beside it) -- its ~449px
+         reach from .photo-wrap's own left edge massively overshoots this
+         breakpoint's narrower 216px photo-wrap, extending past the card and
+         off the viewport's right edge. The text is now below the photo, not
+         beside it, so the line has nothing to bridge into either. Hidden here,
+         same "sanctioned adaptation" pattern used for other decorative
+         elements that don't survive a breakpoint's layout restructuring. */
+      display: none;
+    }
   }
 </style>
