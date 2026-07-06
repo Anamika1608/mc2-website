@@ -1,6 +1,5 @@
 ---
 import PillButton from "../PillButton.astro";
-import IllusCapital from "../../assets/home/illus-capital.svg";
 import IllusMentorship from "../../assets/home/illus-mentorship.svg";
 import IllusMarket from "../../assets/home/illus-market.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
@@ -87,7 +86,11 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
             Structured access to seed funding for early validation and
             scale-up capital for ventures demonstrating commercial traction.
           </p>
-          <IllusCapital class="card-illus" aria-hidden="true" />
+          <img
+            src="/Icons.png"
+            alt=""
+            class="card-illus card-illus--raster"
+          />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -237,9 +240,9 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
        both this rule and `.card.is-active`'s own min-height (below) reference it,
        instead of maintaining the same clamp expression in two places. */
     --pillar-active-height: clamp(
-      27rem,
-      max(92.2325rem - 65.5vw, 42.6875rem - 11.667vw),
-      51rem
+      26.5rem,
+      max(90.5431rem - 65.497vw, 41.0625rem - 11.667vw),
+      49rem
     );
     min-height: var(--pillar-active-height);
   }
@@ -326,7 +329,18 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      `--pillar-active-height` custom property so the two can't drift apart. An
      active card growing to this height was already guaranteed to fit within
      the row (the row IS this height, always, now) — nothing here changes
-     behaviorally, just where the number lives. */
+     behaviorally, just where the number lives.
+
+     Round 8 (per direct feedback: still visible empty space below the icon on
+     every card, not just O3): trimmed ~26-27px of fixed decorative
+     padding/margin off every card (see `.card`'s bottom padding and
+     `.card-content`/`.card-body`'s comments) and re-measured the same
+     worst-of-all-four scrollHeight sweep across the same eleven widths: 1024→763,
+     1100→679, 1200→623, 1300→567, 1366→539, 1440→474, 1536→446, 1600→446,
+     1700→418, 1800→418, 1920→418 (each roughly 26-27px below round 5's numbers,
+     confirming the trim landed evenly on every card rather than just O1). Refit
+     the same two-segment shape with a ~15px margin at each anchor; outer clamp
+     bounds also lowered (49rem ceiling, 26.5rem floor) to match. */
   .card.is-active {
     background: var(--color-orange); /* #F37D2C, Figma 1:1201 */
     min-height: var(--pillar-active-height);
@@ -390,7 +404,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
   .card-content {
     margin-top: 0.6rem;
     margin-left: 0.89rem; /* divider inset (37.82px) minus the card's own left padding (23.53px) */
-    padding-left: 2.3rem; /* body-text inset (74.62px) minus the divider's own inset (37.82px) */
+    padding-left: 1.5rem; /* round 9 (per direct feedback + Figma node 1:1200): text must start flush with the horizontal rule's own left edge, not indented further right — measured live, rule sits 64.4px from the card border while this padding used to put the body text at 78.5px, a visible extra gap the rule itself doesn't have. 1.5rem puts text at ~63.8px, matching the rule to within a pixel. */
     /* Round 3 (direct feedback: give the text below the horizontal rule some top
        breathing room) — this used to be 0, so the body text's own line-height
        started flush against the divider/rule with no gap at all. Kept (just
@@ -441,13 +455,23 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     height: 5.5625rem; /* 89px, matching O3's illus-mentorship native height */
     width: auto;
   }
-  /* O1's icon (round 5, public/Globe-Gray.png) — a raster PNG, not a src/assets
-     SVG, so it needs its own rule rather than the shared `.card-illus` base
-     (height:auto would render it at its native 3300x2550px otherwise). Same
-     height cap as O4's icon above, for visual consistency across all three
-     illustrated cards. */
+  /* O1's icon (round 5, public/Globe-Gray.png) and O2's icon (round 10,
+     public/Icons.png) — raster PNGs, not src/assets SVGs, so they need their
+     own rule rather than the shared `.card-illus` base (height:auto would
+     render them at their native pixel dimensions otherwise). Same height cap
+     as O4's icon above, for visual consistency across all four cards. */
   .card-illus--raster {
     height: 5.5625rem; /* 89px, matches .card--o4 .card-illus above */
+    width: auto;
+  }
+  /* O2's icon (public/Icons.png) has a lot of built-in transparent padding
+     around the actual glyph (1080x1080 canvas, glyph occupies only the
+     middle ~11% of it), so the shared raster cap above renders it barely
+     visible. Sized up on top of that base rule, per direct feedback, so the
+     glyph itself reads at roughly the same visual weight as the other three
+     cards' icons. */
+  .card--o2 .card-illus--raster {
+    height: 9rem;
     width: auto;
   }
 
