@@ -2,12 +2,13 @@
 import SparkOrange from "../../assets/home/spark-orange.svg";
 
 // Order, captions and alt text per plan (Task 3 brief). Width/height were
-// each logo's Figma-matched design bbox, scaled to 65% per user directive
-// 2026-07-07: at full size the 7-logo row's natural width (~1486px incl.
-// gaps) only fit a genuinely wide (~1920px+) browser window, wrapping to a
-// second row on any more modest real desktop width (confirmed via a live
-// screenshot at the user's own browser window). Scaling down keeps the row
-// on one line from 1024px up (this codebase's own desktop/tablet boundary).
+// each logo's Figma-matched design bbox, scaled to 80% per user directive
+// 2026-07-07 (a follow-up bump from an earlier 65% pass): at full Figma size
+// the 7-logo row's natural width (~1486px incl. gaps) only fit a genuinely
+// wide (~1920px+) browser window, wrapping on more modest real desktop
+// widths; 65% then fit but read as too small/clustered. 80% + a 3rem gap
+// (see .logos below) keeps the row on one line from ~1150px up while
+// spreading it out closer to Figma's own look.
 //
 // Sources swapped 2026-07-07 (user directive) from the old src/assets/home/
 // sponsor-*.png imports to new logo exports dropped directly in public/,
@@ -16,50 +17,50 @@ import SparkOrange from "../../assets/home/spark-orange.svg";
 const sponsors = [
   {
     src: "/hindustan-petroleum.png",
-    width: 81,
-    height: 105,
+    width: 99,
+    height: 129,
     caption: "Hindustan Petroleum",
     alt: "Hindustan Petroleum Corporation",
   },
   {
     src: "/oil-naural-gas.png",
-    width: 82,
-    height: 82,
+    width: 101,
+    height: 101,
     caption: "Oil & Natural Gas",
     alt: "Oil and Natural Gas Corporation",
   },
   {
     src: "/indian-oil.png",
-    width: 91,
-    height: 97,
+    width: 112,
+    height: 119,
     caption: "Indian Oil Corp",
     alt: "Indian Oil Corporation",
   },
   {
     src: "/bharat-petroleum.png",
-    width: 66,
-    height: 82,
+    width: 81,
+    height: 101,
     caption: "Bharat Petroleum",
     alt: "Bharat Petroleum Corporation",
   },
   {
     src: "/gas-authority.png",
-    width: 114,
-    height: 86,
+    width: 141,
+    height: 106,
     caption: "Gas Authority",
     alt: "GAIL (India) Limited",
   },
   {
     src: "/oil-india.png",
-    width: 68,
-    height: 99,
+    width: 83,
+    height: 122,
     caption: "Oil India Ltd",
     alt: "Oil India Limited",
   },
   {
     src: "/petronet-lng.png",
-    width: 63,
-    height: 84,
+    width: 78,
+    height: 103,
     caption: "Petronet LNG",
     alt: "Petronet LNG Limited",
   },
@@ -128,7 +129,7 @@ const sponsors = [
     flex-wrap: wrap;
     justify-content: center;
     align-items: start;
-    gap: 2.5rem 2rem; /* column-gap reduced from 6.44rem (103px, Figma-measured) to 2rem (32px) per user directive 2026-07-07 -- the Figma-derived gap only kept one row at a genuinely wide (~1920px+) browser window; combined with the smaller logo sizes below, this keeps all 7 on one row from 1024px up */
+    gap: 2.5rem 3rem; /* column-gap bumped from 2rem to 3rem (48px) per user directive 2026-07-07 -- spreads the row out closer to Figma's own ~103px gap while still fitting one row at realistic desktop widths (see sponsors array comment above) */
   }
 
   .logo {
@@ -142,12 +143,12 @@ const sponsors = [
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    /* 6.54rem = 104.65px, 65% of the tallest sponsor asset (Hindustan
+    /* 8.0625rem = 129px, 80% of the tallest sponsor asset (Hindustan
        Petroleum, scaled per user directive 2026-07-07 -- see the sponsors
        array comment above). Bottom-aligning each image inside a box this
        tall keeps the row visually level without stretching or cropping any
-       logo, same technique as before, just scaled down with the images. */
-    height: 6.54rem;
+       logo, same technique as before, just scaled with the images. */
+    height: 8.0625rem;
   }
 
   figcaption {
