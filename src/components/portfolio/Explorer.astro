@@ -1,7 +1,21 @@
 ---
 // Figma file u4NLOVKuXUTKULhSn0sAJQ, node 1:23922. Filter chips + venture list.
-// Task 3: static markup only (all 50 rows rendered, everything visible in the
-// default All/All state) — filtering/hover interactivity is Task 4.
+// Task 3 built the static markup (all 50 rows, everything visible in the
+// default All/All state). Task 4 adds:
+//   - Filtering script (single-select per dimension, AND-combined, static chip
+//     counts, hidden-attribute show/hide, aria-live results count, empty state).
+//   - Hover band (node 1:23932, rounded-rect x96.4 y1731.24 w1675.8 h442.8,
+//     image fill): rather than duplicating every text node into a second
+//     "white version", the SAME tag/name/sector/desc/link elements are
+//     recolored white via `.row:hover`/`:focus-within` descendant selectors
+//     and a dark layer (`.row-hover`) fades in behind them — matches the
+//     design's own look (identical copy, just restyled) without doubling the
+//     DOM. Xyma Analytics alone gets the real photo (hover-photo-xyma.png,
+//     Task 1 export) via a CSS custom property set inline on that one row;
+//     every other row gets the identical dark gradient band WITHOUT a photo
+//     (documented adaptation — the `url` field convention from Task 1 doesn't
+//     extend to photos, so there's no per-venture photo to fall back to; the
+//     markup/CSS is ready to add one later via the same custom-property hook).
 //
 // Filter chips (get_metadata on content group 1:23924, y1185-1420; get_design_context
 // on 1:23936/1:24017 for chip anatomy): "BACKED BY" 1:24015 (y1185.38, real text)
@@ -41,8 +55,10 @@
 //
 // Hover band (rounded-rect 1:23932, Task 1's hover-photo-xyma.png export):
 // markup placeholder only here — Task 4 adds the script + hover CSS.
+import { Image } from "astro:assets";
 import { BACKERS, SECTORS, VENTURES } from "../../data/ventures";
 import SparkRow from "../../assets/portfolio/spark-row.svg";
+import hoverPhotoXyma from "../../assets/portfolio/hover-photo-xyma.png";
 ---
 
 <section class="explorer" aria-label="Venture explorer">
@@ -91,7 +107,12 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     <div class="rows">
       {
         VENTURES.map((v) => (
-          <article class="row" data-backer={v.backer} data-sector={v.sector}>
+          <article
+            class="row"
+            data-backer={v.backer}
+            data-sector={v.sector}
+            style={v.name === "Xyma Analytics" ? `--hover-photo:url(${hoverPhotoXyma.src})` : undefined}
+          >
             <div class="row-divider" aria-hidden="true">
               <span class="row-tag">Backed by {v.backer}</span>
               <SparkRow class="row-spark" />
@@ -116,7 +137,11 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
                   </span>
                 )}
               </div>
-              <div class="row-hover" aria-hidden="true" />
+              <div class="row-hover" aria-hidden="true">
+                {v.name === "Xyma Analytics" && (
+                  <Image src={hoverPhotoXyma} alt="" class="row-hover-photo" />
+                )}
+              </div>
             </div>
           </article>
         ))
@@ -197,9 +222,19 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   .row {
     position: relative;
     padding-block: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    transition: padding 200ms ease;
+  }
+  .row:hover,
+  .row:focus-within {
+    /* Grows to make room for the photo band (node 1:23932 is 442.8px tall vs
+       this row's own ~264px cadence) — a "reveal" interaction rather than an
+       overlay that would clip against neighbouring rows. */
+    padding-inline: 2rem;
   }
   .row-divider {
     position: relative;
+    z-index: 2; /* stays above .row-hover's own z-index:0 band, which would otherwise paint over this unpositioned-by-default sibling */
     display: flex;
     align-items: center;
     height: 1px;
@@ -299,9 +334,69 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   }
 
   .row-hover {
-    /* Task 4 fills this in: absolutely-positioned dark band + Xyma photo on
-       hover/focus-within, per node 1:23932. Empty in this static-markup task. */
-    display: none;
+    position: absolute;
+    inset: -1.5rem -2rem; /* bleeds past the row's own content into its padding-block, matching the design's band overshooting the row's normal text column */
+    z-index: 0;
+    border-radius: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    background-color: var(--color-ink-alt);
+    /* --hover-photo is set inline only on Xyma's row (Task 1's hover-photo-
+       xyma.png); every other row falls back to `none`, i.e. gradient only —
+       see frontmatter comment for the "identical band, no photo" adaptation. */
+    background-image: linear-gradient(
+        to top,
+        rgba(30, 30, 60, 0.92),
+        rgba(30, 30, 60, 0.55) 60%,
+        rgba(30, 30, 60, 0.25)
+      ),
+      var(--hover-photo, none);
+    background-size: cover;
+    background-position: center;
+  }
+  .row-hover-photo {
+    display: none; /* the <Image> exists only so Astro optimizes the asset; the visible paint is the CSS background-image above (identical source), not this <img> */
+  }
+  .row:hover .row-hover,
+  .row:focus-within .row-hover {
+    opacity: 1;
+  }
+
+  /* Recolor the SAME text nodes to white when the band is behind them —
+     see frontmatter comment on why this doesn't duplicate markup. */
+  .row:hover .row-tag,
+  .row:focus-within .row-tag {
+    background: var(--color-orange);
+    border-color: var(--color-orange);
+    color: var(--color-white);
+  }
+  .row:hover .row-name,
+  .row:focus-within .row-name,
+  .row:hover .row-sector,
+  .row:focus-within .row-sector,
+  .row:hover .row-desc,
+  .row:focus-within .row-desc {
+    position: relative;
+    z-index: 1;
+    color: var(--color-white);
+  }
+  .row:hover .row-sector .dot,
+  .row:focus-within .row-sector .dot {
+    background: var(--color-white);
+  }
+  .row:hover .row-link,
+  .row:focus-within .row-link {
+    position: relative;
+    z-index: 1;
+    color: var(--color-orange);
+  }
+  .row:hover .row-main,
+  .row:focus-within .row-main,
+  .row:hover .row-side,
+  .row:focus-within .row-side {
+    position: relative;
+    z-index: 1;
   }
 
   .empty-state {
@@ -336,3 +431,51 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     }
   }
 </style>
+
+<script>
+  // Behavior spec (plan, Task 4): single-select per dimension, All default,
+  // AND-combined across dimensions, static chip counts (never recomputed),
+  // hidden-attribute show/hide (no re-render), aria-live results count,
+  // empty state when a combination matches nothing, fully keyboard-operable
+  // via native <button> + aria-pressed (no extra keydown handling needed).
+  const explorer = document.querySelector(".explorer")!;
+  const chips = Array.from(explorer.querySelectorAll<HTMLButtonElement>(".chip"));
+  const rows = Array.from(explorer.querySelectorAll<HTMLElement>(".row"));
+  const resultsCount = explorer.querySelector(".results-count")!;
+  const emptyState = explorer.querySelector<HTMLElement>(".empty-state")!;
+
+  const selected: Record<"backer" | "sector", string> = {
+    backer: "All",
+    sector: "All",
+  };
+
+  function applyFilters() {
+    let visible = 0;
+    for (const row of rows) {
+      const matches =
+        (selected.backer === "All" || row.dataset.backer === selected.backer) &&
+        (selected.sector === "All" || row.dataset.sector === selected.sector);
+      row.hidden = !matches;
+      if (matches) visible++;
+    }
+    resultsCount.textContent =
+      visible === rows.length
+        ? `Showing all ${rows.length} ventures`
+        : `Showing ${visible} of ${rows.length} ventures`;
+    emptyState.hidden = visible !== 0;
+  }
+
+  for (const chip of chips) {
+    chip.addEventListener("click", () => {
+      const filter = chip.dataset.filter as "backer" | "sector";
+      const value = chip.dataset.value!;
+      selected[filter] = value;
+      for (const sibling of chips) {
+        if (sibling.dataset.filter === filter) {
+          sibling.setAttribute("aria-pressed", String(sibling === chip));
+        }
+      }
+      applyFilters();
+    });
+  }
+</script>
