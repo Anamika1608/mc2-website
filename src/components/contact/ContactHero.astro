@@ -39,9 +39,15 @@ import ScrollArrow from "../../assets/contact/scroll-arrow.svg";
   }
   @media (min-width: 1024px) {
     .hero {
-      /* hero-curves.svg's own exported height (1012px = 63.25rem) approximates
-         the hero band, mirroring TeamHero. */
-      min-height: 63.25rem;
+      /* Was 63.25rem (the curve SVG's 1012px export height) — sized for the
+         pre-normalization 80px/31px hero text. After the type-scale
+         normalization (user directive 2026-07-06) the content stack ends
+         ~595px into the band, leaving ~393px dead space (measured: 598px
+         chevron→heading gap vs Figma's 205px — chevron 963.6 → band end 984
+         → H2 1169, nodes 1:29713/1:28682). Re-derived: content bottom 595px
+         + 20.4px Figma chevron→band-end ≈ 615px = 38.7rem; the curve
+         backdrop crops per the site's allow-crop rule. */
+      min-height: 38.7rem;
     }
     /* Each h1 span is one authored Figma line (916/798/552px) — the browser's
        Faculty Glyphic metrics render a hair wider than Figma's own, so at the
