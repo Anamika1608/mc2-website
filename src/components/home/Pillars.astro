@@ -211,28 +211,16 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     display: flex;
     align-items: flex-end; /* shared bottom baseline (all four cards' boxes end at Figma y2218.1) — this alone produces O3's "sits higher" and O1's short tab */
     gap: 3.47%; /* 61.45px / 1772.2px total row width (1:1068) — percentage so the gap scales with the row instead of the fixed-width cards overflowing narrower desktop viewports */
-    /* Round 7 (per direct feedback: hovering a card grows `.pillars-row` itself —
-       a flex row's own height auto-sizes to its tallest child — which shoved the
-       CTA button and everything after it up/down on every hover/un-hover, making
-       the whole page feel like it was jumping). Fix: reserve this row's height
-       PERMANENTLY at the active-card height, not just while something's active.
-       `align-items: flex-end` (above) then does the rest for free — collapsed
-       cards simply float at the bottom of this already-tall row with empty space
-       above them (this is the gap the first reference screenshot showed; it was
-       never wasted space, it's room being held open for exactly this), and an
-       activated card just grows to fill space that was already reserved. The
-       row's own rendered height is now a constant regardless of hover state, so
-       nothing outside it — the CTA button, the heading above, anything below —
-       ever needs to move.
-       `--pillar-active-height` is one shared source of truth for this value —
-       both this rule and `.card.is-active`'s own min-height (below) reference it,
-       instead of maintaining the same clamp expression in two places. */
-    --pillar-active-height: clamp(
-      26.5rem,
-      max(90.5431rem - 65.497vw, 41.0625rem - 11.667vw),
-      49rem
-    );
-    min-height: var(--pillar-active-height);
+    /* Per direct feedback: reverted to always-open cards (round 7's permanent
+       `--pillar-active-height` reservation, and the min-height/hide-show
+       machinery it existed to protect, are gone — see .card and .card-content
+       below). That whole apparatus was defending against a real
+       reflow-thrashing bug from a card's box growing/shrinking on hover; now
+       that every card's content is always visible and never toggles, nothing
+       about layout ever changes on hover (only background-color, a paint
+       property), so there's nothing left to protect against. The row simply
+       sizes to its tallest (permanently-shown) card via `align-items:
+       flex-end` above, same as any ordinary flex row. */
   }
 
   .card {
@@ -242,110 +230,21 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px, all four cards (1:1070 etc.) */
     background: var(--color-cream);
-    padding: 0.8rem 1.47rem 1rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards); bottom trimmed from 1.5rem (round 8, per direct feedback: every card carries this same fixed padding regardless of content, so shaving it here reduces the leftover space below every card's icon once the shared active height is refitted, see .pillars-row's comment) */
-    /* Round 3 (per direct feedback — rounds 1 and 2 both still shook the page and
-       looked nothing like the original design): every card, collapsed, now shares
-       ONE short min-height — O1's own original value (6.5663rem/105px, "title
-       only," Figma 1:1069) — instead of each card keeping its own old always-
-       content-visible height (O2 328px, O3 378px, O4 322px) now that the content
-       those heights were sized for is hidden until active. Those old per-card
-       values used to leave O2/O3/O4 rendering as tall, empty-looking boxes at
-       rest (nothing in them, but still 328-378px tall) — the "extra space"
-       reported directly. Collapsed cards now all sit at the exact same short
-       height, "under the same vertical line." */
-    min-height: 6.5663rem; /* 105.06px, Figma 1:1069 — shared collapsed height for all four */
-    overflow: hidden; /* belt-and-suspenders: if a card's real content ever slightly exceeds the active min-height below at an extreme viewport, clip it rather than let it grow the card (and the row) taller */
-    transition:
-      background-color 200ms ease,
-      min-height 200ms ease;
+    padding: 0.8rem 1.47rem 1rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards) */
+    transition: background-color 200ms ease;
   }
-  /* At most one card carries `.is-active` at a time, assigned by the script
-     below on hover — none by default (round 6: all four start collapsed, see
-     markup). Replaces the old permanent `.card--o3` background.
-
-     CRITICAL FIX — reflow-thrashing bug: this used to just set `background`,
-     leaving each card's own (very different, staircase) min-height untouched.
-     Once a non-O3 card revealed its body+icon, IT became the row's tallest child
-     (align-items: flex-end sizes `.pillars-row` to its tallest item), growing
-     the row and shoving every real DOM element below it (the CTA button, the
-     next section) further down the page. A real mouse is never perfectly still —
-     a sub-pixel jitter during that shove is enough to move a DIFFERENT card or
-     the CTA under the cursor, firing another mouseenter/mouseleave, causing
-     another reflow, on and on — visible as the page violently vibrating and the
-     tab hanging. Headless Playwright with a mathematically frozen cursor never
-     reproduced it (no real jitter to retrigger the loop), which is why the
-     original screenshots looked fine. Fix: give EVERY active card the exact same
-     min-height, so the row's rendered height is a hardcoded-per-viewport
-     constant no matter which single card is active.
-
-     Round 3 grew this section way past what it ever was (a flat 43rem constant,
-     then a clamp fitted to O1's own content) — fixed by fitting to O3's own
-     original per-viewport need instead. Round 4 (per direct feedback: still a
-     lot of visible empty space below the icon on the active card) had two parts:
-     (a) a single 2-point clamp is a STRAIGHT LINE between its two endpoints, but
-     real content height vs. viewport width isn't linear — text re-wraps in
-     discrete jumps, not continuously — so a straight line fit to the 1024px and
-     1920px endpoints alone overshoots badly in between; (b) the actual biggest
-     driver of the shared budget was `illus-market.svg` (O4's icon) being
-     natively ~2x taller than O2/O3's icons with no size cap on `.card-illus` —
-     fixed above by capping just that one icon down to match its siblings, which
-     lowered the true worst-case need at almost every width.
-     Refitted against actual worst-of-all-four-cards scrollHeight sampled at
-     ELEVEN widths across the full 1024-1920 range (not just two endpoints),
-     after the icon fix: 1024→701px, 1100→622, 1200→594, 1300→538, 1366→510,
-     1440→482, 1536→444, 1600→444, 1700-1920→416 — each with a ~10-25px margin,
-     as a two-segment piecewise curve (steeper 1024–1440px, flatter 1440–1920px
-     — `max()` of both lines always picks whichever segment is valid for the
-     current width). `overflow: hidden` above still clips the rare/edge-case
-     overflow instead of resizing anything (no single card's curve alone covers
-     every width — O1 is worst at 1024, O4 in the middle range, O3 from ~1536
-     up — which is why this is fit to the per-width max across all four rather
-     than one reference card). <1024 switches to the auto-height grid layout
-     below and doesn't use this rule at all.
-
-     Round 5: O1 gained a real icon (public/Globe-Gray.png, see markup), adding
-     ~89px back on top of round 4's numbers and making O1 the worst case at
-     every width again (790px at 1024 down to 444px at 1920). Refitted the same
-     two-segment shape against the new worst-of-all-four numbers: 1024→790,
-     1100→706, 1200→650, 1300→594, 1366→566, 1440→500 (segment A, fit through
-     the 1024/1366 pair since a plain two-point line across the full segment
-     undershot the 1300-1366 middle); 1536→472, 1600→472, 1700-1920→444
-     (segment B). ~15px margin throughout.
-
-     Round 7: this exact value is now also `.pillars-row`'s own permanent
-     min-height (see its comment) — factored out to the shared
-     `--pillar-active-height` custom property so the two can't drift apart. An
-     active card growing to this height was already guaranteed to fit within
-     the row (the row IS this height, always, now) — nothing here changes
-     behaviorally, just where the number lives.
-
-     Round 8 (per direct feedback: still visible empty space below the icon on
-     every card, not just O3): trimmed ~26-27px of fixed decorative
-     padding/margin off every card (see `.card`'s bottom padding and
-     `.card-content`/`.card-body`'s comments) and re-measured the same
-     worst-of-all-four scrollHeight sweep across the same eleven widths: 1024→763,
-     1100→679, 1200→623, 1300→567, 1366→539, 1440→474, 1536→446, 1600→446,
-     1700→418, 1800→418, 1920→418 (each roughly 26-27px below round 5's numbers,
-     confirming the trim landed evenly on every card rather than just O1). Refit
-     the same two-segment shape with a ~15px margin at each anchor; outer clamp
-     bounds also lowered (49rem ceiling, 26.5rem floor) to match.
-
-     Round 10 (per direct feedback: shorter cards shouldn't be force-stretched
-     to match O1's height — it's not compulsory every card be the same size,
-     each should end right after its own content): dropped the min-height
-     override here entirely. The anti-shake fix never actually depended on
-     every ACTIVE CARD sharing one height — it depended on `.pillars-row`
-     itself never resizing (see its own min-height above, unchanged). A
-     flex row with `align-items: flex-end` doesn't let one item's height
-     affect another's, so once the row's own footprint is already pinned,
-     each active card is free to size to its own content via `.card`'s base
-     `min-height: 6.5663rem` (naturally exceeded once `.card-content` shows).
-     O1 still ends up tallest and still fits inside the row's reserved
-     height (nothing above changed); shorter cards (O2/O4) now end shortly
-     after their own icon instead of stretching to fill O1's height, and
-     simply float lower within the same reserved space — the leftover gap
-     moves from "inside the card, below the icon" to "above the card,"
-     which is the same reserved-space mechanism collapsed cards already use. */
+  /* Per direct feedback: all four cards are always open now (title + body +
+     icon always visible — see .card-content below), reverting the
+     collapsed/expand-on-hover interaction from earlier rounds. `.is-active`
+     (assigned by the script below on hover, none by default) now only ever
+     toggles `background` — nothing about height, min-height, or visibility.
+     That's safe specifically because nothing about LAYOUT changes on hover
+     anymore: the reflow-thrashing bug those earlier rounds fought (a card's
+     box growing/shrinking on hover, shoving the CTA button around) can't
+     recur when a card's box never changes size to begin with. Each card
+     simply keeps its own natural height (title + body + icon), same as the
+     reference screenshot's differing heights, with `align-items: flex-end`
+     (on .pillars-row) bottom-aligning them. */
   .card.is-active {
     background: var(--color-orange); /* #F37D2C, Figma 1:1201 */
   }
@@ -401,26 +300,19 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      compound path merging a vertical divider into the card's own border outline
      (e.g. O2's border vector: "M37.82 72.79V329.1H397.54V1H1V329.1H88.05") —
      reproduced here as a border-left on the content wrapper instead of chasing
-     the compound path. Exclusive active card (this task): hidden by default,
-     shown only for the active card (every card has one now, including O1 — see
-     its markup comment) — same hide-until-active pattern as HowItWorks.astro's
-     .step-body, just covering the icon too since both live in one wrapper here. */
+     the compound path. Always visible now (per direct feedback: all four
+     cards are permanently open, hover only changes background color — see
+     .card's own comment above). */
   .card-content {
     margin-top: 0.6rem;
     margin-left: 0.89rem; /* divider inset (37.82px) minus the card's own left padding (23.53px) */
-    padding-left: 1.5rem; /* round 9 (per direct feedback + Figma node 1:1200): text must start flush with the horizontal rule's own left edge, not indented further right — measured live, rule sits 64.4px from the card border while this padding used to put the body text at 78.5px, a visible extra gap the rule itself doesn't have. 1.5rem puts text at ~63.8px, matching the rule to within a pixel. */
-    /* Round 3 (direct feedback: give the text below the horizontal rule some top
-       breathing room) — this used to be 0, so the body text's own line-height
-       started flush against the divider/rule with no gap at all. Kept (just
-       trimmed slightly) in round 8 — the bottom padding below is where that
-       round's leftover-space reduction actually comes from, not this. */
+    padding-left: 1.5rem; /* per direct feedback + Figma node 1:1200: text must start flush with the horizontal rule's own left edge, not indented further right — measured live, rule sits 64.4px from the card border while this padding used to put the body text at 78.5px, a visible extra gap the rule itself doesn't have. 1.5rem puts text at ~63.8px, matching the rule to within a pixel. */
+    /* Direct feedback: give the text below the horizontal rule some top
+       breathing room — this used to be 0, so the body text's own line-height
+       started flush against the divider/rule with no gap at all. */
     padding-top: 0.75rem;
-    padding-bottom: 0.5rem; /* trimmed from 1rem (round 8) — see .card's own comment above */
+    padding-bottom: 0.5rem;
     border-left: 0.125rem solid var(--color-ink-alt);
-    display: none;
-  }
-  .card.is-active .card-content {
-    display: block;
   }
 
   .card-body {
@@ -544,36 +436,9 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
       grid-template-columns: repeat(2, 1fr);
       align-items: start;
       gap: 2rem;
-      /* Round 7: cancel the desktop-only space reservation (`.pillars-row`'s own
-         min-height, see its comment above) — there's no hover here to reserve
-         room for (every card's content is always visible below, per the
-         override further down), so holding that same tall gap open here would
-         just be a big empty band above a normal, already-static 2x2 grid. */
-      min-height: auto;
     }
     .card {
       flex: initial;
-    }
-    .card--o1,
-    .card--o2,
-    .card--o3,
-    .card--o4 {
-      margin-left: 0;
-      min-height: auto;
-    }
-    /* Hover doesn't really exist as a concept below 1024 (stacked grid, likely
-       touch) — show every card's body+icon unconditionally instead, same pattern
-       as HowItWorks.astro's mobile view. Specificity has to match/beat
-       `.card.is-active .card-content` (0,2,0) in case a card is ever left
-       `.is-active` at this width (e.g. a trackpad hover just before resize) — and
-       since round 6 removed the default-active card, this override is also what
-       makes mobile show content at all now (no card is active-by-default here to
-       rely on anymore). No card gets the orange highlight below 1024 as a result
-       (matches the new "nothing active without a real hover" behavior instead of
-       a permanent highlight) — not asked about specifically, flagging in case a
-       different mobile treatment is wanted. */
-    .pillars-row .card .card-content {
-      display: block;
     }
   }
 
