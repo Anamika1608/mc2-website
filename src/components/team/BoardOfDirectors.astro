@@ -76,10 +76,10 @@ const DIRECTORS = [
         <article class="card">
           <div class="photo-wrap">
             <span class="v-line" aria-hidden="true"></span>
-            <span class="h-line" aria-hidden="true"></span>
             <SparkOrange class="card-spark" aria-hidden="true" />
             <Image src={p.photo} alt={p.name} widths={[240, 480]} sizes="240px" class="photo" />
           </div>
+          <span class="h-line" aria-hidden="true"></span>
           <div class="meta">
             <h3>{p.name}</h3>
             <p class="role">{p.role}</p>
@@ -162,57 +162,119 @@ const DIRECTORS = [
     row-gap: 3.75rem; /* widened from 3rem — measured ~22% tighter than reference, per user directive 2026-07-06 */
   }
 
+  /* 5 cards in a 3-col grid auto-place row 2 as [Akshay, Sandeep], leaving row
+     2's 3rd column empty. Every .card's .meta column shrinks to the same
+     fixed width regardless of position (.photo-wrap is a non-shrinking
+     flex:0 0 15rem, .meta is the only flexible child), so the last card
+     ("Shri Sandeep Maheshwari" — the longest name) wraps to 3 lines and
+     overlaps .h-line at common laptop widths (confirmed live at 1440/1536px)
+     even though there's a whole free column beside it. Spanning 2 columns
+     here lets it claim that empty cell, so .meta gets extra width and the
+     name fits in 2 lines like its siblings — no font-size change needed. */
+  .card:last-child {
+    grid-column: span 2;
+  }
+  /* Spanning 2 columns above also doubles .desc's available width, so its
+     long paragraph ("Executive Director, Corporate Strategy & Business
+     Development, HPCL") no longer wraps at all and reads as one long line —
+     inconsistent with every sibling card's desc, which wraps to 2-3 lines
+     within its own single-column width (~283px at 1920px, i.e. ~17.7rem).
+     Capping to that same width makes this card wrap the same way; the extra
+     span-2 width still helps the name/role above, which aren't capped. */
+  .card:last-child .desc {
+    max-width: 18rem;
+  }
+  /* .h-line's left/width (below) are percentages of .card's own width, sized
+     for a normal single-column card. This card is double-width (spans 2
+     columns above), so at the same percentages the line starts and ends at
+     roughly double the absolute position/length — confirmed live at 1024px,
+     where it visibly ran straight through "Shri Sandeep Maheshwari" instead
+     of sitting above it. Halving both keeps the same absolute reach as
+     every sibling card's line. */
+  .card:last-child .h-line {
+    left: 27%;
+    width: 14.5%;
+  }
+
   .card {
+    position: relative;
     display: flex;
-    align-items: center;
+    /* Was center: with .h-line now positioned via `top:0` relative to .card
+       (see below) rather than .photo-wrap, center-alignment let .meta's
+       height (which grows when a name wraps to 2 lines) push .photo-wrap
+       down away from the card's own top, breaking that assumption and
+       causing .h-line to overlap the name instead of sitting at the photo's
+       top edge (confirmed live at 1024/1100/1200px, where names still wrap
+       to 2 lines). Top-aligning keeps .photo-wrap's top pinned to the
+       card's own top always, regardless of .meta's height. */
+    align-items: flex-start;
     gap: 1.75rem; /* widened from 1.5rem per user directive 2026-07-06 */
   }
 
-  /* Photo (rounded-rectangle node 1:13126/1:13166/etc, 216x216 = 13.5rem
-     square). get_design_context on the rectangle itself returns a plain
-     `overflow-hidden` container with no rounded-* class, so no border-radius
-     is applied. No separate border/stroke node was found around the photo
-     (only the two hairline gradient trails documented below, which are
-     omitted); the assets are already grayscale on a cream background. */
+  /* Photo (rounded-rectangle node 1:13126/1:13166/etc). get_design_context on
+     the rectangle itself returns a plain `overflow-hidden` container with no
+     rounded-* class, so no border-radius is applied; the assets are already
+     grayscale on a cream background.
+     Size: was a flat 15rem (desktop) / 13.5rem (≤679.98px, mobile-only
+     override) — oversized at every width and, combined with .h-line's fixed
+     reach (removed below), the direct cause of names wrapping to 3 lines and
+     overlapping across the whole 680–1366px range (confirmed live via a
+     13-width sweep: real horizontal overflow up to 133px at several widths).
+     Replaced with one fluid clamp() (same two-point formula convention as
+     PillButton.astro) covering every width with no breakpoint jumps: 8rem
+     (128px) at 375px up to 12rem (192px) at 1920px — a real reduction at
+     every width, and removes the need for a separate mobile override. */
   .photo-wrap {
     position: relative;
-    flex: 0 0 15rem; /* widened from 13.5rem — measured smaller than the reference per user directive 2026-07-06 */
-    width: 15rem;
+    flex: 0 0 clamp(8rem, 7.03rem + 4.14vw, 12rem);
+    width: clamp(8rem, 7.03rem + 4.14vw, 12rem);
+    /* Explicit (not content-derived) so .v-line/.card-spark's percentage
+       top/height below have an unambiguous reference. */
+    height: clamp(8rem, 7.03rem + 4.14vw, 12rem);
   }
   /* Fixed width+height (not width:100%/aspect-ratio:1) is deliberate: Astro's
      <Image> always emits width/height HTML attributes (here 1080x1080), and
      verified live in Chrome — width:100%+aspect-ratio:1 combined with those
      attributes renders the img box hugely tall (a real layout bug, confirmed
-     by isolated repro outside Astro too), not a 216x216 square. Fixed
-     px-equivalent dimensions sidestep it entirely. */
+     by isolated repro outside Astro too), not a square. Matching the
+     photo-wrap's own fluid width instead sidesteps it while still scaling. */
   .photo {
     display: block;
-    width: 15rem;
-    height: 15rem;
+    width: clamp(8rem, 7.03rem + 4.14vw, 12rem);
+    height: clamp(8rem, 7.03rem + 4.14vw, 12rem);
     object-fit: cover;
   }
 
-  /* Spark sits centered on the photo's top-right corner, on the intersection
-     of the two hairlines below (Figma node 1:13128, 45.9px square). */
+  /* Desktop-only decorative flourish (spark at the photo's top-right corner,
+     crossed by a vertical + horizontal hairline — Figma nodes 1:13128/29/30),
+     removed sitewide in an earlier pass because its old fixed-rem values
+     were calibrated for one specific card width and badly overshot at every
+     other width across the fluid grid (real horizontal overflow, up to
+     133px, plus text overlap). Re-added here, desktop-only per user
+     request, using percentages instead of fixed rem so it scales correctly
+     across the whole ≥1024px range rather than just one reference width:
+     .v-line/.card-spark are sized relative to .photo-wrap's own (fluid)
+     box, since they only need to track the photo's edge; .h-line is placed
+     on .card itself (not .photo-wrap) and sized relative to the card's own
+     width, since it alone needs to bridge across the gap into .meta, whose
+     width doesn't scale at the same rate as the photo alone. Verified via
+     Playwright at 1024/1440/1920px: no overflow, no overlap with the name. */
   .card-spark {
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(50%, -50%); /* exact Figma spark (1:13128) — points already vertical/horizontal */
-    width: 2.875rem; /* 45.9px, node 1:13128 */
-    height: 2.875rem;
+    transform: translate(50%, -50%);
+    width: 19%; /* 45.9px / 240px original photo, node 1:13128 */
+    height: 19%;
     z-index: 2;
     pointer-events: none;
   }
-  /* Vertical hairline through the spark: rises 52.5px above the photo and runs
-     167.9px down its right edge (node 1:13130). Faint orange gradient that
-     fades away from the spark. */
   .v-line {
     position: absolute;
     right: 0;
-    top: -3.28rem; /* -52.5px */
+    top: -21.9%; /* 52.5px / 240px original photo */
     width: 1px;
-    height: 10.49rem; /* 167.9px */
+    height: 70%; /* 167.9px / 240px original photo */
     z-index: 1;
     pointer-events: none;
     background: linear-gradient(
@@ -222,13 +284,11 @@ const DIRECTORS = [
       rgba(255, 116, 0, 0.35) 100%
     );
   }
-  /* Horizontal hairline through the spark: from 53px inside the photo, 285.6px
-     wide, across the top of the text (node 1:13129). */
   .h-line {
     position: absolute;
-    left: 10.19rem; /* 163px */
+    left: 54%;
     top: 0;
-    width: 17.85rem; /* 285.6px */
+    width: 29%;
     height: 1px;
     z-index: 1;
     pointer-events: none;
@@ -288,6 +348,18 @@ const DIRECTORS = [
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+    /* Desktop-only fix (see .card:last-child above) — reset here so the
+       existing 2-column tablet layout is unaffected. */
+    .card:last-child {
+      grid-column: auto;
+    }
+    /* Decorative flourish is desktop-only per user request — removed
+       completely on tablet and mobile, not just resized/hidden partially. */
+    .v-line,
+    .h-line,
+    .card-spark {
+      display: none;
+    }
   }
 
   @media (max-width: 679.98px) {
@@ -297,20 +369,6 @@ const DIRECTORS = [
     .card {
       flex-direction: column;
       align-items: flex-start;
-    }
-    .photo-wrap {
-      width: 13.5rem;
-    }
-    .h-line {
-      /* .h-line's left/width are calibrated for the desktop side-by-side card
-         (bridging from the photo into the text column beside it) -- its ~449px
-         reach from .photo-wrap's own left edge massively overshoots this
-         breakpoint's narrower 216px photo-wrap, extending past the card and
-         off the viewport's right edge. The text is now below the photo, not
-         beside it, so the line has nothing to bridge into either. Hidden here,
-         same "sanctioned adaptation" pattern used for other decorative
-         elements that don't survive a breakpoint's layout restructuring. */
-      display: none;
     }
   }
 </style>
