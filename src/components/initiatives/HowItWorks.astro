@@ -1,0 +1,375 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: eyebrow 1:15970 / H2 1:15971 (consumed via
+// SectionHeading, verified against these exact nodes in Task 2), sub-line
+// 1:15972 (outlined), step-card row 1:16075 (STEP/O-number text nodes
+// 1:16081-1:16265), down-chevron 1:16816 (Task 1: byte-identical to
+// src/assets/home/scroll-arrow.svg — reused, no new asset). See derivations
+// in the style block below.
+import SectionHeading from "../SectionHeading.astro";
+import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+
+// Folder-tab connector (Figma nodes 1:16080 / 1:16088 / 1:16202 / 1:16262) —
+// downloaded all four as raw SVG to compare against Home's Pillars.astro
+// precedent (two-path, front-color-swapped-per-card notch). These are
+// simpler: a SINGLE path, byte-identical across all four cards, always
+// `fill="black"` — even on O2's orange card (verified directly on 1:16088's
+// own export, not inferred). So there's no per-card color swap needed; one
+// shared shape suffices.
+const NOTCH = `<svg class="step-notch" viewBox="0 0 42 73" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <path d="M41.6 0V72.13L39.17 48.76C38.41 41.44 32.46 35.7499 25.11 35.3199L0 33.3199L25.67 31.1C32.95 30.63 38.84 25.01 39.64 17.76L41.6 0.0100098V0Z" fill="#000" />
+</svg>`;
+
+// Pointed arrow connector (the plan's "pointed arrow connectors between
+// cards") — baked into the border-outline paths themselves on O1 (1:16078),
+// O2 (1:16086) and O3 (1:16200): each card's right border detours outward to
+// a symmetric 45° point beside the STEP label (O1's own path, card-local:
+// border line x349.51 detours (349.51,63.81) → apex (368.62,82.92) →
+// (349.51,102.03) — a 19.11px-deep, 38.22px-tall V; O2/O3 carry the
+// byte-identical shape at slightly different y). ABSENT on O4 (1:16261 is a
+// plain rectangle): each card points at its successor, the last card has
+// none. (An earlier revision of this file dismissed the shape as an
+// Illustrator-import artifact and dropped it — wrong: it's precise,
+// symmetric, and consistently present-on-O1/O2/O3 / absent-on-O4.)
+// Reproduced as an overlay SVG per V-bearing card, split into two paths — the
+// same two-path split precedent as Home's Pillars.astro notch. Fill-only
+// path: a wedge closed at x=0, the SVG's local coordinate for the border's
+// own INNER edge (not x=1, the border's centerline) — filled with the card's
+// own background (orange on O2, whose design path fills the tab orange too)
+// — so it replaces the full 2px CSS border thickness across the tab mouth,
+// not just its outer half (closing at the centerline left a 1px navy seam
+// across the mouth on all three cards — fixed by this wider closing edge).
+// Stroke-only path: the two diagonals, centered on the border's own
+// centerline (x=1), left open (no closing segment) so no stroke is drawn
+// along the border line itself — the same open-detour construction as the
+// design's own border path, minus the rectangle.
+function vTab(fill: string) {
+  return `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 1L20.11 20.11L0 39.22Z" fill="${fill}" />
+    <path d="M1 1L20.11 20.11L1 39.22" fill="none" stroke="var(--color-ink-alt)" stroke-width="2" />
+  </svg>`;
+}
+const VTAB_CREAM = vTab("var(--color-cream)");
+const VTAB_ORANGE = vTab("var(--color-orange)");
+---
+
+<section class="how-it-works">
+  <div class="container heading">
+    <SectionHeading eyebrow="HOW IT WORKS">From idea, to deployment.</SectionHeading>
+    <p class="sub">
+      Come in through a Grand Challenge, as a Fellow, or as an existing
+      venture. Every builder moves through the same four steps.
+    </p>
+  </div>
+
+  <div class="container">
+    <div class="steps-row">
+      <article class="step step--o1">
+        <div class="step-head">
+          <p class="step-label">STEP</p>
+          <p class="step-number">O1</p>
+          <div class="step-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
+          <Fragment set:html={VTAB_CREAM} />
+        </div>
+        <div class="step-foot">
+          <h3 class="step-title">Apply</h3>
+        </div>
+      </article>
+
+      <article class="step step--o2">
+        <div class="step-head">
+          <p class="step-label">STEP</p>
+          <p class="step-number">O2</p>
+          <div class="step-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
+          <Fragment set:html={VTAB_ORANGE} />
+        </div>
+        <div class="step-foot">
+          <h3 class="step-title">Find energy-major champions</h3>
+          <p class="step-body">
+            We match you to the energy majors who own the problem and the
+            assets, your sponsors, mentors and first reference customers.
+          </p>
+        </div>
+      </article>
+
+      <article class="step step--o3">
+        <div class="step-head">
+          <p class="step-label">STEP</p>
+          <p class="step-number">O3</p>
+          <div class="step-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
+          <Fragment set:html={VTAB_CREAM} />
+        </div>
+        <div class="step-foot">
+          <h3 class="step-title">Build, test, iterate</h3>
+          <!-- Design-file error, fixed per the standing "fix with documented
+               deviation" policy: node 1:16205 (this body's outlined vector
+               group) genuinely stops mid-sentence at "with labs," — verified
+               via a direct high-res screenshot of the node (not a crop/clip
+               artifact: the group's own bbox sits well inside the card's
+               border, with slack below it). There is no further vector data
+               to extract; the sentence was never finished in the design file
+               itself. Completed here, matching this card's own established
+               "with X, Y and Z" resource-listing pattern (see O2's body). -->
+          <p class="step-body">
+            Prototype and validate on real infrastructure, with labs, pilot
+            sites and mentors on hand.
+          </p>
+        </div>
+      </article>
+
+      <article class="step step--o4">
+        <div class="step-head">
+          <p class="step-label">STEP</p>
+          <p class="step-number">O4</p>
+          <div class="step-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
+        </div>
+        <div class="step-foot">
+          <h3 class="step-title">Scale with capital</h3>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <ScrollArrow class="scroll" aria-hidden="true" />
+</section>
+
+<style>
+  .how-it-works {
+    background: var(--color-cream);
+    /* Gap from Hero's own down-chevron (1:16967, bottom y1044.16 = 1023.55 +
+       20.61) to this section's eyebrow top (1:15970, y1205.44) is 161.28px.
+       Hero.astro already accounts for 4rem (64px) of that as its own
+       padding-bottom, so this section's share is 161.28 - 64 = 97.28px
+       (6.08rem). padding-bottom is a placeholder pending Task 6's whole-page
+       pass (Programs, the next section, isn't built yet to measure against —
+       same "reconciled later" pattern as Home's Pillars/Task 7). */
+    padding-top: 6.08rem;
+    padding-bottom: 6rem;
+  }
+
+  .heading {
+    text-align: center;
+    /* 43.82px, gap between the sub-line's own bbox bottom (1:15972, y1397.59)
+       and the step row's top (1:16075, y1441.41 — set by O2, the tallest/
+       elevated card). */
+    margin-bottom: 2.7388rem;
+  }
+
+  .sub {
+    margin: 0.4613rem auto 0; /* 7.38px, SectionHeading's H2 bottom (1249.85+84) to sub-line top (1341.23) */
+    max-width: 50.2056rem; /* 803.29px, node 1:15972's own bbox width */
+    font-family: var(--font-sans);
+    /* Outlined vectors (no text node — node 1:15972 is ~130 glyph paths, same
+       situation as Home's CtaBand .body). Total 2-line bbox height is 56.36px;
+       20px/1.4 line-height gives a 28px line box × 2 = 56px, a near-exact
+       match (0.36px off) — reusing Pillars' .card-body constant (1.25rem/1.4)
+       rather than re-deriving from scratch, since it already fits this
+       measurement almost exactly. */
+    font-size: 1.25rem;
+    line-height: 1.4;
+    color: var(--color-gray);
+  }
+
+  .steps-row {
+    display: flex;
+    align-items: flex-end; /* all four cards' boxes share the same bottom edge, Figma y1983.93 — same bottom-alignment technique as Home's Pillars.astro */
+    gap: 1.44%; /* 21.87px avg / 1518.98px total row width (1:16075) — percentage so it scales with the row, same technique as Pillars' own row gap */
+  }
+
+  .step {
+    position: relative;
+    flex: 1 1 0%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 0.125rem solid var(--color-ink-alt); /* 2px navy, all four cards (e.g. 1:16078/1:16086/1:16200/1:16261) */
+    background: var(--color-cream);
+  }
+  /* Card heights (bottom-aligned, so these alone produce the "steps" look):
+     O2 is the tallest (elevated, per the brief) despite sitting 3rd in the
+     text-node list — its own top (1441.41) is the highest of the four. */
+  .step--o1 {
+    min-height: 20.7825rem; /* 332.52px, node 1:16076 */
+  }
+  .step--o2 {
+    min-height: 33.9075rem; /* 542.52px, node 1:16084 */
+    background: var(--color-orange); /* #F37D2C, node 1:16086's own fill — the only one of the four with a fill (rest are stroke-only, page bg shows through) */
+  }
+  .step--o3 {
+    min-height: 25.1575rem; /* 402.52px, node 1:16198 */
+  }
+  .step--o4 {
+    min-height: 21.1263rem; /* 338.02px, node 1:16258 */
+  }
+
+  /* Figma's own box widths differ slightly per card (368.12px for O1/O2/O3's
+     header-bearing box vs 349.01px for O4's, plus O1/O3 additionally split
+     their header/foot into two literal stacked boxes of those two widths) —
+     an Illustrator-import artifact of the original fixed-width layout, not a
+     meaningful ratio to preserve once every card is an equal flex:1 1 0%
+     column (Pillars.astro's own precedent for this exact situation). Treated
+     as noise and flattened; see init-task-3-report.md for the full geometry
+     trace. */
+  .step-head {
+    position: relative;
+    text-align: center;
+    padding: 2.8rem 1rem 1.6rem;
+  }
+  .step-label {
+    margin: 0;
+    font-family: var(--font-sans); /* Figma reports Faculty Glyphic on this real text node (1:16083 etc.), but a zoomed render shows plain sans strokes (no serifs on S/T/E/P) — same wrapping-group-reports-Faculty correction already applied throughout this page/Home */
+    font-size: 1.7831rem; /* 28.53px, real text node, all four cards */
+    color: var(--color-ink-alt);
+  }
+  .step-number {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-display); /* zoomed render confirms genuine serif/slab strokes here, unlike the label above — Faculty Glyphic rendering truthfully */
+    font-size: 6.5788rem; /* 105.26px, real text node, all four cards */
+    line-height: 1.1;
+    color: var(--color-ink-alt);
+  }
+  /* Divider between header and title/body — reproduces the shared border
+     edge where Figma's O1/O3 literally stack two separate boxes, and O2/O4
+     draw a zero-height divider vector at the identical relative offset
+     (243.63px from card top in all four cases) inside one continuous box. */
+  .step-rule {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 0.125rem;
+    background: var(--color-ink-alt);
+  }
+  /* :global — injected via set:html (shared markup built in frontmatter, see
+     comment above), so Astro's scoped data-attribute never attaches to it.
+     Anchored to .step-head's own bottom (top:100%, the same divider edge as
+     .step-rule) rather than a fixed distance from the card's top, so it
+     tracks the header's real height regardless of small per-viewport font
+     reflow — same technique as Pillars.astro's .card-rule. */
+  .step :global(.step-notch) {
+    position: absolute;
+    top: 100%;
+    margin-top: -2.0719rem; /* notch starts 33.15px above the divider (consistent across all four cards' own geometry) */
+    right: 0;
+    width: 2.6rem; /* 41.6px */
+    height: 4.5081rem; /* 72.13px */
+    pointer-events: none;
+  }
+
+  /* Pointed arrow connector (see frontmatter comment for shape provenance).
+     Sizing: the design's V is 19.11px deep x 38.22px tall stroke-center to
+     stroke-center; the SVG adds 1px padding on each side for its own 2px
+     stroke (viewBox 21.11x40.22). Horizontal: the path's x=1 line must sit on
+     the card border's centerline (inner edge + 1px of the 2px border), so the
+     SVG's left edge lands exactly on .step-head's right content edge —
+     right: -21.11px puts it there while the apex (path x=20.11) ends up
+     19.11px beyond the border centerline, matching the design's 349.51 →
+     368.62 protrusion exactly. Vertical: in the design the V's top edge sits
+     +1.5px (O1) / +8.57px (O2) / +3.99px (O3) below each card's own
+     STEP-label top (per-card values from the border-path y's vs. text-node
+     y's cited in the frontmatter comment) — a +4.7px mean with ±4px
+     hand-placement jitter, treated as one shared value: STEP-label top
+     (2.8rem head padding = 44.8px) + 4.7px design offset − 2px SVG padding
+     (the fill wedge's own top inset plus the stroke's half-width bleed at
+     the vertex) = 47.5px — still inside the jitter band above. */
+  .step :global(.step-vtab) {
+    position: absolute;
+    top: 2.9688rem; /* 47.5px, see above */
+    right: -1.3194rem; /* -21.11px, see above */
+    width: 1.3194rem; /* 21.11px */
+    height: 2.5138rem; /* 40.22px */
+    pointer-events: none;
+  }
+
+  .step-foot {
+    padding: 1.8rem 1.2rem 1.6rem;
+    text-align: center;
+  }
+  .step-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.7831rem; /* 28.53px — identical value to .step-label, both real text nodes */
+    font-weight: 400;
+    color: var(--color-ink-alt); /* navy on every card, including O2's orange one — matches Pillars' .card-title convention */
+  }
+  .step-body {
+    margin: 0.8rem auto 0;
+    font-family: var(--font-sans);
+    /* Outlined (no text node). O2's body (node 1:16093, "We match you to the
+       energy majors...") wraps to an exact 5 lines at its own 298.06px column
+       width (node 1:16090's width, reused below as .step--o2's max-width) —
+       verified letter-for-letter against a zoomed screenshot of the node.
+       Same empirical technique as Home's CtaBand .body (match the design's
+       own line-break points at its own max-width, rather than trust bbox
+       height ÷ line count, which is unreliable for an ink bbox): rendered
+       this exact sentence at that exact width in real Sora across a range of
+       sizes, 18-19px are the only ones that reproduce all 4 of the design's
+       break points; 20px+ all break one word earlier per line. 19px chosen
+       (upper end of the matching range). Reused for O3's body too — same
+       role, same card family, no independent text to re-derive against. */
+    font-size: 1.1875rem;
+    line-height: 1.4;
+    color: var(--color-gray);
+  }
+  .step--o2 .step-body {
+    color: var(--color-ink-alt); /* on-orange body copy is navy, not gray — matches Pillars' .card--o3 .card-body */
+  }
+  .step--o2 .step-title,
+  .step--o2 .step-body {
+    max-width: 18.6288rem; /* 298.06px, node 1:16090/1:16093's own wrap column — reproduces the design's "Find energy-major" / "champions" break */
+    margin-inline: auto;
+  }
+  .step--o3 .step-body {
+    max-width: 17.5138rem; /* 280.22px, node 1:16203's own wrap column */
+    margin-inline: auto;
+  }
+
+  .scroll {
+    display: block;
+    margin: 5.1019rem auto 0; /* 81.63px, step row bottom (1983.93) to chevron top (1:16816, y2065.56) */
+  }
+
+  @media (max-width: 1023.98px) {
+    .sub {
+      max-width: 90%;
+    }
+
+    /* Responsive rule: below 1024, drop the bottom-aligned offset collage for
+       a normal 2x2 grid (same pattern as Home's Pillars.astro) — no card is
+       forced taller/shorter than its own content. */
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      align-items: start;
+      gap: 2rem;
+    }
+    .step {
+      flex: initial;
+    }
+    .step--o1,
+    .step--o2,
+    .step--o3,
+    .step--o4 {
+      min-height: auto;
+    }
+    /* The pointed arrow connectors express left-to-right succession in the
+       desktop 4-across row; in the stacked 2x2/1-col grid that reading no
+       longer holds (O2's V would point off the row's right edge into the
+       container gutter — 21.11px of protrusion vs. a gutter that clamps down
+       to 20px, risking horizontal overflow at narrow widths). Hidden below
+       1024 along with the rest of the collage treatment (offsets already
+       flattened above), same sanctioned-adaptation reasoning as Hero.astro's
+       sparks. */
+    .step :global(.step-vtab) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .steps-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
