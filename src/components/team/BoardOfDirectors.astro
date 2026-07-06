@@ -64,12 +64,12 @@ const DIRECTORS = [
     <div class="grid">
       {DIRECTORS.map((p) => (
         <article class="card">
-          <div class="deco" aria-hidden="true">
-            <span class="v-line"></span>
-            <span class="h-line"></span>
-            <SparkOrange class="card-spark" />
+          <div class="photo-wrap">
+            <span class="v-line" aria-hidden="true"></span>
+            <span class="h-line" aria-hidden="true"></span>
+            <SparkOrange class="card-spark" aria-hidden="true" />
+            <Image src={p.photo} alt={p.name} widths={[216, 432]} sizes="216px" class="photo" />
           </div>
-          <Image src={p.photo} alt={p.name} widths={[216, 432]} sizes="216px" class="photo" />
           <div class="meta">
             <h3>{p.name}</h3>
             <p class="role">{p.role}</p>
@@ -132,65 +132,79 @@ const DIRECTORS = [
     text-align: center;
   }
 
-  /* Grid: 5 director cards, 3-then-2 layout, content-sized columns (node
-     1:13078). Cards auto-size to their content (name is one line, so long
-     names widen the card just like Figma's non-uniform card widths — Neeraj
-     533px, Sandeep 602px, etc). Row 2 tucks up under row 1 with a negative
-     margin: Figma card pitch is 210.9px (rows y1399 → y1609.9) against a
-     268.5px card height, i.e. ~57.6px of overlap. */
+  /* Grid: 5 director cards, 3-then-2 layout. Figma (node 1:13078) actually
+     lays these out as content-hugging groups with non-uniform card widths and
+     gaps (e.g. col1->col2 pitch 621.84px vs col2->col3 pitch 566.79px) rather
+     than a strict equal-width grid, and its row gap is closer to 0 (row 2's
+     photos start 5-8px BEFORE row 1's photos end — confirmed by both the
+     coordinate math and a direct pixel crop showing the two photos touching,
+     with the spark sitting right at the seam). Both of those are impractical
+     to reproduce with a robust, responsive CSS grid, so per the task's own
+     instruction this uses equal minmax(0,1fr) tracks with a normal, uniform
+     gap instead — documented simplification, not a missed measurement.
+     3 columns + 5 items auto-places item 4 under column 1 and item 5 under
+     column 2 for free, matching the brief's required row-2 alignment with no
+     extra rules needed. */
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, max-content);
-    justify-content: center;
-    justify-items: start;
-    column-gap: 5.4rem; /* ~86px, Neeraj card-end 643 → Vikas card-start 730 */
-    row-gap: 0;
-  }
-  .card:nth-child(n + 4) {
-    margin-top: -3.6rem; /* -57.6px, row-2 overlap → 210.9px pitch */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 2.5rem;
+    row-gap: 3rem;
   }
 
-  /* Card = photo (left) + meta (right) + an absolutely-positioned decoration
-     layer (the cross of hairlines + spark). Card top padding (52.5px) reserves
-     the band above the photo where the vertical hairline rises. */
   .card {
-    position: relative;
     display: flex;
-    gap: 1.5rem; /* 24px, photo right 216 → text left 240 (node 1:13079) */
-    padding-top: 3.28rem; /* 52.5px, photo top y1451.5 − card top y1399 */
+    align-items: center;
+    gap: 1.5rem; /* 24.21px measured gap between photo right edge and text left edge, node 1:13079 */
   }
 
-  /* Photo: 216×216 square (node 1:13126). Fixed px dims (not width:100% +
-     aspect-ratio) sidestep an Astro <Image> width/height-attr layout bug. */
+  /* Photo (rounded-rectangle node 1:13126/1:13166/etc, 216x216 = 13.5rem
+     square). get_design_context on the rectangle itself returns a plain
+     `overflow-hidden` container with no rounded-* class, so no border-radius
+     is applied. No separate border/stroke node was found around the photo
+     (only the two hairline gradient trails documented below, which are
+     omitted); the assets are already grayscale on a cream background. */
+  .photo-wrap {
+    position: relative;
+    flex: 0 0 13.5rem;
+    width: 13.5rem;
+  }
+  /* Fixed width+height (not width:100%/aspect-ratio:1) is deliberate: Astro's
+     <Image> always emits width/height HTML attributes (here 1080x1080), and
+     verified live in Chrome — width:100%+aspect-ratio:1 combined with those
+     attributes renders the img box hugely tall (a real layout bug, confirmed
+     by isolated repro outside Astro too), not a 216x216 square. Fixed
+     px-equivalent dimensions sidestep it entirely. */
   .photo {
     display: block;
-    flex: none;
     width: 13.5rem;
     height: 13.5rem;
     object-fit: cover;
   }
 
-  .meta {
-    padding-top: 2.72rem; /* 43.5px, name top y1495 − photo top y1451.5 */
-    min-width: 0;
-  }
-
-  /* Decoration: a vertical + horizontal hairline crossing at the photo's
-     top-right corner, with the orange spark centered on the intersection
-     (nodes 1:13128 spark, 1:13129 h-line, 1:13130 v-line). The hairlines are
-     a faint orange gradient that fades out away from the spark (pixel-sampled
-     ~#FFB97F / #FFE5CF over cream ≈ orange at ~45–60% opacity). */
-  .deco {
+  /* Spark sits centered on the photo's top-right corner, on the intersection
+     of the two hairlines below (Figma node 1:13128, 45.9px square). */
+  .card-spark {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    width: 2.875rem; /* 45.9px, node 1:13128 */
+    height: 2.875rem;
+    z-index: 2;
     pointer-events: none;
   }
+  /* Vertical hairline through the spark: rises 52.5px above the photo and runs
+     167.9px down its right edge (node 1:13130). Faint orange gradient that
+     fades away from the spark. */
   .v-line {
     position: absolute;
-    left: 13.31rem; /* 213px, node 1:13130 (photo right edge) */
-    top: 0;
+    right: 0;
+    top: -3.28rem; /* -52.5px */
     width: 1px;
     height: 10.49rem; /* 167.9px */
+    z-index: 1;
+    pointer-events: none;
     background: linear-gradient(
       to bottom,
       rgba(255, 116, 0, 0.1) 0%,
@@ -198,12 +212,16 @@ const DIRECTORS = [
       rgba(255, 116, 0, 0.35) 100%
     );
   }
+  /* Horizontal hairline through the spark: from 53px inside the photo, 285.6px
+     wide, across the top of the text (node 1:13129). */
   .h-line {
     position: absolute;
-    left: 10.19rem; /* 163px, node 1:13129 */
-    top: 3.28rem; /* 52.5px */
+    left: 10.19rem; /* 163px */
+    top: 0;
     width: 17.85rem; /* 285.6px */
     height: 1px;
+    z-index: 1;
+    pointer-events: none;
     background: linear-gradient(
       to right,
       rgba(255, 116, 0, 0.4) 0%,
@@ -211,13 +229,9 @@ const DIRECTORS = [
       rgba(255, 116, 0, 0.12) 100%
     );
   }
-  .card-spark {
-    position: absolute;
-    left: 13.31rem; /* 213px */
-    top: 3.28rem; /* 52.5px, spark centred on the v-line × h-line intersection */
-    transform: translate(-50%, -50%);
-    width: 2.87rem; /* 45.9px, node 1:13128 */
-    height: 2.87rem;
+
+  .meta {
+    min-width: 0;
   }
 
   /* Name: real text, Faculty ~30px. Pixel-sampled darkest ink = RGB(30,30,62)
@@ -225,10 +239,9 @@ const DIRECTORS = [
   .meta h3 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.881rem; /* 30.102px, node 1:13081 */
-    line-height: 1.25;
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.3;
     color: #1e1e3e;
-    white-space: nowrap; /* names are single-line in the design */
   }
 
   /* Role: real text, Faculty ~14.88px uppercase, tracked ~1.49px. Pixel-sampled
@@ -238,8 +251,8 @@ const DIRECTORS = [
   .role {
     margin: 0.4rem 0 0.85rem;
     font-family: var(--font-display);
-    font-size: 0.93rem; /* 14.88px, node 1:13125 */
-    letter-spacing: 0.1em; /* 1.488px / 14.88px */
+    font-size: 0.93rem; /* 14.88px */
+    letter-spacing: 0.093em; /* 1.49px / 14.88px */
     text-transform: uppercase;
     color: var(--color-gray);
   }
@@ -252,9 +265,8 @@ const DIRECTORS = [
      --color-ink-alt as the brief guessed (Figma wins). */
   .desc {
     margin: 0;
-    max-width: 18.28rem; /* 292.5px, node 1:13082 — wraps like the design */
     font-family: var(--font-sans);
-    font-size: 1.2rem; /* 19.2px, derived */
+    font-size: 1.2rem; /* 19.2px, derived — see comment above */
     line-height: 1.3;
     color: #1e1e3e;
   }
@@ -264,27 +276,20 @@ const DIRECTORS = [
       font-size: clamp(2.2rem, 6vw, 4.0625rem);
     }
     .grid {
-      grid-template-columns: repeat(2, max-content);
-    }
-    .card:nth-child(n + 4) {
-      margin-top: 0; /* drop the row overlap once re-flowed to 2 columns */
-    }
-    .meta h3 {
-      white-space: normal;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 679.98px) {
     .grid {
       grid-template-columns: 1fr;
-      row-gap: 2.5rem;
     }
     .card {
-      padding-top: 2rem;
+      flex-direction: column;
+      align-items: flex-start;
     }
-    /* Photo-left layout holds; the cross decoration stays anchored to the photo. */
-    .desc {
-      max-width: none;
+    .photo-wrap {
+      width: 13.5rem;
     }
   }
 </style>
