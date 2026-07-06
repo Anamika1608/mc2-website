@@ -133,7 +133,14 @@ const CONTACTS = [
      centered on the header/body divider line. */
   .fold {
     position: absolute;
-    top: 5.73rem; /* 91.65px, card top → flourish top */
+    /* Was 5.73rem, derived when the H2 was still 50px. A later change reduced
+       h2 to 2.5rem/40px, which shortened .card-header's own rendered height
+       and moved the divider (its border-bottom) up with it — the fold's
+       fixed top no longer tracked that, leaving it centered ~13.7px below
+       the divider (measured live: divider at 118.27px from card top, fold
+       center at 131.95px). Recentered on the divider's current position:
+       118.27 - fold's own height/2 (78.55/2 = 39.27) = 78.99px. */
+    top: 4.937rem;
     right: 0;
     width: 3.09rem; /* 49.51px */
     height: 4.91rem; /* 78.62px */
