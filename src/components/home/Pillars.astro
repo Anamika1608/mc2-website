@@ -401,7 +401,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
   .card-content {
     margin-top: 0.6rem;
     margin-left: 0.89rem; /* divider inset (37.82px) minus the card's own left padding (23.53px) */
-    padding-left: 2.3rem; /* body-text inset (74.62px) minus the divider's own inset (37.82px) */
+    padding-left: 1.5rem; /* round 9 (per direct feedback + Figma node 1:1200): text must start flush with the horizontal rule's own left edge, not indented further right — measured live, rule sits 64.4px from the card border while this padding used to put the body text at 78.5px, a visible extra gap the rule itself doesn't have. 1.5rem puts text at ~63.8px, matching the rule to within a pixel. */
     /* Round 3 (direct feedback: give the text below the horizontal rule some top
        breathing room) — this used to be 0, so the body text's own line-height
        started flush against the divider/rule with no gap at all. Kept (just
