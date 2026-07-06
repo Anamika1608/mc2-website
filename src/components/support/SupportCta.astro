@@ -2,12 +2,20 @@
 // Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:20863: H2 1:20865,
 // vectorized paragraph inside 1:20864, pills group 1:20981.
 import PillButton from "../PillButton.astro";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="support-cta">
-  <div class="container">
-    <h2>Build with all of this behind you.</h2>
-    <p class="lede">
+  <div class="container reveal">
+    <h2>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">Build with all of this behind you.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+    </h2>
+    <p class="lede reveal-rise reveal-rise--after-1-line">
       The first MC<sup>2</sup>+ cohort launches in August 2026, with
       applications opening soon. Bring the technology, and put this support
       stack to work.

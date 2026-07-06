@@ -12,6 +12,7 @@ import vikas from "../../assets/team/dir-vikas.png";
 import sanjay from "../../assets/team/dir-sanjay.png";
 import akshay from "../../assets/team/dir-akshay.png";
 import sandeep from "../../assets/team/dir-sandeep.png";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 
 // Copy verbatim from the task brief. Literal "&" is used here (not the
 // "&amp;" entity) to match the house convention already established by
@@ -55,11 +56,20 @@ const DIRECTORS = [
 <section class="board">
   <div class="container">
     <p class="eyebrow">GOVERNANCE</p>
-    <h2>Board of Directors</h2>
-    <p class="subheading">
-      Nominee directors from the seven energy majors, chaired from the
-      Ministry of Petroleum &amp; Natural Gas.
-    </p>
+    <div class="reveal">
+      <h2>
+        <span class="reveal-line">
+          <span class="reveal-line-box">
+            <span class="reveal-line-text">Board of Directors</span>
+            <RevealStar class="reveal-star" aria-hidden="true" />
+          </span>
+        </span>
+      </h2>
+      <p class="subheading reveal-rise reveal-rise--after-1-line">
+        Nominee directors from the seven energy majors, chaired from the
+        Ministry of Petroleum &amp; Natural Gas.
+      </p>
+    </div>
 
     <div class="grid">
       {DIRECTORS.map((p) => (

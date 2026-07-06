@@ -128,7 +128,7 @@ a {
          </span>
          ... one .reveal-line per visual line (supports up to 3) ...
        </h1>
-       <p class="reveal-rise reveal-rise--after-2-lines | --after-3-lines">...</p>  (optional)
+       <p class="reveal-rise reveal-rise--after-1-line | --after-2-lines | --after-3-lines">...</p>  (optional)
      </div>
    {layout-class} is whatever the component already uses to force each line
    onto its own row (e.g. `.line`) — untouched, stays local to that
@@ -274,6 +274,9 @@ a {
 .reveal.in-view .reveal-rise {
   animation: reveal-rise 0.8s ease var(--reveal-rise-delay) forwards;
 }
+.reveal-rise--after-1-line {
+  --reveal-rise-delay: 0.99s; /* line 1's delay (0s) + 90% of its 1.1s duration */
+}
 .reveal-rise--after-2-lines {
   --reveal-rise-delay: 1.34s; /* line 2's delay (0.35s) + 90% of its 1.1s duration */
 }
@@ -339,6 +342,9 @@ a {
   .reveal .accent {
     animation: none;
     opacity: 1;
+  }
+  .reveal-rise--after-1-line {
+    --reveal-rise-delay: 0.7s; /* line 1's delay (0s) + its fade duration (0.7s) */
   }
   .reveal-rise--after-2-lines {
     --reveal-rise-delay: 0.9s; /* line 2's delay (0.2s) + its fade duration (0.7s) */

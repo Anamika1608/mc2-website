@@ -7,6 +7,7 @@
 // in the style block below.
 import SectionHeading from "../SectionHeading.astro";
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+import RevealStar from "../../assets/shared/reveal-star.svg";
 
 // Folder-tab connector (Figma nodes 1:16080 / 1:16088 / 1:16202 / 1:16262) —
 // downloaded all four as raw SVG to compare against Home's Pillars.astro
@@ -54,9 +55,16 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
 ---
 
 <section class="how-it-works">
-  <div class="container heading">
-    <SectionHeading eyebrow="HOW IT WORKS">From idea, to deployment.</SectionHeading>
-    <p class="sub">
+  <div class="container heading reveal">
+    <SectionHeading eyebrow="HOW IT WORKS">
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">From idea, to deployment.</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+    </SectionHeading>
+    <p class="sub reveal-rise reveal-rise--after-1-line">
       Come in through a Grand Challenge, as a Fellow, or as an existing
       venture. Every builder moves through the same four steps.
     </p>

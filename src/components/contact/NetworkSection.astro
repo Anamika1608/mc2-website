@@ -4,6 +4,8 @@
 // for a pixel-exact match), expansion banner 1:28683/1:28684. All spacing/sizes
 // derived from get_metadata; banner fill pixel-sampled (#e77628, a source orange
 // rendered through mix-blend-multiply over the cream page).
+import RevealStar from "../../assets/shared/reveal-star.svg";
+
 const LOCATIONS = [
   {
     kind: "HUB",
@@ -33,8 +35,15 @@ const LOCATIONS = [
 ---
 
 <section class="network">
-  <div class="container">
-    <h2>The MC²+ network</h2>
+  <div class="container reveal">
+    <h2>
+      <span class="reveal-line">
+        <span class="reveal-line-box">
+          <span class="reveal-line-text">The MC&sup2;+ network</span>
+          <RevealStar class="reveal-star" aria-hidden="true" />
+        </span>
+      </span>
+    </h2>
 
     <img
       class="map"
