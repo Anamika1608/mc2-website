@@ -78,7 +78,7 @@ const DIRECTORS = [
             <span class="v-line" aria-hidden="true"></span>
             <span class="h-line" aria-hidden="true"></span>
             <SparkOrange class="card-spark" aria-hidden="true" />
-            <Image src={p.photo} alt={p.name} widths={[216, 432]} sizes="216px" class="photo" />
+            <Image src={p.photo} alt={p.name} widths={[240, 480]} sizes="240px" class="photo" />
           </div>
           <div class="meta">
             <h3>{p.name}</h3>
@@ -134,7 +134,7 @@ const DIRECTORS = [
      Max-width 44.64rem = line 1's own measured width (714.19px, node 1:12890). */
   .subheading {
     max-width: 44.64rem;
-    margin: 0 auto 4.5rem;
+    margin: 0 auto 5.5rem; /* widened from 4.5rem — more breathing room above the card grid per user directive 2026-07-06 */
     font-family: var(--font-sans);
     font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667; /* derived — see comment above */
@@ -158,14 +158,14 @@ const DIRECTORS = [
   .grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: 2.5rem;
-    row-gap: 3rem;
+    column-gap: 3rem; /* widened from 2.5rem per user directive 2026-07-06 */
+    row-gap: 3.75rem; /* widened from 3rem — measured ~22% tighter than reference, per user directive 2026-07-06 */
   }
 
   .card {
     display: flex;
     align-items: center;
-    gap: 1.5rem; /* 24.21px measured gap between photo right edge and text left edge, node 1:13079 */
+    gap: 1.75rem; /* widened from 1.5rem per user directive 2026-07-06 */
   }
 
   /* Photo (rounded-rectangle node 1:13126/1:13166/etc, 216x216 = 13.5rem
@@ -176,8 +176,8 @@ const DIRECTORS = [
      omitted); the assets are already grayscale on a cream background. */
   .photo-wrap {
     position: relative;
-    flex: 0 0 13.5rem;
-    width: 13.5rem;
+    flex: 0 0 15rem; /* widened from 13.5rem — measured smaller than the reference per user directive 2026-07-06 */
+    width: 15rem;
   }
   /* Fixed width+height (not width:100%/aspect-ratio:1) is deliberate: Astro's
      <Image> always emits width/height HTML attributes (here 1080x1080), and
@@ -187,8 +187,8 @@ const DIRECTORS = [
      px-equivalent dimensions sidestep it entirely. */
   .photo {
     display: block;
-    width: 13.5rem;
-    height: 13.5rem;
+    width: 15rem;
+    height: 15rem;
     object-fit: cover;
   }
 

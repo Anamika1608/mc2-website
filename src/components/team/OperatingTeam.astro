@@ -125,7 +125,7 @@ const TEAM = [
   .card {
     position: relative;
     text-align: left;
-    padding-inline: 1.75rem;
+    padding-inline: 2.25rem; /* widened from 1.75rem per user directive 2026-07-06 */
   }
 
   /* Row 1 (cards 1-4): padding-bottom before the row divider, and a
@@ -138,7 +138,7 @@ const TEAM = [
      chose not to reproduce; this build keeps the readable solid-color core). */
   .card:nth-child(-n + 4) {
     padding-top: 0;
-    padding-bottom: 3rem;
+    padding-bottom: 3.75rem; /* widened from 3rem per user directive 2026-07-06 */
     border-bottom: 1px solid var(--color-orange);
   }
 
@@ -161,11 +161,11 @@ const TEAM = [
      row 1's bottom padding on the other side of the divider. */
   .card:nth-child(5) {
     grid-column: 2;
-    padding-top: 3rem;
+    padding-top: 3.75rem; /* widened from 3rem per user directive 2026-07-06 */
   }
   .card:nth-child(6) {
     grid-column: 3;
-    padding-top: 3rem;
+    padding-top: 3.75rem; /* widened from 3rem per user directive 2026-07-06 */
   }
 
   /* Sparks: measured 35x35px diamond (spark bbox at the col2/3-top
