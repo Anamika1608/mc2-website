@@ -11,19 +11,20 @@ import SparkOrange from "../../assets/about/spark-orange.svg";
 // Sources swapped 2026-07-07 (user directive) from the old src/assets/about/
 // sponsor-*.png imports to new logo exports dropped directly in public/ --
 // referenced as plain <img src="/...png"> since public/ files aren't
-// processed by astro:assets. width/height are each logo's Figma design bbox
-// (node 1:354's children, confirmed against Figma metadata node 1:194 to the
-// pixel) -- same values Home's SponsorStrip.astro uses, replacing the old
-// flat height:7.5rem/object-fit:contain approximation that didn't match
-// Figma's actual varying per-logo box sizes.
+// processed by astro:assets. width/height were each logo's Figma design bbox
+// (node 1:354's children), scaled to 65% per a follow-up user directive
+// 2026-07-07: at full size the 7-logo row's natural width only fit a
+// genuinely wide (~1920px+) browser window, wrapping to a second row on any
+// more modest real desktop width -- see Home's SponsorStrip.astro for the
+// full math. Same values as Home's, kept in sync.
 const SPONSORS = [
-  { img: "/hindustan-petroleum.png", width: 124, height: 161, caption: "Hindustan Petroleum", alt: "Hindustan Petroleum Corporation" },
-  { img: "/oil-naural-gas.png", width: 126, height: 126, caption: "Oil & Natural Gas", alt: "Oil and Natural Gas Corporation" },
-  { img: "/indian-oil.png", width: 140, height: 149, caption: "Indian Oil Corp", alt: "Indian Oil Corporation" },
-  { img: "/bharat-petroleum.png", width: 101, height: 126, caption: "Bharat Petroleum", alt: "Bharat Petroleum Corporation" },
-  { img: "/gas-authority.png", width: 176, height: 132, caption: "Gas Authority", alt: "GAIL (India) Limited" },
-  { img: "/oil-india.png", width: 104, height: 153, caption: "Oil India Ltd", alt: "Oil India Limited" },
-  { img: "/petronet-lng.png", width: 97, height: 129, caption: "Petronet LNG", alt: "Petronet LNG Limited" },
+  { img: "/hindustan-petroleum.png", width: 81, height: 105, caption: "Hindustan Petroleum", alt: "Hindustan Petroleum Corporation" },
+  { img: "/oil-naural-gas.png", width: 82, height: 82, caption: "Oil & Natural Gas", alt: "Oil and Natural Gas Corporation" },
+  { img: "/indian-oil.png", width: 91, height: 97, caption: "Indian Oil Corp", alt: "Indian Oil Corporation" },
+  { img: "/bharat-petroleum.png", width: 66, height: 82, caption: "Bharat Petroleum", alt: "Bharat Petroleum Corporation" },
+  { img: "/gas-authority.png", width: 114, height: 86, caption: "Gas Authority", alt: "GAIL (India) Limited" },
+  { img: "/oil-india.png", width: 68, height: 99, caption: "Oil India Ltd", alt: "Oil India Limited" },
+  { img: "/petronet-lng.png", width: 63, height: 84, caption: "Petronet LNG", alt: "Petronet LNG Limited" },
 ];
 ---
 
@@ -104,7 +105,7 @@ const SPONSORS = [
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem 6.44rem; /* row-gap unchanged; column-gap = 103px, the average measured Figma gap -- same documented simplification as Home's SponsorStrip */
+    gap: 1.5rem 2rem; /* column-gap reduced from 6.44rem to 2rem per user directive 2026-07-07 -- see Home's SponsorStrip.astro for the full math */
   }
   .logos li {
     display: grid;
@@ -115,7 +116,7 @@ const SPONSORS = [
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: 10.0625rem; /* 161px, the tallest logo (Hindustan Petroleum) -- bottom-aligns every logo inside a box this tall so the row reads level, same technique as Home's SponsorStrip.astro */
+    height: 6.54rem; /* 104.65px, 65% of the tallest logo (Hindustan Petroleum) -- bottom-aligns every logo inside a box this tall so the row reads level, same technique as Home's SponsorStrip.astro */
   }
   .logo {
     display: block;
