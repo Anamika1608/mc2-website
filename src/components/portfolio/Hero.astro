@@ -317,6 +317,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       border-radius: 1.5rem;
       padding: 1.75rem 1.5rem;
       gap: 1rem;
+      transform: none; /* the desktop translateX only re-centers the badge+pill unit around the badge's absolute-positioned overhang -- once .info-badge below goes static and the layout stacks, that overhang no longer exists, so the leftover shift just pushed this card off the right edge of the viewport */
     }
     .info-badge {
       position: static;
