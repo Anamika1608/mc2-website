@@ -236,6 +236,29 @@ a {
 .reveal.in-view .accent {
   animation: reveal-accent-settle 1.3s ease forwards;
 }
+/* Whole-line accent (the accented word IS the entire line, e.g. About's
+   "Energy Innovation"): `.reveal-line-text` and `.accent` end up as the SAME
+   element instead of nested. Both classes independently declare a full
+   `animation` shorthand for that one element — only one can win the
+   cascade, which used to silently cancel the clip-path reveal (whichever
+   lost never ran, leaving the line either permanently clipped or never
+   accent-tinted). This combined selector (higher specificity: 4 classes vs
+   3) runs BOTH animations together via the comma-separated list form.
+   The single animation-delay value from the :nth-of-type overrides below
+   still applies to both listed animations (CSS repeats a short
+   animation-delay list to match animation-name's length), so no separate
+   stagger rule is needed for this combination. Nesting `.accent` inside
+   `.reveal-line-text` instead of combining classes was tried first and
+   reverted: Chromium's intrinsic-sizing pass for a nested inline-block
+   whose only child is another inline element measurably undersizes the
+   outer box at narrow (<1024px) viewports, so the un-wrapped word overflows
+   past its own reported box edge. Combining classes on one leaf element
+   sidesteps that sizing bug entirely. */
+.reveal.in-view .reveal-line-text.accent {
+  animation:
+    reveal-line 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards,
+    reveal-accent-settle 1.3s ease forwards;
+}
 .reveal-line:nth-of-type(1) .accent {
   animation-delay: 0s;
 }
