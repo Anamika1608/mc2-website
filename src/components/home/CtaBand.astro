@@ -42,12 +42,14 @@ import PillButton from "../PillButton.astro";
 
   h2 {
     font-family: var(--font-display);
-    /* 65px, Figma text nodes 1:55/1:56 (real text nodes, not outlined) —
-       the design context call reports this size directly, correcting the
-       brief's "~42px" bbox-derived guess. Matches the 65px H2 size already
-       established for this same Faculty Glyphic H2 role in
-       Pillars.astro/Audiences.astro. */
-    font-size: 4.0625rem;
+    /* Was 65px (4.0625rem), Figma text nodes 1:55/1:56 (real text nodes, not
+       outlined) — the design context call reports this size directly,
+       correcting the brief's "~42px" bbox-derived guess. Matched the 65px
+       H2 size established for this same Faculty Glyphic H2 role in
+       Pillars.astro/Audiences.astro. Reduced to 52px per user directive
+       2026-07-06 (desktop type felt oversized on sub-1920 laptops), kept
+       matched to those two siblings' own reduction. */
+    font-size: 3.25rem;
     line-height: 1.07; /* consistent with the sibling H2s at this size */
     color: var(--color-ink-alt); /* #1e1e3c, exact fill on 1:55/1:56 */
   }
@@ -75,7 +77,7 @@ import PillButton from "../PillButton.astro";
        23px (1.4375rem) is the size that reproduces that exact 3-line
        break (20-22.5px all wrap one word later per line; 23px+ all match,
        so 23px is the smallest/closest fit). */
-    font-size: var(--text-body-lg); /* 23px */
+    font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-06 (overridden locally, same approach as Initiatives' CtaBand; the shared token itself is untouched) */
     line-height: 1.4;
     color: var(--color-gray);
   }
@@ -90,7 +92,7 @@ import PillButton from "../PillButton.astro";
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+      font-size: clamp(2.25rem, 6vw, 3.25rem);
     }
     .body {
       max-width: 90%;
