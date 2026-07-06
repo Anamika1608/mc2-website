@@ -82,9 +82,10 @@ const CARDS = [
       <div class="line line-h line-one" aria-hidden="true"></div>
       <div class="line line-h line-two" aria-hidden="true"></div>
       <div class="line line-h line-three" aria-hidden="true"></div>
+      <div class="line line-h line-four" aria-hidden="true"></div>
 
       {
-        ["a", "b", "c", "d", "e", "f"].map((id) => (
+        ["a", "b", "c", "d", "e", "f", "g"].map((id) => (
           <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
         ))
       }
@@ -227,22 +228,51 @@ const CARDS = [
     width: 23.75rem;
   }
 
+  /* All 4 closing-line positions below (.line-one/-two/-four/-three, one per
+     card) were re-derived from Figma directly (fileKey u4NLOVKuXUTKULhSn0sAJQ,
+     node 1:19224): found each card's own eyebrow text node to establish the
+     conversion between Figma's absolute canvas y and this artboard's local
+     y (figma_y − 1067.23 = local_y, confirmed against all 4 cards' own
+     `top` values), then found each card's actual "closing" hairline (the
+     widest h-line in its own decorative group) and converted its y the same
+     way. Previously only 3 lines existed for 4 cards, and none were at the
+     Figma-derived offset — line-one/-two were each too early (crossing the
+     end of their own card's content) and line-three, despite this session's
+     earlier attempt to fix it, was still short of piloting's true offset
+     (161.14rem, not the ~153.7rem estimated last time from live content
+     bounds alone). Infrastructure (point 3) had no closing line at all.
+     Left/right (width) values are intentionally untouched — this is a
+     y-position-only fix. */
   .line-one {
+    /* Capital-closing. Was 41.8rem. */
     left: 0;
     right: 0;
-    top: 41.8rem;
+    top: 53.29rem;
   }
 
   .line-two {
+    /* Expertise-closing. Was 87.9rem. */
     left: 3.5rem;
     right: 1.5rem;
-    top: 87.9rem;
+    top: 89.24rem;
+  }
+
+  .line-four {
+    /* Infrastructure-closing — newly added, this card had no closing line
+       before. Reuses .line-one's full-width style since Infrastructure
+       shares Capital's card-left/art-right layout. */
+    left: 0;
+    right: 0;
+    top: 125.18rem;
   }
 
   .line-three {
+    /* Piloting-closing (this is the line the user originally flagged).
+       Was 144.2rem, then 153.7rem after this session's first attempt —
+       still short of the Figma-derived offset by ~7.4rem. */
     left: 37rem;
     right: 2rem;
-    top: 144.2rem;
+    top: 161.14rem;
   }
 
   .spark {
@@ -264,23 +294,35 @@ const CARDS = [
   }
 
   .spark-c {
+    /* Paired with .line-one. Was 40.2rem — moved with it, keeping the same
+       1.6rem spark-to-line gap used throughout this diagram. */
     right: 0.44rem;
-    top: 40.2rem;
+    top: 51.73rem;
   }
 
   .spark-d {
+    /* Paired with .line-two. Was 86.34rem. */
     left: 8.39rem;
-    top: 86.34rem;
+    top: 87.68rem;
   }
 
   .spark-e {
+    /* Paired with .line-two. Was 86.34rem. */
     left: calc(50% - 1.5625rem);
-    top: 86.34rem;
+    top: 87.68rem;
+  }
+
+  .spark-g {
+    /* Paired with the new .line-four (infrastructure-closing). */
+    right: 0.44rem;
+    top: 123.62rem;
   }
 
   .spark-f {
+    /* Paired with .line-three (piloting-closing). Was 142.6rem, then
+       152.1rem after this session's first attempt. */
     right: 0.44rem;
-    top: 142.6rem;
+    top: 159.58rem;
   }
 
   .art {
