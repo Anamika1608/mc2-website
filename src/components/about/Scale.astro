@@ -140,12 +140,48 @@ const STATS = [
      Size derived the same way as the intro: "D" of "Dedicated" (vector
      1:9312) measures 14.74px cap height -> 14.74 / 0.73 ≈ 20.19px = 1.26rem. */
   .stats {
+    position: relative;
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     text-align: left;
+  }
+  /* The 2 asymmetric horizontal hairlines the earlier simplification dropped
+     (see .has-divider comment below) — added back per user request. Both are
+     vectors in group 1:9465/1:9466, pixel-sampled/fetched as solid #F37D2C,
+     same orange as the vertical dividers/sparks, fading to transparent at
+     their outer/far tip rather than ending in a hard edge (confirmed via
+     get_screenshot on 1:9465 — every line in this flourish is solid near its
+     spark/crossing point and fades out toward its unanchored far end).
+     Figma's own lines bleed past the row's edges into the page margin, but
+     .container caps at 1760px with only a small gutter (global.css), so
+     reproducing that literal bleed pushed these past .container's own edge
+     and caused horizontal page overflow (user-reported). Clamped both to
+     stay within .stats's own box — left/right kept at a small positive inset
+     instead of the negative bleed — preserving the asymmetric
+     left-favoring/right-favoring look and the fade without the overflow. */
+  .stats::before,
+  .stats::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+  }
+  .stats::before {
+    /* Solid from the left (where it meets the row), fading out to the right. */
+    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-orange) 65%, transparent 100%);
+    top: -0.75rem;
+    left: 35.07%;
+    right: 1.5%;
+  }
+  .stats::after {
+    /* Solid from the right (where it meets the row), fading out to the left
+       — mirror of ::before. */
+    background: linear-gradient(to right, transparent 0%, var(--color-orange) 35%, var(--color-orange) 100%);
+    bottom: -0.75rem;
+    left: 1.5%;
+    right: 39.84%;
   }
   .stats li {
     position: relative;
@@ -157,14 +193,11 @@ const STATS = [
        pixel-sample to a solid RGB(243,125,44) = #f37d2c = --color-orange,
        not the neutral --color-line. The source file actually draws 5
        vertical hairlines (outer-left/right edges plus the 3 internal
-       column gaps) crossed by 2 asymmetric horizontal hairlines, all
-       studded with sparks at seemingly arbitrary points — a decorative
-       flourish that doesn't reduce to a simple per-column border pattern
-       (same kind of unreachable/irregular spark geometry SponsorStrip.astro
-       already ran into and simplified). This build keeps the readable core
-       of it: 3 internal vertical dividers, each with one spark at its top
-       and one at its bottom, and drops the outer-edge lines/asymmetric
-       horizontals. */
+       column gaps) crossed by 2 asymmetric horizontal hairlines (now added
+       back above), all studded with sparks at seemingly arbitrary points.
+       This build keeps the readable core of it: 3 internal vertical
+       dividers, each with one spark at its top and one at its bottom, and
+       still drops the 2 outer-edge vertical lines (1:9467/1:9471). */
     border-left: 1px solid var(--color-orange);
   }
   .stat-spark {
@@ -209,6 +242,13 @@ const STATS = [
       border-left: 0;
     }
     .stats li:nth-child(odd) .stat-spark {
+      display: none;
+    }
+    /* Desktop-only per user request — their percentage positions are derived
+       against the 4-column grid and don't translate to the 2-col/1-col
+       mobile layouts. */
+    .stats::before,
+    .stats::after {
       display: none;
     }
   }
