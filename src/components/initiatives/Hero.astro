@@ -70,7 +70,33 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     position: relative;
     overflow: hidden;
     background: var(--color-cream);
-    padding-block: 6rem 4rem;
+    /* padding-top fix (Task 6 whole-page fidelity pass, carried item 5 —
+       cross-section vertical rhythm): the base 6rem was never independently
+       derived from Figma (just a reused default); a whole-page render showed
+       the Hero→HowItWorks gap was 381.8px at 1920 vs the design's measured
+       161.28px (chevron 1:16967 bottom 1044.16 → eyebrow 1:15970 top
+       1205.44), while 1024/1366 already matched the design almost exactly
+       (161.27px, because min-height doesn't bind at those widths — natural
+       content height already exceeds it there). Root cause: at 1920 only,
+       the curves' own min-height (below) exceeds this section's natural
+       content-flow height by 220.55px (886.48px content vs 1107.03px
+       min-height, confirmed by temporarily zeroing min-height and by a raw
+       pixel scan of the reference PNG showing genuine curve ink up to
+       y≈1100, i.e. the curve truly needs its full height, not a case of
+       over-generous padding) — that's pure unfilled dead space between the
+       chevron and the section's own bottom edge, on top of which
+       HowItWorks' own 6.08rem padding-top piles further gap.
+       Fix: grow padding-top by exactly that shortfall, but ONLY once the
+       curve's own vw-driven height (same clamp() as min-height, below)
+       exceeds this section's fixed content-only height (726.48px content +
+       64px padding-bottom = 790.48px = 49.405rem) — below that crossover
+       (~1371px viewport), max() keeps the base 6rem untouched, preserving
+       the already-correct 1024/1366 gap exactly. At 1920 this evaluates to
+       19.784rem (316.55px), which makes the section's natural height equal
+       min-height exactly (zero dead space) and reproduces the design's
+       161.28px gap to <0.01px (verified: 96px‑old + 220.55px = 316.55px). */
+    padding-top: max(6rem, clamp(40rem, 57.66vw, 69.19rem) - 49.405rem);
+    padding-bottom: 4rem;
   }
   @media (min-width: 1024px) {
     .hero {

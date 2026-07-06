@@ -283,11 +283,15 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
        `--color-cream` rather than this raw sample, so this section matches its neighbors
        instead of introducing a barely-perceptible seam. */
     overflow-x: hidden; /* contains the O1 spark's small left bleed, see .o1-spark below */
-    /* Placeholder pending Task 6's whole-page pass (CtaBand, the next section, isn't
-       built yet to measure the real gap against) — same "reconciled later" pattern as
-       HowItWorks' own padding-bottom. Gap from HowItWorks' chevron bottom (1:16816,
-       y2086.17) to this row's own top (y2239.6-2239.9) is ~153px; HowItWorks already
-       contributes 6rem/96px of that via its own padding-bottom, leaving ~57px here. */
+    /* Gap from HowItWorks' chevron bottom (1:16816, y2086.17) to this row's own top
+       (y2239.64) is 153.47px; HowItWorks already contributes 6rem/96px of that via its
+       own padding-bottom, leaving 57.47px (3.59rem) here. Task 6 whole-page fidelity pass
+       confirmed this renders correctly (153.4375px measured at 1024/1366/1920 alike) —
+       no change needed.
+       padding-bottom (6rem) confirmed too: this row's own bottom (all four O-cards share
+       height 606.86px on shared top y2239.91 → bottom 2846.77) to CTA's H2 top
+       (1:16268, y2978.28) is 131.51px design vs 131.5px rendered at all three gate
+       widths — verified correct as-is. */
     padding-top: 3.59rem;
     padding-bottom: 6rem;
   }
@@ -413,6 +417,27 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
        1920 the numeral fills this height exactly, so nothing changes there. */
     min-height: 4.1519rem;
   }
+  /* Task 6 fidelity pass (carried item 3, MUST NOT LOSE): at 1024 O3's own
+     label tail ("EXISTING VENTURES") sits only ~7.5px past O4's revealed
+     header fragment's own start (measured via getBoundingClientRect: O3's
+     line-1 right edge 802.2px vs O4's fragment becoming visible at O3's
+     notch-start x≈794.7px), so the two read as one merged word,
+     "EXISTING VENTURESATED," — confirmed visually via a zoomed screenshot,
+     and confirmed absent at 1080px+ (positive clearance from there on, this
+     is a narrow-desktop-only compression artifact). Fix lever: tighten the
+     numeral↔label gap specifically in this narrow band (not the head's own
+     left padding, which would shift the numeral too and misalign it against
+     the title/subtitle/body below, which keep their own unchanged 2.36rem
+     left margin) — this only pulls the label left relative to the numeral,
+     gaining +12.7px of clearance (verified: -7.5px → +4.66px at 1024,
+     positive at every card). No content lost or re-clipped: O3's own label
+     text is unchanged, just repositioned. */
+  @media (min-width: 1024px) and (max-width: 1099.98px) {
+    .card-head {
+      gap: 0.5rem;
+    }
+  }
+
   /* Desktop type scale (fix round 1): the cards are %-width (they compress with the
      viewport) but the type was fixed px, so at 1024-1366 fixed-size single words
      ("Accelerator") overflowed their own shrunken card onto the neighbor. All four core

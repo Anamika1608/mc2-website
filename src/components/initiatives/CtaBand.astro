@@ -72,14 +72,18 @@ import PillButton from "../PillButton.astro";
        padding-bottom (untouched — out of this task's file scope), leaving
        131.51 - 96 = 35.51px (2.2194rem) as this section's own share — same
        "subtract the already-built neighbor's contribution" technique as
-       Home's CtaBand top-padding derivation. */
+       Home's CtaBand top-padding derivation. Task 6 whole-page fidelity pass
+       confirmed this renders correctly (131.5px measured at 1024/1366/1920
+       alike) — no change needed. */
     padding-top: 2.2194rem;
     /* Gap from this section's own bottom (the pill, 1:16367, bottom
        y3254.11) to the Footer chrome's own top (1:17186, y3394 exactly) is
        139.89px (8.7431rem). Footer is chrome/untouched, so — per Home's
        CtaBand precedent, which attributed its own equivalent gap entirely to
        itself rather than splitting it with Footer's internal top padding —
-       this section's padding-bottom carries the full measured gap. */
+       this section's padding-bottom carries the full measured gap. Task 6
+       whole-page fidelity pass confirmed this too (139.875px measured at
+       1024/1366/1920 alike) — no change needed. */
     padding-bottom: 8.7431rem;
   }
 
@@ -128,7 +132,12 @@ import PillButton from "../PillButton.astro";
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+      /* Floor harmonized to SectionHeading's 2.2rem (Task 6 fidelity pass,
+         carried item 4) — this H2 doesn't use SectionHeading (no eyebrow,
+         see frontmatter), but there's no design reason for its own <1024
+         floor to differ from the shared component's; 2.25rem vs 2.2rem was
+         an unreconciled drift between the two hand-authored clamps. */
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
     }
     .body {
       max-width: 90%;

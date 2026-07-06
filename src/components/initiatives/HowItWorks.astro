@@ -143,9 +143,14 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
        20.61) to this section's eyebrow top (1:15970, y1205.44) is 161.28px.
        Hero.astro already accounts for 4rem (64px) of that as its own
        padding-bottom, so this section's share is 161.28 - 64 = 97.28px
-       (6.08rem). padding-bottom is a placeholder pending Task 6's whole-page
-       pass (Programs, the next section, isn't built yet to measure against —
-       same "reconciled later" pattern as Home's Pillars/Task 7). */
+       (6.08rem). Task 6 whole-page fidelity pass confirmed this renders
+       correctly (161.27px measured at 1024/1366/1920 alike, after Hero's own
+       dead-space fix — see Hero.astro) — no change needed here.
+       padding-bottom (6rem) confirmed too: HowItWorks' own chevron
+       (1:16816, bottom y2086.17) to Programs' first card top (y2239.64) is
+       153.47px design vs 153.4375px rendered at all three gate widths — a
+       coincidental match with Pillars/Home's reused 6rem, not independently
+       re-derived, but verified correct as-is. */
     padding-top: 6.08rem;
     padding-bottom: 6rem;
   }
@@ -176,7 +181,16 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
   .steps-row {
     display: flex;
     align-items: flex-end; /* all four cards' boxes share the same bottom edge, Figma y1983.93 — same bottom-alignment technique as Home's Pillars.astro */
-    gap: 1.44%; /* 21.87px avg / 1518.98px total row width (1:16075) — percentage so it scales with the row, same technique as Pillars' own row gap */
+    /* 21.87px avg / 1518.98px total row width (1:16075) — percentage so it
+       scales with the row, same technique as Pillars' own row gap. Task 6
+       fidelity pass (carried item 2): at 1024 the percentage gap (13.56px)
+       compresses below the V-tab's own fixed 21.11px protrusion depth,
+       overlapping the next card's border by ~5.5px (measured via
+       getBoundingClientRect on all three tabs — 1366 is fine, ~1px, within
+       antialiasing noise). Floor added so the gap never falls below the
+       tab's own depth plus a small clearance; verified at 1024 the overlap
+       drops to 0 (tab tip now lands ~2px clear of the next card). */
+    gap: max(1.44%, 1.55rem);
   }
 
   .step {

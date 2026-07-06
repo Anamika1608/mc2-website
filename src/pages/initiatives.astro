@@ -1,5 +1,14 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/initiatives/Hero.astro";
+import HowItWorks from "../components/initiatives/HowItWorks.astro";
+import Programs from "../components/initiatives/Programs.astro";
+import CtaBand from "../components/initiatives/CtaBand.astro";
 ---
 
-<StubPage name="Initiatives" />
+<BaseLayout title="Initiatives · MC²+">
+  <Hero />
+  <HowItWorks />
+  <Programs />
+  <CtaBand />
+</BaseLayout>
