@@ -442,16 +442,39 @@ const CARDS = [
     .art,
     .support-card {
       position: static;
-      width: min(100%, 36rem);
     }
 
     .support-card {
+      width: min(100%, 36rem);
       background: transparent;
     }
 
+    /* .art used to share the .support-card's width:min(100%,36rem) cap
+       above, plus a blanket max-width:70% below -- discarding each
+       illustration's own distinct native size (29.15rem/15.66rem/15.3rem/
+       27.52rem, all different) in favor of one shared value. That's fine
+       for Capital/Piloting (already close to or bigger than the shared
+       cap) but massively inflates Expertise/Infrastructure, the two
+       smallest illustrations -- confirmed live at 825px, where
+       Infrastructure's compass-in-hand icon rendered at ~660px, nearly
+       triple its intended 245px. Each illustration now gets its own
+       max-width (its existing desktop-native size, reused as the ceiling)
+       so it stays fluidly responsive but never exceeds its correct size. */
     .art {
       justify-self: center;
-      max-width: 70%;
+      width: 100%;
+    }
+    .art-capital {
+      max-width: 29.15rem;
+    }
+    .art-expertise {
+      max-width: 15.66rem;
+    }
+    .art-infrastructure {
+      max-width: 15.3rem;
+    }
+    .art-piloting {
+      max-width: 27.52rem;
     }
 
     .support-card {
