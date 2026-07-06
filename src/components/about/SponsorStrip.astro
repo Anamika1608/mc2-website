@@ -74,7 +74,7 @@ const SPONSORS = [
   .eyebrow {
     font-family: var(--font-sans);
     color: var(--color-gray);
-    font-size: 1.9375rem; /* 31px, derived — see comment above */
+    font-size: var(--text-body); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
     margin: 0 0 1.3125rem; /* 21px gap to h2, measured from the full-section screenshot */
   }
 
@@ -135,7 +135,7 @@ const SPONSORS = [
      matching the H2's ink, not muted gray). */
   .caption {
     font-family: var(--font-sans);
-    font-size: 1.1125rem; /* 17.8px, derived — see comment above */
+    font-size: var(--text-caption); /* 17.8px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
   }
 
