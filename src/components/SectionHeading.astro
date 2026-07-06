@@ -1,0 +1,79 @@
+---
+// Shared eyebrow + H2 pattern, extracted for the Initiatives page's NEW sections
+// (Task 3's HowItWorks onward — see the plan's Architecture note: "used by NEW
+// sections only", home/about are not retrofitted).
+//
+// Verified directly against THIS page's own nodes (file u4NLOVKuXUTKULhSn0sAJQ),
+// per the Initiatives plan's Task 2 requirement that this component fit BOTH:
+//   - Hero eyebrow 1:16966 "INITIATIVES": text-[27.07px] tracking-[6.7675px]
+//     fill #959595, font reported as Faculty_Glyphic:Regular.
+//   - How-it-works eyebrow 1:15970 "HOW IT WORKS": identical numbers (27.07px /
+//     6.7675px / #959595), same font report.
+//   - How-it-works H2 1:15971 "From idea, to deployment.": text-[65px] fill
+//     #1e1e3c, font also reported as Faculty_Glyphic:Regular.
+// Both eyebrow nodes report Faculty Glyphic, but a zoomed render of each
+// (get_screenshot at 6x) shows plain sans-serif strokes (no serifs on I/N/T/A/V,
+// clean O/W/R) — the SAME "wrapping-group reports Faculty, rendered glyphs are
+// sans" Illustrator-import quirk already corrected in Home's Pillars.astro/
+// Audiences.astro. Corrected here too: eyebrow uses --font-sans. The H2 node's
+// own zoomed render (from the how-it-works heading region) clearly shows serifs
+// (Faculty Glyphic rendering truthfully) — kept as --font-display.
+//
+// H2 line-height: outlined/real-text leading is reported as "normal" with no
+// usable value; 1.07 is the site-wide constant Home derived by direct baseline
+// measurement (Pillars.astro, Audiences.astro: 69.57px gap / 65px = 1.07) and
+// reused everywhere a 65px Faculty H2 appears. This page's own H2 nodes
+// (1:15971 here; CTA's 1:16268, Task 5) are single-line, so the ratio can't be
+// independently re-derived from them — reusing the confirmed constant rather
+// than guessing.
+//
+// Eyebrow-to-H2 gap: 9.41px measured here (eyebrow bottom 1240.44 to H2 top
+// 1249.85, both from node y/height) = 0.588rem, matching Pillars' own
+// independently-measured 0.5875rem essentially exactly.
+//
+// No underline: unlike the Hero (which has its own hairline rule, node
+// 1:16965 — see Hero.astro), the how-it-works eyebrow+H2 group (1:15969) has
+// no hairline sibling between them, matching Home's Pillars/Audiences (also no
+// underline). Confirms the underline is a hero-only decorative treatment, not
+// part of this shared component.
+interface Props {
+  eyebrow: string;
+}
+const { eyebrow } = Astro.props;
+---
+
+<div class="section-heading">
+  <p class="eyebrow">{eyebrow}</p>
+  <h2><slot /></h2>
+</div>
+
+<style>
+  .section-heading {
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-sans); /* corrected from Figma's reported Faculty Glyphic — see comment above */
+    font-size: 1.6919rem; /* 27.07px, nodes 1:16966 / 1:15970 */
+    letter-spacing: 0.25em; /* 6.7675px / 27.07px, nodes 1:16966 / 1:15970 */
+    color: var(--color-gray); /* #959595 exact match */
+  }
+
+  h2 {
+    margin: 0.5875rem 0 0; /* 9.41px measured gap here; matches Pillars' 0.5875rem — see comment above */
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:15971 */
+    line-height: 1.07; /* site-wide constant, see comment above */
+    color: var(--color-ink-alt); /* #1e1e3c exact match, node 1:15971 */
+  }
+  h2 :global(.line) {
+    display: block;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+  }
+</style>

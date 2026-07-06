@@ -1,0 +1,298 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: eyebrow 1:16966, H1 lines 1:16970/1:16971,
+// paragraph 1:16972 (outlined), notice bar 1:16817 (outlined), curves+sparks
+// group 1:16398 (Task 1 export), chevron 1:16967. See exact derivations in the
+// style block below.
+//
+// SectionHeading-vs-own-markup decision (required by the Task 2 brief): this
+// Hero does NOT consume the new SectionHeading.astro. Evidence: (1) the H1
+// (1:16970/1:16971) is 81.3px — a DIFFERENT size from the shared H2 pattern's
+// 65px (matches this page's own how-it-works H2, 1:15971) — and is semantically
+// the page's <h1>, not an <h2>; (2) the H1 needs two independently-authored
+// lines with an inline accent span, a shape SectionHeading's plain-string
+// eyebrow + generic H2 slot isn't built for; (3) unlike the how-it-works
+// heading, THIS eyebrow has a hairline underline sibling (1:16965) with no
+// equivalent in the shared component. This mirrors Home's own precedent: Hero.astro
+// there also never used a shared heading component. Only the eyebrow's
+// *numeric* treatment is shared (verified identical to SectionHeading's, see
+// comments below) — kept as local markup here as the plan's architecture note
+// intends ("SectionHeading... used by NEW sections only").
+import HeroCurves from "../../assets/initiatives/hero-curves.svg";
+import SparkBurstA from "../../assets/initiatives/spark-burst-a.svg";
+import SparkBurstB from "../../assets/initiatives/spark-burst-b.svg";
+import NoticeIcon from "../../assets/initiatives/notice-icon.svg";
+// scroll-arrow: Task 1 found this page's two down-chevron instances (1:16967 here)
+// download as byte-identical path data to src/assets/home/scroll-arrow.svg — reuse,
+// no separate initiatives asset exists (see init-task-1-report.md).
+import ScrollArrow from "../../assets/home/scroll-arrow.svg";
+---
+
+<section class="hero">
+  <div class="orbit" aria-hidden="true">
+    <HeroCurves class="curves" />
+    <SparkBurstA class="spark spark-a" />
+    <SparkBurstB class="spark spark-b" />
+  </div>
+
+  <div class="hero-inner">
+    <p class="eyebrow">INITIATIVES</p>
+    <div class="underline" aria-hidden="true"></div>
+
+    <h1>
+      <span class="line">Built for <span class="accent">every builder</span></span>
+      <span class="line">in India&rsquo;s energy story.</span>
+    </h1>
+
+    <p class="lede">
+      Whether you are an early-stage aspiring entrepreneur, a researcher with
+      a lab-stage IP, or an institution ready to co-build the next decade of
+      energy technology, MC&sup2;+ is for you.
+    </p>
+  </div>
+
+  <div class="notice">
+    <NoticeIcon class="notice-icon" aria-hidden="true" />
+    <p class="notice-text">
+      Capital, infrastructure and mentorship support every stage, from lab
+      access to pilot sites across the seven energy majors. <a
+        href="/support"
+        class="notice-link"
+        >See the full support stack <span aria-hidden="true">&rarr;</span></a
+      >
+    </p>
+  </div>
+
+  <ScrollArrow class="scroll" aria-hidden="true" />
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-cream);
+    padding-block: 6rem 4rem;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      /* Design's own curves box (node 1:16398, hero-curves.svg viewBox) is
+         1920x1107 — matching Home's "curves scales its *height* down with
+         viewport width" fluid-min-height technique so the section never falls
+         shorter than the scaled background at any ≥1024px width:
+         1107/1920 = 57.66vw at the 1920px reference, capped at 1107px = 69.19rem;
+         40rem floor is a sanity backstop, not expected to bind at any ≥1024px
+         width (same rationale as Home's Hero.astro). */
+      min-height: clamp(40rem, 57.66vw, 69.19rem);
+    }
+  }
+
+  /* Curves + sparks: decorative, absolutely positioned behind copy. Sparks are
+     separate sibling nodes (1:16403/1:16404, Task 1 export), positioned as
+     percentages of the curves SVG's own 1920x1107 box so they stay locked to
+     the curve intersections at any viewport width (same technique as Home's
+     Hero.astro and this page's Task 1 report positioning note). */
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .curves {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .spark {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .spark-a {
+    /* node 1:16403: center (1721.06, 560.8) / (1920, 1107) box */
+    left: 89.64%;
+    top: 50.66%;
+    width: 6.323rem; /* 101.17px natural size */
+    height: 5.601rem; /* 89.62px */
+  }
+  .spark-b {
+    /* node 1:16404: center (271.84, 849.79) / (1920, 1107) box */
+    left: 14.16%;
+    top: 76.77%;
+    width: 4.609rem; /* 73.75px natural size */
+    height: 6.504rem; /* 104.07px */
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    /* Node 1:16968 (the H1+lede wrapping group) measures 833.66px = 52.104rem,
+       but that's razor-thin against the widest H1 line's own bbox (825px =
+       51.5625rem, node 1:16970) — under 9px of slack, which a browser's own
+       font shaping tips over into an unwanted wrap (verified: it wrapped at
+       52.104rem in a real render). Buffered up to 56rem instead, matching
+       AboutHero.astro's own precedent (same buffer-above-widest-line
+       technique, same resulting value). */
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem; /* narrow-viewport safety only, house convention */
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    /* Figma reports Faculty Glyphic on this text node (1:16966), but a 6x
+       zoomed render (get_screenshot) shows plain sans strokes — no serifs on
+       I/N/T/A/V — the same "wrapping-group reports Faculty, rendered glyphs
+       are sans" correction already made in Home's Pillars.astro/Audiences.astro.
+       Corrected here too (unlike About's AboutHero.astro, which kept Faculty
+       for its own eyebrow — verified per-instance, not page-wide; see
+       Scale.astro's own note that this file mixes both within one page). */
+    font-family: var(--font-sans);
+    font-size: 1.6919rem; /* 27.07px, node 1:16966 */
+    letter-spacing: 0.25em; /* 6.7675px / 27.07px, node 1:16966 */
+    color: var(--color-gray); /* #959595 exact match */
+  }
+  .underline {
+    width: 11.77rem; /* 188.25px, node 1:16965 — byte-identical to About's AboutHero.astro underline (1:9500), same construction reused */
+    height: 1px;
+    margin: 2.8rem auto 1.6rem; /* 45.11px / 26.15px gaps (eyebrow-bottom→underline, underline→H1-top), matching AboutHero's own measurements of this exact construction */
+    background: #000; /* one-off literal, matches AboutHero's sampled hairline color (not a token) */
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 5.08rem; /* 81.3px, nodes 1:16970/1:16971 — identical to About's AboutHero H1 size */
+    line-height: 1.08; /* baseline delta 87.57px (505.25-417.68) / 81.3px = 1.077, same derivation and result as AboutHero.astro */
+    color: var(--color-ink-alt); /* #1e1e3c exact match */
+  }
+  h1 .line {
+    display: block;
+  }
+  h1 .accent {
+    color: var(--color-orange); /* #f37d2c exact match, node 1:16970 span fill */
+  }
+
+  .lede {
+    max-width: 49.2rem; /* 787.27px, the paragraph's own bounding width (node 1:16972) — same technique as AboutHero's lede (its own bbox width used directly as the wrap max-width) */
+    margin: 1.5rem auto 0;
+    font-family: var(--font-sans);
+    /* Lede (1:16972) is an outlined/vectorized paragraph, not real text, so its
+       font-size is re-derived the same way as AboutHero's lede: 3 independent
+       glyph heights against the self-hosted Sora font's own metrics
+       (src/assets/fonts/Sora-VariableFont_wght.ttf, unitsPerEm 1000, measured
+       via fontTools) all converge on the SAME value as AboutHero: the "t"
+       ascender height/Sora's own t-ratio (0.702), the "l"/"h" ascender
+       height/Sora's l-ratio (0.73), and the cap "C"/Sora's C-ratio (0.768) all
+       independently land on ~31px. Line-height, likewise re-derived from the
+       4 lines' baseline deltas (~40.5px avg / 31px ≈ 1.31), matches AboutHero's
+       lede exactly. */
+    font-size: 1.9375rem; /* 31px, derived — see comment above */
+    line-height: 1.31; /* derived — see comment above */
+    /* Fill sampled directly from this node's own vector paths: #1E1E3C
+       (--color-ink-alt) — NOT --color-ink like About's lede (which is a
+       DIFFERENT node, #1e1e3a; About's own comment notes this was itself a
+       corrected value). Different node, different (if barely distinguishable)
+       fill — verify-don't-assume applies per node, not per house pattern. */
+    color: var(--color-ink-alt);
+  }
+
+  .notice {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem; /* 17.67px, icon-right-edge to text-left-edge gap, node 1:16817 children */
+    max-width: 78.99rem; /* 1263.77px, node 1:16817 */
+    margin: 4.03rem auto 0; /* 64.44px, lede-bottom (785.39) to notice-top (849.83) */
+    /* Figma's own node math gives 80.02px here (arrow-right-edge, node 1:16948,
+       to pill-right-edge, node 1:16817) — but that reflects the OUTLINED
+       vector export's glyph advances, which render ~2% narrower than the same
+       live Sora text at the same font-size in a real browser (verified:
+       80.02px/5rem here made "See the full support stack" wrap to a 3rd line
+       that isn't in the design's own 2-line render). Tightened to the browser-
+       verified threshold so the sentence wraps at 2 lines like the design. */
+    padding-inline-end: 3rem;
+    background: var(--color-ink-alt); /* #1e1e3c, pill fill sampled from node 1:16817's own vector paths */
+    border-radius: 999px;
+    position: relative;
+    z-index: 1;
+  }
+  .notice-icon {
+    width: 6.8025rem; /* 108.84px — exactly the pill's own height, node 1:16817, flush left with no inset */
+    height: 6.8025rem;
+    flex-shrink: 0;
+  }
+  .notice-text {
+    margin: 0;
+    font-family: var(--font-sans);
+    /* Outlined/vectorized (no real text), re-derived the same way as .lede
+       above: 3 independent glyphs from this exact sentence ("C" of "Capital",
+       the "t" ascenders, the "l"/"h" ascenders) against Sora's own metrics all
+       converge on 28.42px (tighter agreement than .lede's derivation — see
+       comment there for method). Line-height from the 2 lines' baseline delta
+       (37.1px / 28.42px ≈ 1.31) matches the SAME 1.31 constant as .lede and
+       About's lede — a consistent house-wide body-copy line-height regardless
+       of font-size. */
+    font-size: 1.7763rem; /* 28.42px, derived — see comment above */
+    line-height: 1.31;
+    color: var(--color-white); /* sampled fill: literal "white" in the node's own paths */
+    text-align: left;
+  }
+  .notice-link {
+    color: var(--color-orange); /* #f37d2c exact match, sampled from this link's own paths */
+    text-decoration: none;
+    font-weight: inherit;
+  }
+  .notice-link:hover {
+    text-decoration: underline;
+  }
+
+  .scroll {
+    display: block;
+    position: relative;
+    z-index: 1;
+    margin: 4.05rem auto 0; /* 64.88px, notice-bottom (958.67) to chevron-top (1023.55), node 1:16967 */
+  }
+
+  @media (max-width: 1023.98px) {
+    h1 {
+      font-size: clamp(2.4rem, 7vw, 5.08rem);
+    }
+    .lede {
+      max-width: 90%;
+    }
+    /* Sanctioned adaptation: at ≥1024px the fixed-rem sparks sit precisely on
+       the curve intersections (by design), but below 1024px the copy column
+       shrinks much less than the curves do, so the sparks drift onto the H1/
+       lede text (verified in a real render — spark-a crossed through
+       "builder"). Home's own Hero avoids this because its narrower 3-line H1
+       leaves more lateral clearance; this page's wider 2-line H1 does not.
+       Hiding the sparks (purely decorative, already aria-hidden) below 1024px
+       keeps the softer curve lines without the text collision. */
+    .spark {
+      display: none;
+    }
+    .notice {
+      /* Sanctioned adaptation (design is desktop-only): the wide fixed-width
+         pill can't survive a narrow viewport without either truncating or
+         overflowing, so it collapses to a stacked card below 1024px — icon
+         above text, rounded corners instead of a true pill, full container
+         width. */
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 90%;
+      border-radius: 1.5rem;
+      padding: 1.75rem 1.5rem;
+      gap: 1rem;
+    }
+    .notice-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .notice {
+      max-width: 100%;
+    }
+  }
+</style>
