@@ -213,9 +213,57 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
 
   .row {
     position: relative;
-    padding-block: 2.5rem 2rem;
+    /* Horizontal padding gives the hover band breathing room; the matching
+       negative margin bleeds it back so the resting text still aligns to the
+       container edge. 1.25rem == the container's min side padding, so the band
+       never causes horizontal scroll even on the narrowest viewport. */
+    padding: 2.5rem 1.25rem 2rem;
+    margin-inline: -1.25rem;
     border-radius: 1.5rem;
-    transition: padding 500ms ease;
+    transition: background-color 250ms ease;
+  }
+  /* Hover / focus highlight: the whole row turns orange with white text + marks. */
+  .row:hover,
+  .row:focus-within {
+    background-color: var(--color-orange);
+  }
+  .row-name,
+  .row-sector,
+  .row-desc,
+  .row-link,
+  .row-tag,
+  .row-divider,
+  .row-sector .dot {
+    transition: color 200ms ease, background-color 200ms ease,
+      border-color 200ms ease;
+  }
+  .row:hover .row-name,
+  .row:focus-within .row-name,
+  .row:hover .row-sector,
+  .row:focus-within .row-sector,
+  .row:hover .row-desc,
+  .row:focus-within .row-desc,
+  .row:hover .row-link,
+  .row:focus-within .row-link {
+    color: var(--color-white);
+  }
+  .row:hover .row-sector .dot,
+  .row:focus-within .row-sector .dot {
+    background: var(--color-white);
+  }
+  .row:hover .row-divider,
+  .row:focus-within .row-divider {
+    background: var(--color-white);
+  }
+  .row:hover .row-tag,
+  .row:focus-within .row-tag {
+    background: transparent;
+    border-color: var(--color-white);
+    color: var(--color-white);
+  }
+  .row:hover .row-spark,
+  .row:focus-within .row-spark {
+    filter: brightness(0) invert(1); /* orange spark → white on the orange band */
   }
   .row-divider {
     position: relative;
