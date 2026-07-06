@@ -350,6 +350,17 @@ a {
   .reveal.in-view .reveal-line-text {
     animation: reveal-line-fade 0.57s ease forwards;
   }
+  /* Whole-line accent (e.g. About's "Energy Innovation") needs its own
+     override here too, same reason as the desktop combined selector further
+     up: `.reveal-line-text.accent` (3 classes) beats the plain rule above
+     (2 classes) regardless of media query, so without this the element kept
+     running the desktop reveal-line/reveal-accent-settle animations on
+     mobile -- neither of which touch `transform`, leaving the armed state's
+     `translateY(0.75rem)` permanently stuck and the line visibly overlapping
+     the one below it. */
+  .reveal.in-view .reveal-line-text.accent {
+    animation: reveal-line-fade 0.57s ease forwards;
+  }
   .reveal-line:nth-of-type(1) .reveal-line-text {
     animation-delay: 0s;
   }
