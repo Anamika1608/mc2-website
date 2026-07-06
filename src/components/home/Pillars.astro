@@ -46,6 +46,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
         <div class="card-head">
           <h3 class="card-title">O1 Infrastructure</h3>
           <div class="card-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
         </div>
         <!-- Hover-to-expand (this task): O1 never had a body/icon at all — confirmed
              genuinely absent from Figma (node 1:1069 has only a border, title and
@@ -64,13 +65,13 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
           </p>
           <img src="/icon01.png" alt="" class="card-illus" />
         </div>
-        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o2">
         <div class="card-head">
           <h3 class="card-title">O2 Capital</h3>
           <div class="card-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
         </div>
         <div class="card-content">
           <p class="card-body">
@@ -79,13 +80,13 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
           </p>
           <img src="/icon02.png" alt="" class="card-illus" />
         </div>
-        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o3">
         <div class="card-head">
           <h3 class="card-title">O3 Mentorship</h3>
           <div class="card-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
         </div>
         <div class="card-content">
           <p class="card-body">
@@ -95,13 +96,13 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
           </p>
           <img src="/icon03.png" alt="" class="card-illus" />
         </div>
-        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o4">
         <div class="card-head">
           <h3 class="card-title">O4 Market Access</h3>
           <div class="card-rule" aria-hidden="true"></div>
+          <Fragment set:html={NOTCH} />
         </div>
         <div class="card-content">
           <!-- O4 body: design file duplicated O2's text; replacement approved by user 2026-07-05 -->
@@ -111,7 +112,6 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
           </p>
           <img src="/icon04.png" alt="" class="card-illus" />
         </div>
-        <Fragment set:html={NOTCH} />
       </article>
     </div>
 
@@ -459,11 +459,39 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      markup built in frontmatter), so Astro's scoped data-attribute never
      attaches to it and an un-prefixed rule here would silently no-op. The
      class is section-prefixed ("pillar-") and the rule anchored under the
-     scoped .card so it can't collide with other components' globals. */
+     scoped .card so it can't collide with other components' globals.
+
+     Per direct feedback (the notch's own pinch point should cross .card-rule,
+     matching Figma node 1:1073 etc. almost exactly — confirmed directly
+     against Figma's own coordinates, off by 0.32px): this used to be `top:
+     1.9rem` measured from the card's own top — a fixed guess that only holds
+     when the title is a single line. Confirmed via a full-width sweep
+     (1024-1920px) that O1/O3/O4's titles genuinely wrap to 2 lines at
+     1024-1366px (O4 up to 1440px) — pushing .card-rule down a full line
+     without moving this fixed offset, opening a real ~36px gap exactly at
+     those widths (O2's shorter title never wraps, so it stayed aligned
+     throughout, which is why this only showed up on 3 of the 4 cards at
+     narrower widths). Moved the notch inside `.card-head` (alongside
+     .card-rule, right after it in the markup) and anchored it the same way
+     `.card-rule` already is — `top: 100%` off .card-head's own bottom edge —
+     so it always tracks the title's real rendered height at any wrap count.
+     `margin-top` reproduces the pinch-to-rule offset: the notch's visual
+     pinch sits partway down its own SVG, not at its own top edge (viewBox
+     y=33.33 of 72.18, i.e. 46.18% down), so margin-top pulls it up by that
+     fraction of its own height, landing the pinch on .card-rule's own line:
+     0.802rem (.card-rule's own margin-top) − (33.33 / 72.18 × 4.5113rem) ≈
+     -1.2813rem. `right` is offset by `-1.595rem` (the card's own right
+     padding, 1.47rem, plus its 0.125rem border) to compensate for .card-head
+     sitting inset from the card's actual outer border edge by that combined
+     amount — without it, the notch would land short of the card's border
+     instead of flush with it, same as Figma's own 0px inset (confirmed
+     against 1:1073's coordinates: right edge exactly at the card's border,
+     no gap). */
   .card :global(.pillar-notch) {
     position: absolute;
-    top: 1.9rem; /* ≈30px from card top, consistent across all four cards regardless of card height */
-    right: 0;
+    top: 100%;
+    margin-top: -1.2813rem;
+    right: -1.595rem;
     width: 3.1944rem; /* 51.11px */
     height: 4.5113rem; /* 72.18px */
     pointer-events: none;
