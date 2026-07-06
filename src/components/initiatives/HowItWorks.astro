@@ -231,7 +231,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        match (0.36px off) — reusing Pillars' .card-body constant (1.25rem/1.4)
        rather than re-deriving from scratch, since it already fits this
        measurement almost exactly. */
-    font-size: 1.25rem;
+    font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
   }
@@ -331,13 +331,13 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   .step-label {
     margin: 0;
     font-family: var(--font-sans); /* Figma reports Faculty Glyphic on this real text node (1:16083 etc.), but a zoomed render shows plain sans strokes (no serifs on S/T/E/P) — same wrapping-group-reports-Faculty correction already applied throughout this page/Home */
-    font-size: 1.7831rem; /* 28.53px, real text node, all four cards */
+    font-size: 1.4rem; /* 22.4px — reduced from 28.53px per user directive 2026-07-06 */
     color: var(--color-ink-alt);
   }
   .step-number {
     margin: 0.2rem 0 0;
     font-family: var(--font-display); /* zoomed render confirms genuine serif/slab strokes here, unlike the label above — Faculty Glyphic rendering truthfully */
-    font-size: 6.5788rem; /* 105.26px, real text node, all four cards */
+    font-size: 5.25rem; /* 84px — reduced from 105.26px per user directive 2026-07-06, the single most oversized element on the page */
     line-height: 1.1;
     color: var(--color-ink-alt);
   }
@@ -409,7 +409,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   .step-title {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1.7831rem; /* 28.53px — identical value to .step-label, both real text nodes */
+    font-size: 1.4rem; /* 22.4px — reduced from 28.53px per user directive 2026-07-06, kept equal to .step-label */
     font-weight: 400;
     color: var(--color-ink-alt); /* navy on every card, including O2's orange one — matches Pillars' .card-title convention */
   }
@@ -428,7 +428,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        break points; 20px+ all break one word earlier per line. 19px chosen
        (upper end of the matching range). Reused for O3's body too — same
        role, same card family, no independent text to re-derive against. */
-    font-size: 1.1875rem;
+    font-size: 1rem; /* 16px — reduced from 19px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
     /* Exclusive active card (this task): only the active card's body ever shows (see
