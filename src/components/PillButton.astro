@@ -15,7 +15,7 @@ const Tag = href ? "a" : "button";
 <Tag class:list={["pill", variant]} href={href} type={href ? undefined : type}>
   <span class="pill-label">{label}</span>
   <span class="pill-arrow" aria-hidden="true">
-    <svg viewBox="0 0 16 16" width="32" height="32" fill="none">
+    <svg viewBox="0 0 16 16" fill="none">
       <path
         d="M2 8h11M9 3.5 13.5 8 9 12.5"
         stroke="currentColor"
@@ -51,16 +51,30 @@ const Tag = href ? "a" : "button";
    * capHeight/upm≈0.73 and full-extent≈0.938 constants this file's SponsorStrip
    * eyebrow comment already established lands back on ~32px, i.e. 2rem.)
    */
+  /*
+   * Responsive scaling: the parent CTA rows (SupportCta, CtaBand, etc.) are
+   * flex containers that shrink this pill below its natural single-line width
+   * on narrow viewports — without fluid sizing here, that just wraps the
+   * label at full desktop size (32px font, 76px circle), which reads as
+   * cramped and broken on phones (verified via Playwright viewport emulation,
+   * not the CLI screenshot tool — that tool doesn't set a real CSS viewport
+   * and produces false "cut off" renders at mobile widths). clamp() shrinks
+   * every dimension together down to a 375px-ish reference instead of
+   * changing at a single breakpoint, matching --container-gutter's existing
+   * pattern. Floors keep min font-size at 1rem (legibility) and the arrow
+   * circle at 2.75rem/44px (>=44px WCAG 2.5.5 touch-target minimum).
+   */
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: 1.6rem; /* 25.6px, node 1:1479; about's 1:8953/1:8932 measured 25.3-28.9px, same shared value within noise */
+    gap: clamp(0.9rem, 0.55rem + 1.4vw, 1.6rem); /* 25.6px desktop, node 1:1479 */
     font-family: var(--font-sans);
-    font-size: 2rem; /* 32px — verified equal across 1:1479, 1:8953, 1:8932 by direct glyph measurement, see block comment above */
+    font-size: clamp(1rem, 0.55rem + 2vw, 2rem); /* 32px desktop — verified equal across 1:1479, 1:8953, 1:8932, see block comment above */
     font-weight: 400; /* regular — stroke widths measured pixel-identical across all 3 nodes, not 600 */
+    line-height: 1.25; /* breathing room if a long label wraps to 2 lines on the smallest phones */
     text-decoration: none;
     border-radius: 999px;
-    padding: 0 0 0 2.875rem; /* 46px left inset, node 1:1479; about's nodes measured 42-45px, same shared value within noise */
+    padding: 0.4rem 0 0.4rem clamp(1.25rem, 0.65rem + 2.7vw, 2.875rem); /* 46px left inset desktop, node 1:1479; about's nodes measured 42-45px, same shared value within noise */
     border: none;
     margin: 0;
     cursor: pointer;
@@ -70,10 +84,14 @@ const Tag = href ? "a" : "button";
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 4.75rem; /* 76px — arrow-circle diameter exactly equals pill height in 1:1479, 1:8953 and 1:8932 */
-    height: 4.75rem;
+    width: clamp(2.75rem, 1.85rem + 3.6vw, 4.75rem); /* 76px desktop — arrow-circle diameter exactly equals pill height in 1:1479, 1:8953 and 1:8932; floor is 44px, the WCAG 2.5.5 touch-target minimum */
+    height: clamp(2.75rem, 1.85rem + 3.6vw, 4.75rem);
     border-radius: 999px;
     transition: transform 150ms ease;
+  }
+  .pill-arrow svg {
+    width: 42%; /* 32/76, the icon's original fixed-px ratio to the circle — scales with the clamp() above instead of a hardcoded 32px */
+    height: 42%;
   }
   .pill:hover .pill-arrow {
     transform: translateX(3px);
