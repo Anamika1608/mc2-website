@@ -18,10 +18,18 @@
 <style>
   .mission {
     background: var(--color-cream);
-    /* Figma gap Mission-top (1230.41) − Hero-bottom (984.16, node 1:9499's
-       scroll-chevron) ≈ 246.25px = 15.39rem. Bottom is 0 — the Mission-to-Vision
-       gap is owned by Vision's own padding-block-start (see Vision.astro). */
-    padding-block: 15.39rem 0;
+    /* Was 15.39rem (246.25px), derived as Figma's Mission-top − Hero-bottom
+       (node 1:9499's scroll-chevron) gap. That assumed hero's own box ended
+       right at the scroll arrow — true in the original design, but no
+       longer true after AboutHero's min-height was floored to preserve its
+       4 baked-in sparks (user directive) rather than shrink to fit the
+       (now smaller) hero text: hero's box now extends ~382px past the
+       arrow on its own. Stacking the full 246px on top of that reads as
+       far too much space (user directive). Reduced to 3rem so the total
+       arrow→heading gap is tighter, without re-introducing hero clipping.
+       Bottom is 0 — the Mission-to-Vision gap is owned by Vision's own
+       padding-block-start (see Vision.astro). */
+    padding-block: 3rem 0;
   }
 
   /* Column widths from node 1:8065 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
