@@ -65,7 +65,16 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 
   @media (min-width: 1024px) {
     .support-hero {
-      min-height: 62rem;
+      /* Was 62rem (992px), then briefly 61.5rem (984px, the minimum that
+         kept .orbit's full ~984px-tall PNG uncropped) — but that only
+         closed 8px of the ~390px gap below the scroll arrow, essentially
+         invisible. Per user directive, accepting orbit cropping to actually
+         close the gap: content (chevron) bottom sits at 601px from hero's
+         own top, so 38.8rem (620.8px) gives a small buffer past that,
+         matching the convention used for the About/Contact hero fixes. The
+         orbit's own bottom portion (its circle+spark) is now clipped by
+         .hero's overflow:hidden. */
+      min-height: 38.8rem;
     }
   }
 
@@ -157,7 +166,13 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 
   .scroll {
     display: block;
-    margin: 6.12rem auto 0;
+    /* Bottom margin added so the next section (support-stack) doesn't sit
+       right on top of the chevron — was 0, giving only ~19.6px of gap after
+       the hero's min-height was floored to close the earlier dead-space
+       bug. .support-hero uses min-height (a floor, not a cap), so this
+       margin grows the hero's own rendered height to fit, rather than
+       getting clipped. Doubled from 2rem per user directive. */
+    margin: 6.12rem auto 4rem;
   }
 
   @media (max-width: 1023.98px) {
