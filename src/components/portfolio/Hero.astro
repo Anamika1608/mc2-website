@@ -96,14 +96,15 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   }
   @media (min-width: 1024px) {
     .hero {
-      /* Design's own hero band (eyebrow y311.55 to chevron ~y940) doesn't need
-         the header-offset treatment Initiatives' hero required (that page's own
-         curve canvas sat BEHIND the header at canvas y0 — this page's curve
-         canvas (1:25612/1:25614) starts at y34.71, already clear of the header
-         in normal flow), so this follows Home's simpler min-height-only pattern:
-         a fluid band sized off the curve box's own ~1085px height at the 1920
-         reference (1085/1920 = 56.51vw), floored for legibility. */
-      min-height: clamp(40rem, 56.51vw, 67.8rem);
+      /* CORRECTED (fix round 1): a fresh get_screenshot of node 1:23922 shows
+         both curves emerging exactly at the shared header's own bottom edge —
+         i.e. the design's curve canvas (1:25612/1:25614, starting at canvas
+         y34.71) sits PARTLY BEHIND the header (header height 110.65px, node
+         1:25617), not "already clear of it" as this comment previously and
+         wrongly claimed. Same convention as Initiatives' Hero: min-height is
+         sized off the curve box's height MINUS the header (1086 - 110.65 =
+         975.35px = 60.96rem at the 1920 reference, 975.35/1920 = 50.80vw). */
+      min-height: clamp(40rem, 50.8vw, 60.96rem);
     }
   }
 
@@ -111,10 +112,19 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
      separate sibling nodes (1:25616/1:25615, Task 1 export), positioned as
      percentages of the curves SVG's own 1920x1086 box so they stay locked to
      the curve intersections at any viewport width (same technique as Home's/
-     Initiatives' own Hero.astro). */
+     Initiatives' own Hero.astro).
+     top offset (fix round 1): shifts the curve canvas UP by the shared
+     header's own live rendered height (90.1875px = 5.6367rem, the same
+     constant Home/Initiatives already cite for this identical component) so
+     canvas y0 re-aligns with true page y0 — matching the design, where the
+     header sits IN FRONT of (not after) the curve canvas's own origin. Without
+     this, the curves rendered a full header-height too low AND with their
+     top ~110px never clipped by the header, showing extra never-meant-to-be-
+     visible geometry (the "complete circle floating clear of the navbar"
+     bug) instead of the design's own curves-emerge-from-under-the-header look. */
   .orbit {
     position: absolute;
-    top: 0;
+    top: -5.6367rem;
     left: 0;
     width: 100%;
     z-index: 0;
