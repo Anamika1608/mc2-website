@@ -96,7 +96,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
         </div>
       </article>
 
-      <article class="step step--o2 is-active">
+      <article class="step step--o2">
         <div class="step-head">
           <p class="step-label">STEP</p>
           <p class="step-number">O2</p>
@@ -170,14 +170,15 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
 </section>
 
 <script>
-  // Exclusive active card (this task) — same pattern as Programs.astro's script
-  // (plain DOM addEventListener + classList, no framework): exactly one `.step` carries
-  // `.is-active` at a time. O2 starts with it in the markup (the default), hovering any
-  // other step reassigns it there instead, and leaving the row falls back to O2 again.
+  // Exclusive active card, all-closed-by-default (per direct feedback, same
+  // change already made to Home's Pillars.astro): exactly one `.step` carries
+  // `.is-active` at a time, assigned on hover — none by default (see markup,
+  // O2 no longer starts with the class) — and leaving the row deactivates
+  // everything instead of falling back to O2.
   const row = document.querySelector<HTMLElement>(".steps-row");
   const steps = document.querySelectorAll<HTMLElement>(".steps-row .step");
 
-  const activate = (target: HTMLElement) => {
+  const activate = (target: HTMLElement | null) => {
     steps.forEach((step) => step.classList.toggle("is-active", step === target));
   };
 
@@ -187,9 +188,9 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     });
     // Reset unconditionally (no viewport guard) — the Programs.astro fix-round lesson:
     // gating this on a desktop-only check left a card stuck active if the viewport
-    // changed mid-hover. Falling back to O2 is always correct, at any width.
+    // changed mid-hover.
     row.addEventListener("mouseleave", () => {
-      activate(document.querySelector(".step--o2")!);
+      activate(null);
     });
   }
 </script>
@@ -231,7 +232,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        match (0.36px off) — reusing Pillars' .card-body constant (1.25rem/1.4)
        rather than re-deriving from scratch, since it already fits this
        measurement almost exactly. */
-    font-size: 1.25rem;
+    font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
   }
@@ -249,6 +250,31 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        tab's own depth plus a small clearance; verified at 1024 the overlap
        drops to 0 (tab tip now lands ~2px clear of the next card). */
     gap: max(1.44%, 1.55rem);
+    /* Per direct feedback (same fix already made to Home's Pillars.astro):
+       reserve this row's height PERMANENTLY at the active-card height,
+       decoupled from any single card, instead of forcing every active card
+       to share one height (see .step.is-active below). `align-items:
+       flex-end` (above) then lets collapsed cards float at the bottom with
+       empty space already held open above them, and an activated card just
+       grows to fill space that was already reserved — the row's own
+       rendered height is now a constant regardless of hover state, so the
+       down-chevron below never moves.
+       The old `.step.is-active` clamp (32.625rem-43.75rem) was fitted back
+       when O2 was permanently active by default, so it had to cover O2's
+       full expansion even at rest. Now that every card starts collapsed
+       (round 3) and only expands transiently on hover, that value would
+       leave 100-200px of dead space above the collapsed row — refit instead
+       against a fresh worst-of-all-four scrollHeight sweep (same method as
+       Pillars, `is-active` + `min-height:auto` forced, sampled 1024-1920px):
+       1024→502px, 1100→480, 1200→452, 1300-1440→429, 1536-1920→407 (O2
+       tallest throughout), each with a ~15-20px margin, as the same
+       two-segment `max()` piecewise shape Pillars uses. */
+    --step-active-height: clamp(
+      26rem,
+      max(46.286rem - 21.345vw, 32.1875rem - 4.583vw),
+      33rem
+    );
+    min-height: var(--step-active-height);
   }
 
   .step {
@@ -266,7 +292,15 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        rendering as tall, empty boxes at rest. All four collapsed cards now sit
        at the same short height, "under the same vertical line." */
     min-height: 20.7825rem; /* 332.52px, node 1:16076 — shared collapsed height for all four */
-    overflow: hidden; /* clip rather than grow if content ever slightly exceeds the active min-height below at an extreme viewport */
+    /* `overflow: hidden` used to sit here as a defensive clip in case content
+       ever exceeded the active min-height — removed (per direct feedback):
+       it was silently clipping the pointed V-tab connector (see .step-vtab
+       below), which is deliberately positioned to protrude past this card's
+       own right border, the same design element documented at length in the
+       frontmatter. `min-height` alone never causes real overflow to clip
+       against anyway (a floor only grows the box, it doesn't cap it), so
+       this rule was never protecting real content — it was only ever
+       breaking the V-tab. */
     transition:
       transform 250ms ease,
       background-color 200ms ease,
@@ -303,11 +337,24 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
      (700px/522px) for font-loading/rounding variance and the 1366px midpoint
      (524px needed there, comfortably inside the clamp's ~608px at that width).
      <1024 switches to the always-visible grid layout below and doesn't use this
-     rule at all. */
+     rule at all.
+
+     Round 3 (per direct feedback: no rule that every card must share one
+     height — shorter cards showed real dead space below their own text,
+     stretched to fit a budget sized for O2's own content): dropped the
+     forced min-height here entirely. The anti-shake fix never actually
+     depended on every ACTIVE CARD sharing one height — it depended on
+     `.steps-row` itself never resizing (see its own permanent min-height
+     above, carrying this exact clamp value forward). A flex row with
+     `align-items: flex-end` doesn't let one item's height affect another's,
+     so once the row's own footprint is pinned, each active card is free to
+     size to its own content via `.step`'s base `min-height: 20.7825rem`
+     (naturally exceeded once `.step-body` shows). O2 still ends up tallest
+     and still fits inside the row's reserved height; shorter cards now end
+     shortly after their own text instead of stretching to fill O2's space. */
   .step.is-active {
     background: var(--color-orange); /* #F37D2C, node 1:16086's own fill */
     transform: translateY(-0.75rem); /* 12px lift — matches Programs.astro's transition timing for consistency on this page */
-    min-height: clamp(32.625rem, 56.464rem - 19.866vw, 43.75rem);
   }
   /* Card heights: the original "staircase" (O1 332.52px / O2 542.52px / O3
      402.52px / O4 338.02px, bottom-aligned) only ever applied while every card's
@@ -331,13 +378,13 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   .step-label {
     margin: 0;
     font-family: var(--font-sans); /* Figma reports Faculty Glyphic on this real text node (1:16083 etc.), but a zoomed render shows plain sans strokes (no serifs on S/T/E/P) — same wrapping-group-reports-Faculty correction already applied throughout this page/Home */
-    font-size: 1.7831rem; /* 28.53px, real text node, all four cards */
+    font-size: 1.4rem; /* 22.4px — reduced from 28.53px per user directive 2026-07-06 */
     color: var(--color-ink-alt);
   }
   .step-number {
     margin: 0.2rem 0 0;
     font-family: var(--font-display); /* zoomed render confirms genuine serif/slab strokes here, unlike the label above — Faculty Glyphic rendering truthfully */
-    font-size: 6.5788rem; /* 105.26px, real text node, all four cards */
+    font-size: 5.25rem; /* 84px — reduced from 105.26px per user directive 2026-07-06, the single most oversized element on the page */
     line-height: 1.1;
     color: var(--color-ink-alt);
   }
@@ -409,7 +456,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   .step-title {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1.7831rem; /* 28.53px — identical value to .step-label, both real text nodes */
+    font-size: 1.4rem; /* 22.4px — reduced from 28.53px per user directive 2026-07-06, kept equal to .step-label */
     font-weight: 400;
     color: var(--color-ink-alt); /* navy on every card, including O2's orange one — matches Pillars' .card-title convention */
   }
@@ -428,7 +475,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        break points; 20px+ all break one word earlier per line. 19px chosen
        (upper end of the matching range). Reused for O3's body too — same
        role, same card family, no independent text to re-derive against. */
-    font-size: 1.1875rem;
+    font-size: 1rem; /* 16px — reduced from 19px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
     /* Exclusive active card (this task): only the active card's body ever shows (see
@@ -442,7 +489,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     display: block;
     /* On-orange body copy is navy, not gray (matches Pillars' .card--o3 .card-body) —
        applies uniformly since the active card is always the orange one, whichever card
-       that is (O2 by default, including on mobile where nothing ever changes it). */
+       that is (none by default — round 3 — see markup/script above). */
     color: var(--color-ink-alt);
   }
   .step--o2 .step-title,
@@ -486,9 +533,8 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     /* Hover doesn't really exist as a concept below 1024 (stacked grid, likely
        touch) — show every card's body unconditionally instead, same pattern as
        Programs.astro's mobile view. Specificity has to match/beat `.step.is-active
-       .step-body` (0,3,0): O2 keeps `is-active` here too (nothing removes it, no real
-       mouse), so without this override matching/beating that selector, only O2's body
-       would show and O1/O3/O4's would stay hidden. */
+       .step-body` (0,3,0) in case a real mouse (trackpad on a narrow window,
+       etc.) does leave one card `.is-active` here too. */
     .steps-row .step .step-body {
       display: block;
     }

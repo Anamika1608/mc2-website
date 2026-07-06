@@ -82,7 +82,7 @@ const VIDEO_URL = "#";
        rounds to the same 31px/1.9375rem body-text size derived in
        AboutHero.astro's .lede and Mission.astro's .body - this caption reuses
        that shared text style, just recolored. */
-    font-size: var(--text-body-lg); /* was 1.9375rem — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.4; /* new — normalized to home hero scale per user directive 2026-07-06 */
     margin: 0 0 0.5rem;
   }
@@ -93,7 +93,7 @@ const VIDEO_URL = "#";
     /* Cap-height ~15.1px (baseline ~2616.2 - cap-top 2601.06) / 0.73 ~= 20.7px
        -> rounds to 1.25rem (20px). Line-height from line2->line3 baseline
        delta (28.24px) / 20px ~= 1.41, rounded to 1.4. */
-    font-size: var(--text-body); /* was 1.25rem, value unchanged — tokenized for consistency — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.4;
     margin: 0;
   }

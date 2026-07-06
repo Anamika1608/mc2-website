@@ -129,7 +129,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        glyphs are sans — same eyebrow-is-sans correction already made in
        Hero.astro/SponsorStrip.astro/Pillars.astro. Size/tracking identical
        to Pillars' eyebrow (node 1:379): 27.07px / 6.7675px tracking = 0.25em. */
-    font-size: 1.6919rem;
+    font-size: 1.375rem; /* 22px — reduced from 27.07px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     letter-spacing: 0.25em;
     color: var(--color-gray);
   }
@@ -137,10 +137,12 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   h2 {
     margin: 0.6rem 0 0;
     font-family: var(--font-display);
-    /* 65px, node 1:381/1:382. Line-height verified directly against the
-       screenshot (same method as Pillars.astro): line-tops sit ~70px apart
-       (70/65 = 1.077), matching Pillars' 1.07 for the same font-size. */
-    font-size: 4.0625rem;
+    /* Was 65px (4.0625rem), node 1:381/1:382. Line-height verified directly
+       against the screenshot (same method as Pillars.astro): line-tops sit
+       ~70px apart (70/65 = 1.077), matching Pillars' 1.07 for the same
+       font-size. Reduced to 52px per user directive 2026-07-06 (desktop
+       type felt oversized on sub-1920 laptops) — line-height ratio unchanged. */
+    font-size: 3.25rem;
     line-height: 1.07;
     color: var(--color-ink-alt);
   }
@@ -158,7 +160,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     max-width: 51.875rem; /* 830px, screenshot's longest wrapped line */
     margin: 1.5rem auto 0;
     font-family: var(--font-sans);
-    font-size: 1.5rem;
+    font-size: 1.25rem; /* 20px — reduced from 24px per user directive 2026-07-06 */
     line-height: 1.3;
     color: var(--color-gray);
   }
@@ -392,7 +394,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     /* No text node (outlined, like the body copy) — screenshot cap-height
        (16px) is a near-match for the body copy's 15px "V" at 20px, so sized
        the same as .body rather than stepping down further. */
-    font-size: 1.25rem;
+    font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06 */
     /* Navy, not the site's usual gray eyebrow — sampled (30,30,60) off the
        screenshot, an exact match for --color-ink-alt. */
     color: var(--color-ink-alt);
@@ -401,11 +403,13 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   .title {
     margin: 0 0 0.75rem;
     font-family: var(--font-display);
-    /* 35.23px, node 1:538/1:539 (col 1) and 1:628/1:629 (col 2) — real text
-       nodes, and (unlike the eyebrow) genuinely serif on inspection of the
-       screenshot. Line-height measured off the two-line title's line-top
-       gap (42px / 35.23px = 1.19). */
-    font-size: 2.2019rem;
+    /* Was 35.23px (2.2019rem), node 1:538/1:539 (col 1) and 1:628/1:629
+       (col 2) — real text nodes, and (unlike the eyebrow) genuinely serif
+       on inspection of the screenshot. Line-height measured off the
+       two-line title's line-top gap (42px / 35.23px = 1.19). Reduced to
+       28px per user directive 2026-07-06 (desktop type felt oversized on
+       sub-1920 laptops) — line-height ratio unchanged. */
+    font-size: 1.75rem;
     line-height: 1.2;
     font-weight: 400;
     color: var(--color-ink-alt);
@@ -417,15 +421,16 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     /* Outlined vectors, no text node. Screenshot cap-height ("V" of
        "Validate" ~15px) matches the site's other 20px secondary text
        (Hero .lede, Pillars .card-body) exactly, including the 1.4
-       line-height (measured line-top gap ~29px / 20px = 1.45). */
-    font-size: 1.25rem;
+       line-height (measured line-top gap ~29px / 20px = 1.45). Reduced to
+       17px per user directive 2026-07-06. */
+    font-size: 1.0625rem;
     line-height: 1.4;
     color: var(--color-gray);
   }
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+      font-size: clamp(2.25rem, 6vw, 3.25rem);
     }
     .intro {
       max-width: 90%;

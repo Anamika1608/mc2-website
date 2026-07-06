@@ -94,7 +94,7 @@ import PillButton from "../PillButton.astro";
   h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:16268 (real text node, direct report) */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-06 (desktop type felt oversized on sub-1920 laptops) */
     line-height: 1.07; /* site-wide constant for this exact Faculty-65px H2 role (Pillars/Audiences/Home's CtaBand baseline-derived; this H2 is single-line so can't be independently re-derived, reusing the confirmed constant rather than guessing) */
     color: var(--color-ink-alt); /* #1e1e3c exact match */
   }
@@ -117,7 +117,7 @@ import PillButton from "../PillButton.astro";
        browser at THIS paragraph's own text and 46.875rem column: it
        reproduces this design's own confirmed 2-line break ("...Applications"
        / "open soon...") exactly, so no further adjustment was needed. */
-    font-size: 1.4375rem;
+    font-size: 1.125rem; /* 18px — reduced from 23px per user directive 2026-07-06 */
     line-height: 1.4; /* reused from Home's CtaBand .body — same outlined-Sora-body-copy role */
     color: var(--color-gray);
   }
@@ -137,7 +137,7 @@ import PillButton from "../PillButton.astro";
          see frontmatter), but there's no design reason for its own <1024
          floor to differ from the shared component's; 2.25rem vs 2.2rem was
          an unreconciled drift between the two hand-authored clamps. */
-      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .body {
       max-width: 90%;

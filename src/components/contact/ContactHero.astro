@@ -55,15 +55,16 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
   @media (min-width: 1024px) {
     .hero {
-      /* Was 63.25rem (the curve SVG's 1012px export height) — sized for the
-         pre-normalization 80px/31px hero text. After the type-scale
-         normalization (user directive 2026-07-06) the content stack ends
-         ~595px into the band, leaving ~393px dead space (measured: 598px
-         chevron→heading gap vs Figma's 205px — chevron 963.6 → band end 984
-         → H2 1169, nodes 1:29713/1:28682). Re-derived: content bottom 595px
-         + 20.4px Figma chevron→band-end ≈ 615px = 38.7rem; the curve
-         backdrop crops per the site's allow-crop rule. */
-      min-height: 38.7rem;
+      /* Was 63.25rem (curve SVG's 1012px height), then reduced to 38.7rem to
+         fix dead space after type-scale normalization shortened the content
+         stack — but that also clipped (via overflow:hidden) the curve's
+         left-side spark/X-crossing at ~750px down, which needs to be
+         visible (user request). Grown by 8.3rem to 47rem, just enough to
+         clear the spark; NetworkSection's own top padding is reduced by
+         that same 8.3rem below, so the total chevron→H2 gap this fix
+         achieved (≈209px) is unchanged — the 8.3rem just moves from
+         "network's padding" to "hero's own box" so the spark has room. */
+      min-height: 47rem;
     }
     /* Each h1 span is one authored Figma line (916/798/552px) — the browser's
        Faculty Glyphic metrics render a hair wider than Figma's own, so at the
