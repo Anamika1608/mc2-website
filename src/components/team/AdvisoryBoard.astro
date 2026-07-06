@@ -67,8 +67,8 @@ const ADVISORS = [
           <Image
             src={a.photo}
             alt={a.name}
-            widths={[227, 454]}
-            sizes="(max-width: 559.98px) 45vw, (max-width: 1023.98px) 30vw, 227px"
+            widths={[252, 504]}
+            sizes="(max-width: 559.98px) 45vw, (max-width: 1023.98px) 30vw, 252px"
             class="photo"
           />
           <h3>{a.name}</h3>
@@ -125,7 +125,7 @@ const ADVISORS = [
      1:12980, driven by line 1 being the longer of the two lines). */
   .subheading {
     max-width: 46.97rem;
-    margin: 0 auto 4.5rem;
+    margin: 0 auto 5.5rem; /* widened from 4.5rem — more breathing room above the card grid per user directive 2026-07-06 */
     font-family: var(--font-sans);
     font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667;
@@ -148,8 +148,8 @@ const ADVISORS = [
   .grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 2.5rem;
-    row-gap: 3rem;
+    column-gap: 3rem; /* widened from 2.5rem per user directive 2026-07-06 */
+    row-gap: 3.75rem; /* widened from 3rem per user directive 2026-07-06 */
   }
 
   .card {
@@ -171,7 +171,7 @@ const ADVISORS = [
   .photo {
     display: block;
     width: 100%;
-    max-width: 14.175rem;
+    max-width: 15.75rem; /* widened from 14.175rem — measured smaller than the reference per user directive 2026-07-06 */
     height: auto;
     aspect-ratio: 1;
     object-fit: cover;

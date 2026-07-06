@@ -8,17 +8,20 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 // Folder-tab notch (Figma nodes 1:1073 / 1:1191 / 1:1339 / 1:1476) — a single
 // flattened two-path vector reused identically on all four cards. The back
 // path is always navy; only the front path's fill changes (literal black on
-// the three cream cards, navy on O3's orange card so it doesn't read as a
-// harsh cutout). Inlined here (rather than a separate asset) since it's one
-// shape shared by every card with a one-color swap.
-function notch(front: string) {
-  return `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50.68 0.01V72.14L48.25 48.77C47.49 41.45 41.54 35.76 34.19 35.33L0.02 33.33L34.74 31.11C42.02 30.64 47.91 25.02 48.71 17.77L50.67 0.02L50.68 0.01Z" fill="${front}" />
+// a cream card, navy on whichever card is currently orange, so it doesn't
+// read as a harsh cutout). Inlined here (rather than a separate asset) since
+// it's one shape shared by every card with a one-color swap.
+// Hover-to-expand (this task): the front path is always `fill="currentColor"`
+// now instead of being baked in per call site — at most one card is ever
+// orange at a time (whichever carries `.is-active`, none by default — see the
+// script below), not permanently any one card, so the notch color has to
+// track that dynamically. `color` is set via CSS on `.pillar-notch` (base
+// black, orange-card override), same pattern as HowItWorks.astro's step-vtab
+// and Programs.astro's card-flag.
+const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50.68 0.01V72.14L48.25 48.77C47.49 41.45 41.54 35.76 34.19 35.33L0.02 33.33L34.74 31.11C42.02 30.64 47.91 25.02 48.71 17.77L50.67 0.02L50.68 0.01Z" fill="currentColor" />
     <path d="M50.68 0.01C50.67 23.96 51.1 48.1 51.11 72.14L50.24 72.18C49.81 68.4 48.09 51.1 47.61 47.71C46.52 41.37 40.85 36.24 34.43 35.84C31.29 35.64 22.92 35.13 19.68 34.94L0 33.75V32.88C8.54 32.37 23.77 31.42 32.15 30.95C40.02 31.24 47.26 26.35 48.47 18.27C49.24 12.13 50.01 6.02 50.67 0L50.68 0.01ZM50.68 0.01C49.98 6.18 49.47 12.28 48.79 18.33C48.03 24.56 42.98 29.95 36.8 31.11C34.12 31.59 30.32 31.66 27.6 31.9L18.42 32.53L0.05 33.76V32.89L19.74 34.01L29.58 34.57L34.51 34.86C39.61 35.18 44.39 38.31 46.84 42.78C48.57 45.67 48.8 49.21 49.1 52.48L51.11 72.1L50.24 72.14C50.26 48.09 50.69 24.14 50.67 0.01H50.68Z" fill="var(--color-ink-alt)" />
   </svg>`;
-}
-const NOTCH_BLACK = notch("#000");
-const NOTCH_NAVY = notch("var(--color-ink-alt)");
 ---
 
 <section class="pillars">
@@ -47,7 +50,31 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
           <h3 class="card-title">O1 Infrastructure</h3>
           <div class="card-rule" aria-hidden="true"></div>
         </div>
-        <Fragment set:html={NOTCH_BLACK} />
+        <!-- Hover-to-expand (this task): O1 never had a body/icon at all — confirmed
+             genuinely absent from Figma (node 1:1069 has only a border, title and
+             notch, no body text or illustration node). Body sourced verbatim from
+             the reference screenshot provided for this task. Hidden until this
+             card is active — see .card-content CSS below.
+             Icon (round 5): a real Infrastructure icon now exists at
+             public/Globe-Gray.png — a raster PNG, not an importable src/assets SVG
+             like O2/O3/O4's icons, so it's a plain <img> here rather than the
+             inline-SVG component pattern (can't use currentColor on it, but it
+             ships pre-colored gray, matching this card's own muted illustration
+             role). Sized via .card-illus--raster below, same height cap as O4's
+             icon for visual consistency. -->
+        <div class="card-content">
+          <p class="card-body">
+            Shared access to world-class R&D labs, testing rigs, fabrication
+            workshops and technical facilities across India's energy majors
+            and research institutions.
+          </p>
+          <img
+            src="/Globe-Gray.png"
+            alt=""
+            class="card-illus card-illus--raster"
+          />
+        </div>
+        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o2">
@@ -62,7 +89,7 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
           </p>
           <IllusCapital class="card-illus" aria-hidden="true" />
         </div>
-        <Fragment set:html={NOTCH_BLACK} />
+        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o3">
@@ -78,7 +105,7 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
           </p>
           <IllusMentorship class="card-illus" aria-hidden="true" />
         </div>
-        <Fragment set:html={NOTCH_NAVY} />
+        <Fragment set:html={NOTCH} />
       </article>
 
       <article class="card card--o4">
@@ -94,7 +121,7 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
           </p>
           <IllusMarket class="card-illus" aria-hidden="true" />
         </div>
-        <Fragment set:html={NOTCH_BLACK} />
+        <Fragment set:html={NOTCH} />
       </article>
     </div>
 
@@ -103,6 +130,35 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     </div>
   </div>
 </section>
+
+<script>
+  // Exclusive active card, at most one at a time — same pattern as
+  // HowItWorks.astro's script (plain DOM addEventListener + classList, no
+  // framework). No card is active by default (round 6, per direct feedback +
+  // reference screenshots: all four start collapsed, nothing orange, until the
+  // user actually hovers one) — O3 used to be the default/fallback here, no
+  // longer is.
+  const row = document.querySelector<HTMLElement>(".pillars-row");
+  const cards = document.querySelectorAll<HTMLElement>(".pillars-row .card");
+
+  const activate = (target: HTMLElement | null) => {
+    cards.forEach((card) => card.classList.toggle("is-active", card === target));
+  };
+
+  if (row) {
+    cards.forEach((card) => {
+      card.addEventListener("mouseenter", () => activate(card));
+    });
+    // Reset to "nothing active" (not a fallback card) — moving the mouse off the
+    // row returns to the same fully-collapsed look as page load. Unconditional
+    // (no viewport guard), same lesson as the Programs.astro fix-round: gating
+    // this on a desktop-only check left a card stuck active if the viewport
+    // changed mid-hover.
+    row.addEventListener("mouseleave", () => {
+      activate(null);
+    });
+  }
+</script>
 
 <style>
   .pillars {
@@ -164,6 +220,28 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     display: flex;
     align-items: flex-end; /* shared bottom baseline (all four cards' boxes end at Figma y2218.1) — this alone produces O3's "sits higher" and O1's short tab */
     gap: 3.47%; /* 61.45px / 1772.2px total row width (1:1068) — percentage so the gap scales with the row instead of the fixed-width cards overflowing narrower desktop viewports */
+    /* Round 7 (per direct feedback: hovering a card grows `.pillars-row` itself —
+       a flex row's own height auto-sizes to its tallest child — which shoved the
+       CTA button and everything after it up/down on every hover/un-hover, making
+       the whole page feel like it was jumping). Fix: reserve this row's height
+       PERMANENTLY at the active-card height, not just while something's active.
+       `align-items: flex-end` (above) then does the rest for free — collapsed
+       cards simply float at the bottom of this already-tall row with empty space
+       above them (this is the gap the first reference screenshot showed; it was
+       never wasted space, it's room being held open for exactly this), and an
+       activated card just grows to fill space that was already reserved. The
+       row's own rendered height is now a constant regardless of hover state, so
+       nothing outside it — the CTA button, the heading above, anything below —
+       ever needs to move.
+       `--pillar-active-height` is one shared source of truth for this value —
+       both this rule and `.card.is-active`'s own min-height (below) reference it,
+       instead of maintaining the same clamp expression in two places. */
+    --pillar-active-height: clamp(
+      27rem,
+      max(92.2325rem - 65.5vw, 42.6875rem - 11.667vw),
+      51rem
+    );
+    min-height: var(--pillar-active-height);
   }
 
   .card {
@@ -173,71 +251,93 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px, all four cards (1:1070 etc.) */
     background: var(--color-cream);
-    padding: 0.8rem 1.47rem 1.5rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards) */
+    padding: 0.8rem 1.47rem 1rem; /* top/sides inset ≈ title's own inset (12.78px / 23.53px, consistent across all four cards); bottom trimmed from 1.5rem (round 8, per direct feedback: every card carries this same fixed padding regardless of content, so shaving it here reduces the leftover space below every card's icon once the shared active height is refitted, see .pillars-row's comment) */
+    /* Round 3 (per direct feedback — rounds 1 and 2 both still shook the page and
+       looked nothing like the original design): every card, collapsed, now shares
+       ONE short min-height — O1's own original value (6.5663rem/105px, "title
+       only," Figma 1:1069) — instead of each card keeping its own old always-
+       content-visible height (O2 328px, O3 378px, O4 322px) now that the content
+       those heights were sized for is hidden until active. Those old per-card
+       values used to leave O2/O3/O4 rendering as tall, empty-looking boxes at
+       rest (nothing in them, but still 328-378px tall) — the "extra space"
+       reported directly. Collapsed cards now all sit at the exact same short
+       height, "under the same vertical line." */
+    min-height: 6.5663rem; /* 105.06px, Figma 1:1069 — shared collapsed height for all four */
+    overflow: hidden; /* belt-and-suspenders: if a card's real content ever slightly exceeds the active min-height below at an extreme viewport, clip it rather than let it grow the card (and the row) taller */
+    transition:
+      background-color 200ms ease,
+      min-height 200ms ease;
   }
-  /* O1 bleeds off the container's left edge (Figma: the 4-card row starts at
-     x=-33.82 on the 1920px canvas — one card-width+gap left of O2, i.e.
-     this is where a uniform grid naturally lands the first cell, not a
-     special extra offset).
-     Retuned in Task 7 review round 2: a row-relative percentage (the
-     original -1.91%, then a since-superseded -11.7% eyeballed at 1920px
-     only) can't reproduce this — the required offset is the sum of two
-     independent quantities that don't scale together: (a) the .container
-     utility's own left gutter, which must be fully cancelled so the row's
-     left edge reaches the true viewport edge, and (b) a further constant
-     33.82px (the design's own bleed magnitude, x=-33.82 on the 1920 frame)
-     to pass that edge. (a) is fixed per viewport width but not proportional
-     to the row's own width, so no single percentage-of-row-width holds
-     across breakpoints (verified: -11.7% under-bled at 1440px, cropping the
-     card's own title text, and over-bled at 2560px into a much larger gap
-     than the design shows).
-     `.container`'s left gutter (src/styles/global.css) is
-     `clamp(1.25rem, 4vw, 5rem)` padding-inline plus, once the viewport
-     exceeds the 1760px max-width, `(100vw - 1760px) / 2` of centering
-     margin — reproduced identically here so the two stay coupled if
-     `.container` ever changes. `.pillars-row` sits directly inside
-     `.container` with no padding/border of its own, so a flex-item
-     margin-left on `.card--o1` resolves against that same content-box
-     width/offset — i.e. this calc's first term exactly cancels the gutter
-     regardless of viewport.
-     Refactored (Initiatives Task 1) to read `--container-gutter`
-     (src/styles/global.css) instead of repeating the clamp() literal — the
-     token and this calc's first term must stay textually coupled to
-     `.container`'s own padding-inline for the cancellation above to hold.
-     `100vw` includes the scrollbar gutter on platforms with an
-     always-visible scrollbar (~15px on Windows/Linux; 0 on macOS's
-     overlay scrollbars) — an acceptable small error here since the design
-     intent is "visibly bleeds past the edge," not a pixel-exact clip line.
-     Correction (Initiatives Task 1 re-verification): the prior revision of
-     this comment claimed `.card--o1`'s viewport-relative left edge grows
-     with viewport width (-91.4px at 1440px, -190.6px at 1920px, -513.8px
-     at 2560px) — that arithmetic double-counted the gutter. Because this
-     calc's first term is the exact negative of `.container`'s own
-     padding-inline plus centering margin (see above), those two terms
-     cancel completely regardless of viewport width, leaving only the
-     constant second term. Re-measured via headless Chromium
-     (getBoundingClientRect on `.card--o1`) at 1024/1440/1920px, before and
-     after this refactor: -33.77px / -33.77px / -33.75px in all six
-     readings (the sub-0.02px spread is 4vw floating-point jitter, not a
-     real per-width difference) — i.e. a constant ≈ -2.11rem (-33.76px)
-     past the viewport's left edge at every width, exactly the second term
-     alone. */
-  .card--o1 {
-    margin-left: calc(
-      -1 * (var(--container-gutter) + max((100vw - 1760px) / 2, 0px)) -
-        2.11rem
-    );
-    min-height: 6.5663rem; /* 105.06px, Figma 1:1069 */
-  }
-  .card--o2 {
-    min-height: 20.5063rem; /* 328.10px, Figma 1:1076 */
-  }
-  .card--o3 {
+  /* At most one card carries `.is-active` at a time, assigned by the script
+     below on hover — none by default (round 6: all four start collapsed, see
+     markup). Replaces the old permanent `.card--o3` background.
+
+     CRITICAL FIX — reflow-thrashing bug: this used to just set `background`,
+     leaving each card's own (very different, staircase) min-height untouched.
+     Once a non-O3 card revealed its body+icon, IT became the row's tallest child
+     (align-items: flex-end sizes `.pillars-row` to its tallest item), growing
+     the row and shoving every real DOM element below it (the CTA button, the
+     next section) further down the page. A real mouse is never perfectly still —
+     a sub-pixel jitter during that shove is enough to move a DIFFERENT card or
+     the CTA under the cursor, firing another mouseenter/mouseleave, causing
+     another reflow, on and on — visible as the page violently vibrating and the
+     tab hanging. Headless Playwright with a mathematically frozen cursor never
+     reproduced it (no real jitter to retrigger the loop), which is why the
+     original screenshots looked fine. Fix: give EVERY active card the exact same
+     min-height, so the row's rendered height is a hardcoded-per-viewport
+     constant no matter which single card is active.
+
+     Round 3 grew this section way past what it ever was (a flat 43rem constant,
+     then a clamp fitted to O1's own content) — fixed by fitting to O3's own
+     original per-viewport need instead. Round 4 (per direct feedback: still a
+     lot of visible empty space below the icon on the active card) had two parts:
+     (a) a single 2-point clamp is a STRAIGHT LINE between its two endpoints, but
+     real content height vs. viewport width isn't linear — text re-wraps in
+     discrete jumps, not continuously — so a straight line fit to the 1024px and
+     1920px endpoints alone overshoots badly in between; (b) the actual biggest
+     driver of the shared budget was `illus-market.svg` (O4's icon) being
+     natively ~2x taller than O2/O3's icons with no size cap on `.card-illus` —
+     fixed above by capping just that one icon down to match its siblings, which
+     lowered the true worst-case need at almost every width.
+     Refitted against actual worst-of-all-four-cards scrollHeight sampled at
+     ELEVEN widths across the full 1024-1920 range (not just two endpoints),
+     after the icon fix: 1024→701px, 1100→622, 1200→594, 1300→538, 1366→510,
+     1440→482, 1536→444, 1600→444, 1700-1920→416 — each with a ~10-25px margin,
+     as a two-segment piecewise curve (steeper 1024–1440px, flatter 1440–1920px
+     — `max()` of both lines always picks whichever segment is valid for the
+     current width). `overflow: hidden` above still clips the rare/edge-case
+     overflow instead of resizing anything (no single card's curve alone covers
+     every width — O1 is worst at 1024, O4 in the middle range, O3 from ~1536
+     up — which is why this is fit to the per-width max across all four rather
+     than one reference card). <1024 switches to the auto-height grid layout
+     below and doesn't use this rule at all.
+
+     Round 5: O1 gained a real icon (public/Globe-Gray.png, see markup), adding
+     ~89px back on top of round 4's numbers and making O1 the worst case at
+     every width again (790px at 1024 down to 444px at 1920). Refitted the same
+     two-segment shape against the new worst-of-all-four numbers: 1024→790,
+     1100→706, 1200→650, 1300→594, 1366→566, 1440→500 (segment A, fit through
+     the 1024/1366 pair since a plain two-point line across the full segment
+     undershot the 1300-1366 middle); 1536→472, 1600→472, 1700-1920→444
+     (segment B). ~15px margin throughout.
+
+     Round 7: this exact value is now also `.pillars-row`'s own permanent
+     min-height (see its comment) — factored out to the shared
+     `--pillar-active-height` custom property so the two can't drift apart. An
+     active card growing to this height was already guaranteed to fit within
+     the row (the row IS this height, always, now) — nothing here changes
+     behaviorally, just where the number lives. */
+  .card.is-active {
     background: var(--color-orange); /* #F37D2C, Figma 1:1201 */
-    min-height: 23.6313rem; /* 378.10px, Figma 1:1200 — tallest, so bottom-alignment reads as "sits higher" */
+    min-height: var(--pillar-active-height);
   }
-  .card--o4 {
-    min-height: 20.1313rem; /* 322.10px, Figma 1:1342 */
+  /* O1 previously bled off the container's left edge by a Figma-matched constant
+     (~33.8px past the viewport edge) — removed per direct user feedback: it read
+     as a broken/cut-off card regardless of its design provenance. Always a
+     normal, fully on-screen flex item now, same as O2/O3/O4 — kept exactly as-is
+     through this round too, per instruction. */
+  .card--o1 {
+    margin-left: 0;
   }
 
   .card-title {
@@ -279,21 +379,34 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     background: var(--color-ink-alt);
   }
 
-  /* Notebook-margin rule + body copy, present on every card except O1 (which
-     has no body). Figma draws this as one compound path merging a vertical
-     divider into the card's own border outline (e.g. O2's border vector:
-     "M37.82 72.79V329.1H397.54V1H1V329.1H88.05") — reproduced here as a
-     border-left on the content wrapper instead of chasing the compound path. */
+  /* Notebook-margin rule + body copy + icon. Figma draws the divider as one
+     compound path merging a vertical divider into the card's own border outline
+     (e.g. O2's border vector: "M37.82 72.79V329.1H397.54V1H1V329.1H88.05") —
+     reproduced here as a border-left on the content wrapper instead of chasing
+     the compound path. Exclusive active card (this task): hidden by default,
+     shown only for the active card (every card has one now, including O1 — see
+     its markup comment) — same hide-until-active pattern as HowItWorks.astro's
+     .step-body, just covering the icon too since both live in one wrapper here. */
   .card-content {
     margin-top: 0.6rem;
     margin-left: 0.89rem; /* divider inset (37.82px) minus the card's own left padding (23.53px) */
     padding-left: 2.3rem; /* body-text inset (74.62px) minus the divider's own inset (37.82px) */
-    padding-bottom: 1rem;
+    /* Round 3 (direct feedback: give the text below the horizontal rule some top
+       breathing room) — this used to be 0, so the body text's own line-height
+       started flush against the divider/rule with no gap at all. Kept (just
+       trimmed slightly) in round 8 — the bottom padding below is where that
+       round's leftover-space reduction actually comes from, not this. */
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem; /* trimmed from 1rem (round 8) — see .card's own comment above */
     border-left: 0.125rem solid var(--color-ink-alt);
+    display: none;
+  }
+  .card.is-active .card-content {
+    display: block;
   }
 
   .card-body {
-    margin: 0 0 1rem;
+    margin: 0 0 0.6rem; /* bottom trimmed from 1rem (round 8) — see .card's own comment */
     max-width: 15.5rem; /* approximates the design's line breaks (outlined vectors, no text node — sized off the screenshot's 5-line wrap) */
     font-family: var(--font-sans);
     /* Body copy is outlined vectors in Figma (no text-node metrics). Size
@@ -305,8 +418,8 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     line-height: 1.4;
     color: var(--color-gray);
   }
-  .card--o3 .card-body {
-    color: var(--color-ink-alt); /* on-orange body copy is navy, not gray */
+  .card.is-active .card-body {
+    color: var(--color-ink-alt); /* on-orange body copy is navy, not gray — applies to whichever card is currently active, not just O3 */
   }
 
   .card-illus {
@@ -314,6 +427,28 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     height: auto;
     max-width: 100%;
     margin-left: 2.1rem; /* illustrations sit right of the body-text column (Figma insets vary ~34px beyond the body text's own inset, per card) */
+  }
+  /* Round 4 (per direct feedback on the gap below the active card's icon): traced
+     the real cause — illus-market.svg (O4's icon) is natively 240x133px, nearly
+     2x the height of illus-capital (212x65) or illus-mentorship (178x89), and
+     with no explicit size here every icon rendered at its own raw intrinsic
+     pixels. O4's oversized icon was the single biggest driver of how tall the
+     shared active min-height above had to be — shrinking just this one icon to
+     be roughly proportional to its siblings (rather than inflating the shared
+     budget to fit it) directly reduces the empty space every shorter card shows
+     below its own icon. O2/O3's icons are untouched (still their native size). */
+  .card--o4 .card-illus {
+    height: 5.5625rem; /* 89px, matching O3's illus-mentorship native height */
+    width: auto;
+  }
+  /* O1's icon (round 5, public/Globe-Gray.png) — a raster PNG, not a src/assets
+     SVG, so it needs its own rule rather than the shared `.card-illus` base
+     (height:auto would render it at its native 3300x2550px otherwise). Same
+     height cap as O4's icon above, for visual consistency across all three
+     illustrated cards. */
+  .card-illus--raster {
+    height: 5.5625rem; /* 89px, matches .card--o4 .card-illus above */
+    width: auto;
   }
 
   /* :global — this SVG is injected via set:html (it's shared, colour-swapped
@@ -328,6 +463,14 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     width: 3.1944rem; /* 51.11px */
     height: 4.5113rem; /* 72.18px */
     pointer-events: none;
+    /* fill="currentColor" in the NOTCH markup (see frontmatter) — tracks the same
+       cream/orange switch as the card's own background, so the notch's front path
+       never mismatches whichever card is currently active. */
+    color: #000;
+    transition: color 200ms ease;
+  }
+  .card.is-active :global(.pillar-notch) {
+    color: var(--color-ink-alt);
   }
 
   .cta {
@@ -361,14 +504,19 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     }
 
     /* Responsive rule (brief step 2): below 1024, drop the bleed/offset
-       collage for a normal 2x2 grid — O1 stays title-only (no body is ever
-       rendered for it) but is no longer pushed off-canvas, and no card is
-       forced taller/shorter than its own content. */
+       collage for a normal 2x2 grid — O1 is no longer pushed off-canvas, and
+       no card is forced taller/shorter than its own content. */
     .pillars-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       align-items: start;
       gap: 2rem;
+      /* Round 7: cancel the desktop-only space reservation (`.pillars-row`'s own
+         min-height, see its comment above) — there's no hover here to reserve
+         room for (every card's content is always visible below, per the
+         override further down), so holding that same tall gap open here would
+         just be a big empty band above a normal, already-static 2x2 grid. */
+      min-height: auto;
     }
     .card {
       flex: initial;
@@ -379,6 +527,20 @@ const NOTCH_NAVY = notch("var(--color-ink-alt)");
     .card--o4 {
       margin-left: 0;
       min-height: auto;
+    }
+    /* Hover doesn't really exist as a concept below 1024 (stacked grid, likely
+       touch) — show every card's body+icon unconditionally instead, same pattern
+       as HowItWorks.astro's mobile view. Specificity has to match/beat
+       `.card.is-active .card-content` (0,2,0) in case a card is ever left
+       `.is-active` at this width (e.g. a trackpad hover just before resize) — and
+       since round 6 removed the default-active card, this override is also what
+       makes mobile show content at all now (no card is active-by-default here to
+       rely on anymore). No card gets the orange highlight below 1024 as a result
+       (matches the new "nothing active without a real hover" behavior instead of
+       a permanent highlight) — not asked about specifically, flagging in case a
+       different mobile treatment is wanted. */
+    .pillars-row .card .card-content {
+      display: block;
     }
   }
 
