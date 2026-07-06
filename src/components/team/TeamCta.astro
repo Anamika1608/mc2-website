@@ -1,0 +1,102 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, group 1:12481: H2 (real text node 1:12483,
+// "Want to build with this team?"), paragraph (vectorized, group 1:12484, two
+// lines "We're hiring operators and onboarding mentors" / "as Cohort 1 spins
+// up."), two filled pills (group 1:12542: 1:12543 "Get in touch" / 1:12564
+// "Explore initiatives"). See exact derivations in the style block below.
+//
+// Spark note: investigated — no orange spark node exists in or near this
+// section's own bounding box. get_screenshot on 1:12481 crops flush against
+// the pills at the bottom edge, and the metadata tree shows this group's
+// document-order successor is a *different* section (a footer-text group,
+// id family 1:15xx, starting immediately at y=4112 with zero gap) — no spark
+// node sits between them. Per the exact-replica directive, none is rendered.
+import PillButton from "../PillButton.astro";
+---
+
+<section class="team-cta">
+  <div class="container">
+    <h2>Want to build with this team?</h2>
+    <p class="lede">We&rsquo;re hiring operators and onboarding mentors as Cohort 1 spins up.</p>
+
+    <div class="ctas">
+      <PillButton label="Get in touch" href="/contact" variant="filled" />
+      <PillButton label="Explore initiatives" href="/initiatives" variant="filled" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .team-cta {
+    background: var(--color-cream);
+    padding-block: 6rem;
+    text-align: center;
+  }
+
+  /* H2 (real text node 1:12483): Faculty 65px. Pixel-sampled darkest ink in
+     the full-section screenshot = #1e1e3c = --color-ink-alt, the same
+     treatment as every other section H2 in this repo (OperatingTeam,
+     BoardOfDirectors, SponsorStrip). Margin-bottom: full-section screenshot
+     (rendered ~1:1 with the node's own 884x259.96 bbox) shows the H2's ink
+     ends at row 68 and the paragraph's first line begins at row 89 -> 21px
+     gap, measured directly (same "measured from screenshot" approach
+     SponsorStrip's own H2->logo-row gap already used). */
+  h2 {
+    margin: 0 0 1.3125rem; /* 21px, measured — see comment above */
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:12483 */
+    color: var(--color-ink-alt);
+  }
+
+  /* Paragraph (group 1:12484) is a vectorized 2-line paragraph, not real
+     text. Font-size derived from two isolated capital-letter glyph vectors
+     in the metadata tree (not screenshot pixel-sampling, which is noisier):
+     the "W" opening line 1 measures 18.25px tall (vector 1:12485) and the
+     "C" opening "Cohort" on line 2 measures 19.15px tall (vector 1:12527) —
+     both clean caps with no ascender/descender interference. Against Sora's
+     capHeight/upm constant of 0.73 (used throughout this repo's derivations):
+     18.25/0.73 ~= 25.0px, 19.15/0.73 ~= 26.2px; averaging the two glyph
+     samples -> ~25.6px = 1.6rem.
+     Line-height: cap-top pitch between the two lines (line 2's "C" cap-top
+     y=3972.83 minus line 1's "W" cap-top y=3940.84 = 31.99px, essentially
+     32px exactly) / 25.6px font-size = 1.25 exactly.
+     Max-width: the paragraph group's own bbox width, 596.57px = 37.29rem,
+     matching Figma's two-line wrap. Color pixel-sampled to #959595 =
+     --color-gray, the same muted treatment as every other section lede in
+     this repo. Margin-bottom: screenshot gap from line 2's ink-bottom (row
+     145) to the pills' ink-top (row 183) = 38px, measured directly. */
+  .lede {
+    max-width: 37.29rem;
+    margin: 0 auto 2.375rem; /* 38px, measured — see comment above */
+    font-family: var(--font-sans);
+    font-size: 1.6rem; /* 25.6px, derived — see comment above */
+    line-height: 1.25; /* derived — see comment above */
+    color: var(--color-gray);
+  }
+
+  /* Pills (group 1:12542): "Get in touch" (1:12543, width 356.9px) and
+     "Explore initiatives" (1:12564, width 421.89px) sit 41.69px apart
+     (949.85 - (551.26 + 356.9) = 41.69) = 2.6rem, both variant="filled" per
+     the task brief (both pills in this group render navy-with-orange-arrow,
+     matching PillButton's existing .filled treatment 1:1 — no new variant
+     needed). */
+  .ctas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.6rem;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+  }
+
+  @media (max-width: 559.98px) {
+    .ctas {
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+</style>
