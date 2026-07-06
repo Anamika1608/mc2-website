@@ -78,8 +78,12 @@ const LOCATIONS = [
     background: var(--color-cream);
     /* Single-ownership vertical rhythm (like About/Team): this section owns its
        top gap only. Figma: network H2 y1169 − hero content-bottom (chevron) y984
-       ≈ 185px = 11.56rem. Bottom owned by the following form section. */
-    padding-block: 11.56rem 0;
+       ≈ 185px = 11.56rem. Bottom owned by the following form section.
+       Reduced by 8.3rem here because ContactHero's own min-height grew by
+       that same amount (38.7rem -> 47rem) to stop clipping the hero's
+       left-side spark — moving the space from this section's padding to the
+       hero's own box keeps the total chevron->H2 gap unchanged. */
+    padding-block: 3.26rem 0;
     text-align: center;
   }
   h2 {
