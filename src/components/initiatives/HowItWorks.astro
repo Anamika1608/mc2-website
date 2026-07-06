@@ -258,44 +258,62 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px navy, all four cards (e.g. 1:16078/1:16086/1:16200/1:16261) */
     background: var(--color-cream);
-    /* Exclusive active card (this task): each card's own min-height below is a fixed
-       design value (the "staircase"), untouched — since the row is bottom-aligned
-       (align-items: flex-end, see .steps-row) and each card is independent, a card
-       growing past its own min-height once its body reveals doesn't affect its
-       neighbors, unlike Programs.astro's cards which shared one height by design.
-       Lift: translateY only (not width/height), so nothing reflows — the active card
-       just visually rises off the row's shared bottom edge. */
+    /* Round 3 (per direct feedback on Pillars.astro's identical issue): every
+       card, collapsed, now shares ONE short min-height — O1's own original value
+       (20.7825rem/332.52px, "title only," node 1:16076) — instead of each card
+       keeping its old always-content-visible height (O2 542.52px, O3 402.52px)
+       now that content is hidden until active. Those old values left O2/O3
+       rendering as tall, empty boxes at rest. All four collapsed cards now sit
+       at the same short height, "under the same vertical line." */
+    min-height: 20.7825rem; /* 332.52px, node 1:16076 — shared collapsed height for all four */
+    overflow: hidden; /* clip rather than grow if content ever slightly exceeds the active min-height below at an extreme viewport */
     transition:
       transform 250ms ease,
-      background-color 200ms ease;
+      background-color 200ms ease,
+      min-height 200ms ease;
   }
   /* Exactly one card carries `.is-active` at a time — O2 by default (see its own
      `is-active` class in the markup), swapped to whichever card is hovered by the
      script below, same exclusive-state pattern as Programs.astro's `.card.is-active`.
      Replaces what used to be a permanent `.step--o2` background + a `.step:hover` rule
      that (wrongly, per the previous round) let every card go orange independently with
-     no relationship to its siblings. */
+     no relationship to its siblings.
+
+     CRITICAL FIX — reflow-thrashing bug (same root cause hit on Pillars.astro,
+     reported directly there: "hanging and making the whole website shaking"):
+     without a shared min-height here, whichever card reveals its body becomes the
+     row's tallest child (align-items: flex-end auto-sizes `.steps-row` to it),
+     growing the row and pushing the down-chevron below it further down the page.
+     A real mouse is never perfectly still — a sub-pixel jitter during that shove
+     is enough to move a different element under the cursor, firing another
+     mouseenter/mouseleave, causing another reflow, on and on. Headless Playwright
+     with a mathematically frozen cursor never reproduced it (no jitter to
+     retrigger the loop), which is why this looked fine when it was first built and
+     screenshotted. Fix: give every active card the exact same min-height, so the
+     row's rendered height is a hardcoded-per-viewport constant regardless of
+     which single card is active — hover can no longer move the chevron/anything
+     below the section at all.
+
+     Round 2 (per direct feedback on Pillars.astro's identical fix: a flat
+     43rem/688px at every width was way taller than these sections ever were —
+     replaced with a two-point vw clamp instead of one constant). Fitted to O2's
+     own real content need (the tallest of the four here, measured via
+     scrollHeight with min-height:auto, is-active forced): 676px at 1024px
+     viewport, 498px at 1920px+, +24px safety margin baked into both ends
+     (700px/522px) for font-loading/rounding variance and the 1366px midpoint
+     (524px needed there, comfortably inside the clamp's ~608px at that width).
+     <1024 switches to the always-visible grid layout below and doesn't use this
+     rule at all. */
   .step.is-active {
     background: var(--color-orange); /* #F37D2C, node 1:16086's own fill */
     transform: translateY(-0.75rem); /* 12px lift — matches Programs.astro's transition timing for consistency on this page */
+    min-height: clamp(32.625rem, 56.464rem - 19.866vw, 43.75rem);
   }
-  /* Card heights (bottom-aligned, so these alone produce the "steps" look):
-     O2 is the tallest (elevated, per the brief) despite sitting 3rd in the
-     text-node list — its own top (1441.41) is the highest of the four. This min-height
-     is O2's own fixed geometry regardless of active state — unrelated to which card
-     currently carries `.is-active`. */
-  .step--o1 {
-    min-height: 20.7825rem; /* 332.52px, node 1:16076 */
-  }
-  .step--o2 {
-    min-height: 33.9075rem; /* 542.52px, node 1:16084 */
-  }
-  .step--o3 {
-    min-height: 25.1575rem; /* 402.52px, node 1:16198 */
-  }
-  .step--o4 {
-    min-height: 21.1263rem; /* 338.02px, node 1:16258 */
-  }
+  /* Card heights: the original "staircase" (O1 332.52px / O2 542.52px / O3
+     402.52px / O4 338.02px, bottom-aligned) only ever applied while every card's
+     content was permanently visible. Now that content is hidden until active
+     (round 3), collapsed height is the same 20.7825rem for all four (see base
+     `.step` rule above) — the staircase itself no longer applies at rest. */
 
   /* Figma's own box widths differ slightly per card (368.12px for O1/O2/O3's
      header-bearing box vs 349.01px for O4's, plus O1/O3 additionally split
