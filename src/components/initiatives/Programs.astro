@@ -419,7 +419,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
 
   .programs-row {
     display: flex;
-    align-items: stretch; /* all four cards share one top y AND one height — stretch equalizes them to the tallest (the active card, whose subtitle/body/status make it the tallest) so no card's bottom hangs below the others */
+    align-items: flex-start; /* all four cards share one top y in the design — no bottom-alignment waterfall needed here, unlike HowItWorks/Pillars */
   }
 
   .card {
