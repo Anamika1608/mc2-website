@@ -48,6 +48,19 @@
 // (widths sum to 123.07%; minus the three overlaps = 100.00% exactly — the row fills
 // `.container` edge to edge with no remainder, unlike the design's own small asymmetric
 // insets against its page canvas, an accepted simplification.)
+//
+// Hover-to-expand width fix (later round): the four DIFFERENT per-card widths/overlaps
+// above are what the static Figma collage measures, and are still what renders at rest —
+// but once hover could reveal any card's full body copy, keeping each card pinned to its
+// own (sometimes much narrower) fan-position width made that card's text wrap into far
+// more lines than its neighbors and grow taller than the row. Fixed by collapsing this
+// to just two states — WIDE (=O1's 37.47%, unchanged) for whichever card is `.is-active`,
+// one shared NARROW (28.345%) for the other three, one shared OVERLAP (7.502% ≈ the same
+// 114.62px notch-depth constant already used everywhere else on this page) — see the
+// `.card`/`.card.is-active` rules below for the exact derivation. The per-card
+// `.card--o1/o2/o3/o4` classes still carry the base z-index stacking (front-to-back at
+// rest) and each card's own identity quirks (O1's spark, O4's numeral/label), just not
+// sizing anymore.
 import SparkFlourishO1 from "../../assets/initiatives/spark-flourish-o1.svg";
 
 // Corner "flag" cut — the top-right corner of EVERY card (O1-O4 alike) is carved AWAY by
@@ -82,13 +95,15 @@ import SparkFlourishO1 from "../../assets/initiatives/spark-flourish-o1.svg";
 // centerline start, y1 on the top border centerline, and the stub ends at svg x114.62 =
 // right border centerline (W-1). y is never scaled (fixed CSS height = viewBox height).
 // vector-effect keeps the stroke a true 2px on screen despite the anisotropic x-stretch.
-function cornerFlag(stroke: string) {
-  return `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1 1 L20.07 88.07 H114.62" stroke="${stroke}" stroke-width="2" fill="none" vector-effect="non-scaling-stroke" />
+// Hover-to-expand (this task): stroke is `currentColor` instead of a baked-in constant —
+// any of the four cards can now be the orange/active one, not just O1, so the color has
+// to track `.is-active` dynamically (via `color` on .card-flag below) rather than being
+// fixed per card at build time. Single shared markup for all four cards; the two
+// differently-named constants this replaced (FLAG_ORANGE/FLAG_NAVY) are gone since
+// there's only one variant now.
+const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 1 L20.07 88.07 H114.62" stroke="currentColor" stroke-width="2" fill="none" vector-effect="non-scaling-stroke" />
   </svg>`;
-}
-const FLAG_ORANGE = cornerFlag("var(--color-orange)");
-const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
 ---
 
 <section class="programs" aria-label="Programs">
@@ -112,8 +127,15 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
         nodes found on programs/CTA/how-it-works," missed because it's scattered outside
         O1's own card frame like the other occlusion-adjacent content on this page) —
         exported now as `spark-flourish-o1.svg`, cited here since it's this task's find.
+
+        Hover-to-expand (this task): all four cards now toggle `.is-active`/`.is-inactive`
+        on hover (default O1 active, matching this card's previous always-expanded state
+        exactly — see the script + CSS below). Added a status pill here too ("Coming soon")
+        for parity with O2-O4, sourced the same way (verbatim from
+        https://mc2plus.vercel.app/pages/Initiatives.html — Figma has no status-pill node
+        anywhere on this page).
       -->
-      <article class="card card--o1">
+      <article class="card card--o1 is-active">
         <SparkFlourishO1 class="o1-spark" aria-hidden="true" />
         <div class="card-head">
           <p class="card-num">O1</p>
@@ -136,8 +158,11 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
             <span class="chip">Cash awards + pilots</span>
             <span class="chip">Operating-site access</span>
           </div>
+          <p class="card-status">
+            <span class="status-dot" aria-hidden="true"></span>Coming soon
+          </p>
         </div>
-        <Fragment set:html={FLAG_ORANGE} />
+        <Fragment set:html={CARD_FLAG} />
       </article>
 
       <!--
@@ -163,7 +188,16 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
         "scattered by clip region, not by logical card" pattern as O1's own "Accelerator"
         word sitting inside O3's node subtree). No body paragraph exists for O2 in the file
         (its card frame 1:16405 has exactly 3 children: header row, title clip, border —
-        nothing else) — not an extraction failure, genuinely absent from the source.
+        nothing else) — genuinely absent from Figma.
+
+        Hover-to-expand (this task): subtitle + body + status pill added so this card can
+        show full detail when active, same as O1 already does. Figma has nothing to recover
+        here (confirmed above), so this copy is verbatim from the reference build at
+        https://mc2plus.vercel.app/pages/Initiatives.html, which has the fuller content this
+        Figma file never got: subtitle "The MC² Fellows track", body as below, status
+        "Coming soon". Hidden by default (`.card-subtitle`/`.card-body`/`.card-status` are
+        `display: none` until `.is-active`, see script + CSS below) — collapsed appearance
+        is unchanged from before this task.
       -->
       <article class="card card--o2">
         <div class="card-head">
@@ -177,14 +211,24 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
           <span class="line">Entrepreneur-</span>
           <span class="line">in-Residence</span>
         </h3>
+        <p class="card-subtitle">The MC² Fellows track</p>
+        <p class="card-body">
+          For builders who want to start from zero. Fellows embed in energy
+          major and academic labs to shape a venture around a real problem or
+          a piece of IP, with a stipend and seed funding while they find
+          product-market fit.
+        </p>
         <div class="card-footer">
           <div class="chips">
             <span class="chip">Around 20 fellows a year</span>
             <span class="chip">Stipend + seed</span>
             <span class="chip">Lab residency</span>
           </div>
+          <p class="card-status">
+            <span class="status-dot" aria-hidden="true"></span>Coming soon
+          </p>
         </div>
-        <Fragment set:html={FLAG_NAVY} />
+        <Fragment set:html={CARD_FLAG} />
       </article>
 
       <!--
@@ -199,6 +243,10 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
           chip 1:15957/1:15959 (viewBox 0 0 118.3×13.97) → "PILOT + CAPITAL" ("CAPITA-L")
         No body paragraph in the source (card frame 1:15781 has exactly 4 children: header
         vector, the Accelerator clip group, border, "O3" text — nothing else).
+
+        Hover-to-expand (this task): subtitle + body + status pill, same rationale/source as
+        O2 above — verbatim from https://mc2plus.vercel.app/pages/Initiatives.html (subtitle
+        "The flagship six-month cohort"), hidden until `.is-active`.
       -->
       <article class="card card--o3">
         <div class="card-head">
@@ -209,14 +257,24 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
           </p>
         </div>
         <h3 class="card-title">Accelerator</h3>
+        <p class="card-subtitle">The flagship six-month cohort</p>
+        <p class="card-body">
+          For ventures that already exist and are ready to scale. A
+          six-month, TRL-gated cohort maps each startup to a named energy
+          major challenge brief, with seed and scale-up capital and pilot
+          access, ending in a Demo Day in front of real buyers.
+        </p>
         <div class="card-footer">
           <div class="chips">
             <span class="chip">8 to 12 ventures</span>
             <span class="chip">Pilot + capital</span>
             <span class="chip">Six months</span>
           </div>
+          <p class="card-status">
+            <span class="status-dot" aria-hidden="true"></span>Coming soon
+          </p>
         </div>
-        <Fragment set:html={FLAG_NAVY} />
+        <Fragment set:html={CARD_FLAG} />
       </article>
 
       <!--
@@ -257,6 +315,17 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
         No body paragraph in the source (card frame 1:15820 has exactly 3 children: the
         Energy clip group, border, header clip — nothing else, and no chips group was
         found in this card's unoccluded band either).
+
+        Hover-to-expand (this task): subtitle + body + chips + status pill, verbatim from
+        https://mc2plus.vercel.app/pages/Initiatives.html (Figma has none of this for O4,
+        confirmed above) — hidden until `.is-active`, same as O2/O3.
+        Title divergence: the reference build calls this card "India Energy Fund"
+        everywhere, but Figma's own node here is bbox-verified to be exactly the one word
+        "Energy" (see above) — correct for the collapsed/notched width. Kept BOTH: the
+        collapsed state still reads "Energy" (unchanged, matches Figma), and swaps to the
+        fuller "India Energy Fund" only once this card is active/expanded, where there's
+        room for it (`.title-collapsed`/`.title-expanded`, toggled with the same
+        `.is-active` switch as everything else on this card).
       -->
       <article class="card card--o4">
         <div class="card-head">
@@ -266,12 +335,64 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
             <span class="line">GROWTH-STAGE CAPITAL</span>
           </p>
         </div>
-        <h3 class="card-title">Energy</h3>
-        <Fragment set:html={FLAG_NAVY} />
+        <h3 class="card-title">
+          <span class="title-collapsed">Energy</span>
+          <span class="title-expanded">India Energy Fund</span>
+        </h3>
+        <p class="card-subtitle">An affiliated fund, not run by MC²+</p>
+        <p class="card-body">
+          A proposed SEBI Category-II AIF, managed independently as an
+          affiliate rather than by the MC²+ team. It is designed to back
+          accelerator graduates and other validated ventures with
+          growth-stage capital.
+        </p>
+        <div class="card-footer">
+          <div class="chips">
+            <span class="chip">Affiliate fund</span>
+            <span class="chip">Growth capital</span>
+            <span class="chip">SEBI Cat-II AIF</span>
+          </div>
+          <p class="card-status">
+            <span class="status-dot" aria-hidden="true"></span>Affiliate · Coming
+            soon
+          </p>
+        </div>
+        <Fragment set:html={CARD_FLAG} />
       </article>
     </div>
   </div>
 </section>
+
+<script>
+  // Hover-to-expand (this task). Follows Header.astro's existing script pattern (plain
+  // DOM addEventListener + classList, no framework) — the only other interactive script
+  // in this codebase. Desktop-only: below 1024 the fan collage doesn't exist (cards are
+  // full-width/stacked, see the CSS media query), so there's nothing to hover between.
+  const row = document.querySelector<HTMLElement>(".programs-row");
+  const cards = document.querySelectorAll<HTMLElement>(".programs-row .card");
+  const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+
+  const activate = (target: HTMLElement) => {
+    cards.forEach((card) => card.classList.toggle("is-active", card === target));
+  };
+
+  if (row) {
+    cards.forEach((card) => {
+      card.addEventListener("mouseenter", () => {
+        if (isDesktop()) activate(card);
+      });
+    });
+    // Reset unconditionally (no isDesktop() guard) — unlike activating on hover, resetting
+    // to O1 is always the correct state everywhere, including mobile. Guarding this too
+    // left a card stuck `.is-active` (wrong border/title, since mobile doesn't override
+    // those) if the viewport crossed below 1024 while the mouse was still over a
+    // non-O1 card, e.g. narrowing the window mid-hover, since the guard then skipped the
+    // reset entirely.
+    row.addEventListener("mouseleave", () => {
+      activate(document.querySelector(".card--o1")!);
+    });
+  }
+</script>
 
 <style>
   .programs {
@@ -307,9 +428,21 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    border: 0.125rem solid var(--color-ink-alt); /* 2px navy default; O1 overrides to orange below */
+    border: 0.125rem solid var(--color-ink-alt); /* 2px navy default; is-active overrides to orange below */
     background: var(--color-cream);
     min-height: 37.93rem; /* 606.86px, shared by all four cards' own frames (606.86-607.13px jitter) */
+    /* Width/overlap/color transition (this fix round): the resize used to be an instant
+       snap between the fixed per-card widths below; now that width itself is state-driven
+       (see WIDE/NARROW below), animate it so hovering between cards reads as a smooth
+       reflow rather than a jump cut. clip-path (the notch) is deliberately NOT in this
+       list — it depends on the --cut/--cut-end custom properties, which don't interpolate
+       without registering them via @property, a bigger change for a corner detail that's
+       easy to miss mid-transition; it still snaps, which is fine since it's small and at
+       the card's own edge, not the part users are watching move. */
+    transition:
+      width 250ms ease,
+      margin-left 250ms ease,
+      border-color 200ms ease;
     /* The corner-flag notch as a REAL cutout (see cornerFlag() frontmatter comment for
        the full evidence that it's a window, not a drawing). This polygon removes the
        top-right notch from the card — background, border corner and any content crossing
@@ -342,36 +475,61 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
       -80px calc(100% + 2px)
     );
   }
-  /* Per-card notch percentages: 114.62px and 95.55px over each card's own design width
-     (572.54 / 533.12 / 468.97 / 305.72 — the flag offsets are constant px in the design,
-     so the narrower the card, the larger its notch share). */
+  /* Width fix (this round): a card used to keep its ORIGINAL fan-position width even once
+     hover revealed its subtitle/body/status — O4's copy, wrapping inside a ~20%-wide card
+     instead of the ~37% O1 uses, needed far more lines than its neighbors and grew the
+     card taller than the row, breaking the shared bottom alignment. Fix: exactly two
+     widths now, not four — whichever card is `.is-active` gets WIDE (identical to O1's
+     old always-on width, already proven to fit every card's body copy, see report), the
+     other three all get the SAME NARROW share ("consistent like all other cards" per the
+     user's ask, replacing the old 34.9/30.69/20.01% spread). Overlap is likewise unified
+     to one value (OVERLAP, ≈ the 114.62px notch depth already used everywhere else in
+     this file, so the peek-through window still lines up with the card behind it
+     regardless of which card is active). All three constants solve for the row filling
+     `.container` edge-to-edge exactly as before:
+       WIDE + 3×NARROW − 3×OVERLAP = 37.47 + 3×28.345 − 3×7.502 = 100.00%
+     NARROW/OVERLAP's own --cut/--cut-end are the same 114.62px/95.55px constants over
+     their new widths (433.06px / 114.62px row-share): 114.62/433.06 = 26.469%,
+     95.55/433.06 = 22.066%. WIDE's stay identical to O1's old numbers since the width
+     itself is unchanged (37.47% = 572.58px, matching the original 572.54px within
+     rounding). */
+  .card {
+    width: 28.345%; /* NARROW = 433.06px */
+    margin-left: -7.502%; /* OVERLAP = 114.62px, the same notch-depth constant used for --cut below */
+    --cut: 26.469%; /* 114.62 / 433.06 */
+    --cut-end: 22.066%; /* 95.55 / 433.06 */
+  }
+  .card:first-child {
+    margin-left: 0; /* O1: nothing to its left to overlap */
+  }
   .card--o1 {
-    width: 37.47%; /* 572.54 / 1527.85px row span, see frontmatter */
-    z-index: 4;
-    border-color: var(--color-orange);
-    --cut: 20.02%; /* 114.62 / 572.54 */
-    --cut-end: 16.689%; /* 95.55 / 572.54 */
+    z-index: 4; /* base stacking at rest (front-most fan position) — is-active overrides below */
   }
   .card--o2 {
-    width: 34.9%; /* 533.12 / 1527.85px */
     z-index: 3;
-    margin-left: -8.05%; /* 123.01px overlap with O1 */
-    --cut: 21.5%; /* 114.62 / 533.12 */
-    --cut-end: 17.923%; /* 95.55 / 533.12 */
   }
   .card--o3 {
-    width: 30.69%; /* 468.97 / 1527.85px — O3's own real card width, not the group's inflated bbox */
     z-index: 2;
-    margin-left: -7.5%; /* 114.62px overlap with O2 */
-    --cut: 24.441%; /* 114.62 / 468.97 */
-    --cut-end: 20.374%; /* 95.55 / 468.97 */
   }
   .card--o4 {
-    width: 20.01%; /* 305.72 / 1527.85px */
     z-index: 1;
-    margin-left: -7.52%; /* 114.87px overlap with O3's real (not group) right edge */
-    --cut: 37.492%; /* 114.62 / 305.72 */
-    --cut-end: 31.254%; /* 95.55 / 305.72 */
+  }
+
+  /* Hover-to-expand. Every card starts navy/collapsed/NARROW (the base `.card` rules
+     above, and `.card-subtitle`/`.card-body`/`.card-status` hidden below) — `.is-active`
+     is the ONE state that widens a card, turns it orange and reveals its extra content,
+     replacing what used to be permanently hardcoded onto `.card--o1` alone. Whichever
+     card the script (below) marks active also jumps to the front regardless of its own
+     fan position (O1's z-index:4 above is the tallest "at rest", but O2/O3/O4 must be
+     able to outrank it once hovered, or their revealed body copy would render partly
+     under O1/O2's opaque background) — 10 is arbitrary, just higher than the 1-4 range
+     the fan uses. */
+  .card.is-active {
+    width: 37.47%; /* WIDE = 572.58px, matching O1's original always-on width (572.54px, within rounding) */
+    --cut: 20.017%; /* 114.62 / 572.58 */
+    --cut-end: 16.687%; /* 95.55 / 572.58 */
+    z-index: 10;
+    border-color: var(--color-orange);
   }
 
   /* Corner-flag stroke overlay (see cornerFlag() frontmatter comment for the cutout
@@ -388,6 +546,11 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     width: calc(var(--cut) + 1px); /* the card's own notch % + the 1px centerline inset — x-stretches the viewBox by the same factor as the clip polygon, see frontmatter */
     height: 5.6294rem; /* 90.07px, fixed: card heights don't scale, only widths do */
     pointer-events: none;
+    color: var(--color-ink-alt); /* stroke="currentColor" in the SVG (see CARD_FLAG frontmatter) — navy at rest, matching the card's own border */
+    transition: color 200ms ease;
+  }
+  .card.is-active :global(.card-flag) {
+    color: var(--color-orange); /* tracks the same is-active switch as the border/title/numeral above */
   }
 
   /* O1's decorative spark (see frontmatter comment) — positioned so its own right edge
@@ -451,16 +614,25 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     font-size: clamp(2rem, 2.999vw, 3.5988rem); /* 57.58px at 1920 (2.999vw x 19.2 = 57.58), real text nodes 1:16495/1:16438/1:15819; 32px floor keeps 1024 legible while staying inside the notch windows (verified) */
     line-height: 1;
     color: var(--color-ink-alt);
+    transition: color 200ms ease;
   }
-  .card--o1 .card-num {
+  .card.is-active .card-num {
     color: var(--color-orange);
   }
   /* O4's numeral is a sequence-completion (see markup comment) — hidden in the desktop
      collage (the composite shows none; the source's own label geometry occupies its
      spot), shown <1024. visibility (not display) keeps the head's flex height equal to
-     the other cards' so the title row stays aligned. */
+     the other cards' so the title row stays aligned.
+     Hover-to-expand (this task): also shown once O4 is active — the collapsed-only
+     source positioning below (label pulled left, overlapping O3) has no design
+     precedent for an EXPANDED O4 (Figma never shows this card open), so active O4 just
+     reverts to the same normal numeral+label header every other active card already
+     uses — same override already used for <1024 below, applied here too. */
   .card--o4 .card-num {
     visibility: hidden;
+  }
+  .card--o4.is-active .card-num {
+    visibility: visible;
   }
   .card-label {
     margin: 0;
@@ -491,6 +663,10 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     top: 1.35rem;
     white-space: nowrap;
   }
+  .card--o4.is-active .card-label {
+    position: static;
+    white-space: normal;
+  }
 
   .card-title {
     margin: 1.6719rem 2.36rem 0; /* 26.75px, header block bottom to title top */
@@ -505,8 +681,9 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     line-height: 1.1;
     font-weight: 400;
     color: var(--color-ink-alt);
+    transition: color 200ms ease;
   }
-  .card--o1 .card-title {
+  .card.is-active .card-title {
     color: var(--color-orange); /* node 1:16781's own fill */
   }
   .card-title--split {
@@ -515,10 +692,36 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
   .card-title .line {
     display: block;
   }
+  /* O4's collapsed-vs-active title swap (see markup comment: Figma says "Energy", the
+     content-source reference build says "India Energy Fund"). Base state shows the
+     Figma-verified short form; `.is-active` swaps to the fuller name. */
+  .card--o4 .title-expanded {
+    display: none;
+  }
+  .card--o4.is-active .title-collapsed {
+    display: none;
+  }
+  .card--o4.is-active .title-expanded {
+    display: inline;
+  }
+
+  /* O1 only used to have a subtitle/body — every card does now (this task, see markup
+     comments), but they only ever SHOW on the active card; collapsed cards stay exactly
+     as they looked before this task (header + title + chips only). */
+  .card-subtitle,
+  .card-body,
+  .card-status {
+    display: none;
+  }
+  .card.is-active .card-subtitle,
+  .card.is-active .card-body {
+    display: block;
+  }
+  .card.is-active .card-status {
+    display: inline-flex;
+  }
 
   .card-subtitle {
-    /* O1 only — no equivalent node exists on O2/O3/O4 (see markup comments: their card
-       frames each have no children beyond header/title/border/chips). */
     margin: 0.9788rem 2.36rem 0; /* 15.66px, title bottom to subtitle top */
     font-family: var(--font-sans);
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920 — subtitle's own outlined bbox height (13.78px) is numerically identical to the header label's own glyph cap-height above; same size + same scale/floor as the label */
@@ -527,7 +730,6 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
   }
 
   .card-body {
-    /* O1 only, see markup comment. */
     margin: 1.9238rem 2.36rem 0; /* 30.78px, subtitle bottom to body top */
     max-width: 27.1rem; /* 433.64px, node 1:16497's own wrap column */
     font-family: var(--font-sans);
@@ -541,7 +743,7 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     border-top: 0.125rem solid var(--color-ink-alt);
     padding: 2.4044rem 2.36rem 2.24rem; /* 38.47px divider-to-chip-row gap; 35.86px chip-row-to-card-bottom gap */
   }
-  .card--o1 .card-footer {
+  .card.is-active .card-footer {
     border-top-color: var(--color-orange);
   }
 
@@ -550,6 +752,9 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     flex-wrap: wrap;
     gap: 0.8575rem 1.5781rem; /* 13.72px row-gap (O1's own two chip rows), 25.25px column-gap (O1's chip1-to-chip3 gap) */
   }
+  /* Resting/collapsed chip style (#F3F2EB ≈ --color-cream, node 1:15868's own raw fill)
+     is the base now — this used to be an O2/O3/O4-only override; O1 is just the first
+     card to ever be active, not a permanently special case. */
   .chip {
     display: inline-flex;
     align-items: center;
@@ -558,35 +763,75 @@ const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
     font-family: var(--font-sans);
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920, same glyph-cap-height evidence + viewport scale/floor as the header label */
     line-height: 1;
+    background: var(--color-cream);
+    color: var(--color-ink-alt);
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+  .card.is-active .chip {
     background: var(--color-orange); /* node 1:16724's own raw fill */
     color: var(--color-white);
   }
-  .card--o2 .chip,
-  .card--o3 .chip,
-  .card--o4 .chip {
-    /* #F3F2EB, node 1:15868's own raw fill — numerically `--color-cream`, i.e. the SAME
-       color as this section's own background (see .programs comment above): these three
-       cards' chips are genuinely low-contrast/washed-out by the design's own declared
-       fill, distinguished only by their text, not a visible pill boundary — a deliberate
-       recede-into-the-background treatment consistent with these being the tucked-behind
-       cards, not a bug. */
-    background: var(--color-cream);
-    color: var(--color-ink-alt);
+  /* #F3F2EB (node 1:15868's own raw fill) is numerically `--color-cream`, i.e. the SAME
+     color as this section's own background (see .programs comment above): a collapsed
+     card's chips are genuinely low-contrast/washed-out by the design's own declared
+     fill, distinguished only by their text, not a visible pill boundary — a deliberate
+     recede-into-the-background treatment for the tucked-behind cards, not a bug. Now
+     driven by `.is-active` above rather than being permanently tied to O2/O3/O4. */
+
+  /* New: status pill ("Coming soon" / "Affiliate · Coming soon", see markup comments —
+     no Figma node exists for this anywhere, styled from this component's own existing
+     tokens/proportions rather than the reference site's differently-themed pill). Sits
+     below the chips row, same left inset as everything else in the footer. */
+  .card-status {
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.8575rem 0 0;
+    font-family: var(--font-sans);
+    font-size: clamp(0.7rem, 1.0417vw, 1.25rem);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-gray);
+  }
+  .status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-orange);
+    flex: 0 0 auto;
   }
 
   /* Responsive rule (brief step 3): below 1024, the overlapping fan is a desktop-only
      composition (occlusion existing purely to read as a stacked-folders collage) — drop
-     it for full-width sequential cards, each showing everything it actually has (O1 gets
-     its body paragraph; O2/O3/O4 don't, since they never had one in the source). */
+     it for full-width sequential cards, each showing everything it has. Hover-to-expand
+     (this task) is a desktop-hover concept with nothing to attach to here (the script
+     below no-ops under 1024, see matchMedia guard) — every card now HAS subtitle/body/
+     status content (added this task), so just show it unconditionally instead of gating
+     on `.is-active`. O1 keeps its `is-active` class from the markup regardless (nothing
+     ever removes it at this width), so its border/title/numeral/chip colors render
+     exactly as they always have; O2/O3/O4 never gain `.is-active` here, so theirs do too
+     — this block changes ONLY subtitle/body/status visibility, nothing else. */
   @media (max-width: 1023.98px) {
+    .card-subtitle,
+    .card-body {
+      display: block;
+    }
+    .card-status {
+      display: inline-flex;
+    }
     .programs-row {
       flex-direction: column;
       gap: 2rem;
     }
-    .card--o1,
-    .card--o2,
-    .card--o3,
-    .card--o4 {
+    /* `.programs-row .card` (two classes) rather than repeating `.card--o1, .card--o2, …`
+       (one class each): `.card.is-active` now sets width too (hover-to-expand width fix,
+       above) at two-class specificity — O1 keeps `.is-active` at every viewport (nothing
+       ever removes it below 1024, since the hover script no-ops there), so a one-class
+       override here would lose to `.card.is-active`'s width regardless of source order.
+       Matching its specificity and relying on this block being declared later restores
+       the correct full-width override for every card, active or not. */
+    .programs-row .card {
       width: 100%;
       margin-left: 0;
       min-height: auto;

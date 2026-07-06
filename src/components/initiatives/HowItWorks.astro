@@ -42,14 +42,15 @@ const NOTCH = `<svg class="step-notch" viewBox="0 0 42 73" aria-hidden="true" xm
 // centerline (x=1), left open (no closing segment) so no stroke is drawn
 // along the border line itself — the same open-detour construction as the
 // design's own border path, minus the rectangle.
-function vTab(fill: string) {
-  return `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 1L20.11 20.11L0 39.22Z" fill="${fill}" />
+// Exclusive active card: the tab's fill has to match whichever background color the
+// card behind it is currently showing, and that's no longer fixed per card — exactly
+// one card (O2 by default, or whichever is hovered) is ever orange at a time — so
+// `fill` is always `currentColor`, and the CSS below sets `color` on `.step-vtab` to
+// track the same cream/orange switch as the card's own `background` (`.step.is-active`).
+const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 1L20.11 20.11L0 39.22Z" fill="currentColor" />
     <path d="M1 1L20.11 20.11L1 39.22" fill="none" stroke="var(--color-ink-alt)" stroke-width="2" />
   </svg>`;
-}
-const VTAB_CREAM = vTab("var(--color-cream)");
-const VTAB_ORANGE = vTab("var(--color-orange)");
 ---
 
 <section class="how-it-works">
@@ -69,20 +70,31 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
           <p class="step-number">O1</p>
           <div class="step-rule" aria-hidden="true"></div>
           <Fragment set:html={NOTCH} />
-          <Fragment set:html={VTAB_CREAM} />
+          <Fragment set:html={VTAB} />
         </div>
         <div class="step-foot">
           <h3 class="step-title">Apply</h3>
+          <!-- Hover-to-reveal (this task): Figma's own O1 frame (node 1:16076) has no
+               body text node at all — title + numeral + STEP label only, confirmed via
+               get_metadata, genuinely absent, not a truncation. Sourced verbatim from
+               the reference build at https://mc2plus.vercel.app/pages/Initiatives.html,
+               same source already used for the Programs section. Hidden until hover,
+               see .step-body CSS below. -->
+          <p class="step-body">
+            Tell us what you are building. One application, whichever track
+            fits, through a Grand Challenge, the Fellows programme or the
+            Accelerator.
+          </p>
         </div>
       </article>
 
-      <article class="step step--o2">
+      <article class="step step--o2 is-active">
         <div class="step-head">
           <p class="step-label">STEP</p>
           <p class="step-number">O2</p>
           <div class="step-rule" aria-hidden="true"></div>
           <Fragment set:html={NOTCH} />
-          <Fragment set:html={VTAB_ORANGE} />
+          <Fragment set:html={VTAB} />
         </div>
         <div class="step-foot">
           <h3 class="step-title">Find energy-major champions</h3>
@@ -99,7 +111,7 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
           <p class="step-number">O3</p>
           <div class="step-rule" aria-hidden="true"></div>
           <Fragment set:html={NOTCH} />
-          <Fragment set:html={VTAB_CREAM} />
+          <Fragment set:html={VTAB} />
         </div>
         <div class="step-foot">
           <h3 class="step-title">Build, test, iterate</h3>
@@ -110,11 +122,16 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
                artifact: the group's own bbox sits well inside the card's
                border, with slack below it). There is no further vector data
                to extract; the sentence was never finished in the design file
-               itself. Completed here, matching this card's own established
-               "with X, Y and Z" resource-listing pattern (see O2's body). -->
+               itself. Originally completed by hand to match this card's own
+               "with X, Y and Z" pattern (see O2's body) — corrected now
+               (hover-to-reveal task) to the actual full sentence, recovered
+               from the reference build at
+               https://mc2plus.vercel.app/pages/Initiatives.html (same
+               source used for the Programs section and for O1/O4's copy
+               here), replacing that hand-written stand-in. -->
           <p class="step-body">
             Prototype and validate on real infrastructure, with labs, pilot
-            sites and mentors on hand.
+            sites and hands-on mentorship to reach a field-ready product.
           </p>
         </div>
       </article>
@@ -128,6 +145,14 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
         </div>
         <div class="step-foot">
           <h3 class="step-title">Scale with capital</h3>
+          <!-- Hover-to-reveal (this task): Figma's own O4 frame (node 1:16258) has no
+               body text node either (same check as O1 above, confirmed via
+               get_metadata) — genuinely absent, not truncated. Sourced verbatim from
+               https://mc2plus.vercel.app/pages/Initiatives.html. Hidden until hover. -->
+          <p class="step-body">
+            Turn a successful pilot into procurement, and raise growth-stage
+            capital through the affiliated India Energy Fund to scale.
+          </p>
         </div>
       </article>
     </div>
@@ -135,6 +160,31 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
 
   <ScrollArrow class="scroll" aria-hidden="true" />
 </section>
+
+<script>
+  // Exclusive active card (this task) — same pattern as Programs.astro's script
+  // (plain DOM addEventListener + classList, no framework): exactly one `.step` carries
+  // `.is-active` at a time. O2 starts with it in the markup (the default), hovering any
+  // other step reassigns it there instead, and leaving the row falls back to O2 again.
+  const row = document.querySelector<HTMLElement>(".steps-row");
+  const steps = document.querySelectorAll<HTMLElement>(".steps-row .step");
+
+  const activate = (target: HTMLElement) => {
+    steps.forEach((step) => step.classList.toggle("is-active", step === target));
+  };
+
+  if (row) {
+    steps.forEach((step) => {
+      step.addEventListener("mouseenter", () => activate(step));
+    });
+    // Reset unconditionally (no viewport guard) — the Programs.astro fix-round lesson:
+    // gating this on a desktop-only check left a card stuck active if the viewport
+    // changed mid-hover. Falling back to O2 is always correct, at any width.
+    row.addEventListener("mouseleave", () => {
+      activate(document.querySelector(".step--o2")!);
+    });
+  }
+</script>
 
 <style>
   .how-it-works {
@@ -200,16 +250,37 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px navy, all four cards (e.g. 1:16078/1:16086/1:16200/1:16261) */
     background: var(--color-cream);
+    /* Exclusive active card (this task): each card's own min-height below is a fixed
+       design value (the "staircase"), untouched — since the row is bottom-aligned
+       (align-items: flex-end, see .steps-row) and each card is independent, a card
+       growing past its own min-height once its body reveals doesn't affect its
+       neighbors, unlike Programs.astro's cards which shared one height by design.
+       Lift: translateY only (not width/height), so nothing reflows — the active card
+       just visually rises off the row's shared bottom edge. */
+    transition:
+      transform 250ms ease,
+      background-color 200ms ease;
+  }
+  /* Exactly one card carries `.is-active` at a time — O2 by default (see its own
+     `is-active` class in the markup), swapped to whichever card is hovered by the
+     script below, same exclusive-state pattern as Programs.astro's `.card.is-active`.
+     Replaces what used to be a permanent `.step--o2` background + a `.step:hover` rule
+     that (wrongly, per the previous round) let every card go orange independently with
+     no relationship to its siblings. */
+  .step.is-active {
+    background: var(--color-orange); /* #F37D2C, node 1:16086's own fill */
+    transform: translateY(-0.75rem); /* 12px lift — matches Programs.astro's transition timing for consistency on this page */
   }
   /* Card heights (bottom-aligned, so these alone produce the "steps" look):
      O2 is the tallest (elevated, per the brief) despite sitting 3rd in the
-     text-node list — its own top (1441.41) is the highest of the four. */
+     text-node list — its own top (1441.41) is the highest of the four. This min-height
+     is O2's own fixed geometry regardless of active state — unrelated to which card
+     currently carries `.is-active`. */
   .step--o1 {
     min-height: 20.7825rem; /* 332.52px, node 1:16076 */
   }
   .step--o2 {
     min-height: 33.9075rem; /* 542.52px, node 1:16084 */
-    background: var(--color-orange); /* #F37D2C, node 1:16086's own fill — the only one of the four with a fill (rest are stroke-only, page bg shows through) */
   }
   .step--o3 {
     min-height: 25.1575rem; /* 402.52px, node 1:16198 */
@@ -295,6 +366,14 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
     width: 1.3194rem; /* 21.11px */
     height: 2.5138rem; /* 40.22px */
     pointer-events: none;
+    /* fill="currentColor" in the VTAB markup (see frontmatter) — this tracks the exact
+       same cream/orange switch as the card's own background above, so the tab's fill
+       never mismatches the card behind it, whichever card is currently active. */
+    color: var(--color-cream);
+    transition: color 200ms ease;
+  }
+  .step.is-active :global(.step-vtab) {
+    color: var(--color-orange);
   }
 
   .step-foot {
@@ -326,9 +405,19 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
     font-size: 1.1875rem;
     line-height: 1.4;
     color: var(--color-gray);
+    /* Exclusive active card (this task): only the active card's body ever shows (see
+       .step.is-active .step-body below) — hidden at rest for the other three, now that
+       every card has copy to reveal. display doesn't transition, so this pops in rather
+       than fading/sliding — the lift/background-color on .step.is-active is what's
+       animated; matches the same tradeoff made for Programs.astro's card-body reveal. */
+    display: none;
   }
-  .step--o2 .step-body {
-    color: var(--color-ink-alt); /* on-orange body copy is navy, not gray — matches Pillars' .card--o3 .card-body */
+  .step.is-active .step-body {
+    display: block;
+    /* On-orange body copy is navy, not gray (matches Pillars' .card--o3 .card-body) —
+       applies uniformly since the active card is always the orange one, whichever card
+       that is (O2 by default, including on mobile where nothing ever changes it). */
+    color: var(--color-ink-alt);
   }
   .step--o2 .step-title,
   .step--o2 .step-body {
@@ -367,6 +456,15 @@ const VTAB_ORANGE = vTab("var(--color-orange)");
     .step--o3,
     .step--o4 {
       min-height: auto;
+    }
+    /* Hover doesn't really exist as a concept below 1024 (stacked grid, likely
+       touch) — show every card's body unconditionally instead, same pattern as
+       Programs.astro's mobile view. Specificity has to match/beat `.step.is-active
+       .step-body` (0,3,0): O2 keeps `is-active` here too (nothing removes it, no real
+       mouse), so without this override matching/beating that selector, only O2's body
+       would show and O1/O3/O4's would stay hidden. */
+    .steps-row .step .step-body {
+      display: block;
     }
     /* The pointed arrow connectors express left-to-right succession in the
        desktop 4-across row; in the stacked 2x2/1-col grid that reading no

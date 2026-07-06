@@ -1,0 +1,128 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ. Dual CTA band, two side-by-side columns
+// (get_metadata y3950-4300; get_design_context on headings 1:25244/1:25109 and
+// paragraphs 1:25245/1:25110).
+// Headings (real text, both y4027.80, 65px Faculty Glyphic — same established
+// scale as venture names/SectionHeading's H2, fill #1e1e3e ~= --color-ink-alt):
+// left "Building one of these?" (1:25244), right "Scouting for deal flow?"
+// (1:25109). Paragraphs (outlined) verified via screenshot: left "If your
+// venture fits any of these sectors at TRL 4+, Cohort 1 is open. Bring the
+// technology and a real industrial problem." / right "Corporates and
+// investors can plug into a sourcing pipeline built on real industrial
+// validation, co-invest or co-pilot with us." Pills consume the shared
+// PillButton (house convention: consume, don't fork) — fill sampled #1e1e3e
+// from the pill's own vector (node 1:25221) confirms the "filled" variant;
+// labels ("Coming soon" / "Partner with MC²+") render white-on-white in
+// isolated get_design_context renders (real text over a navy pill, invisible
+// against that tool's own transparent background) — taken from the plan's
+// own artboard-verified copy instead. Both link to /contact (standing
+// catch-all CTA target, same as every other page's "Coming soon"/contact
+// pill; no dedicated apply/partner flow exists yet).
+// Decor: vertical divider between columns (node 1:25365, x955.54, w0.92,
+// h386.82, fill #F37D2C — a 1px orange rule, not a hairline gray one) +
+// a small spark (node 1:25366, 32.16px) between the two pills — confirmed
+// via download_assets to be the SAME artwork as Explorer's spark-row.svg
+// (path coordinates scale by the same ~1.89 ratio throughout), just smaller:
+// reused via CSS sizing rather than exporting a second near-duplicate file.
+import PillButton from "../PillButton.astro";
+import SparkRow from "../../assets/portfolio/spark-row.svg";
+---
+
+<section class="cta-duo">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h2>Building one of these?</h2>
+        <p>
+          If your venture fits any of these sectors at TRL 4+, Cohort 1 is
+          open. Bring the technology and a real industrial problem.
+        </p>
+        <PillButton label="Coming soon" href="/contact" variant="filled" />
+      </div>
+
+      <div class="divider" aria-hidden="true">
+        <SparkRow class="divider-spark" />
+      </div>
+
+      <div class="column">
+        <h2>Scouting for deal flow?</h2>
+        <p>
+          Corporates and investors can plug into a sourcing pipeline built on
+          real industrial validation, co-invest or co-pilot with us.
+        </p>
+        <PillButton label="Partner with MC²+" href="/contact" variant="filled" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-duo {
+    background: var(--color-cream);
+    padding-block: 4rem 6rem;
+  }
+
+  .columns {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 6rem;
+  }
+
+  .column {
+    flex: 1 1 0;
+    max-width: 43.6rem; /* 697px, the wider (right) column's own bounding width, node 1:25108 */
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px — same established Faculty H2 scale used site-wide */
+    line-height: 1.07;
+    font-weight: 400;
+    color: var(--color-ink-alt);
+  }
+
+  p {
+    margin: 0.75rem 0 2.1rem; /* ~11.7px heading-to-paragraph, ~33.8px paragraph-to-pill, both this section's own measurements */
+    max-width: 40rem; /* 638.76px, node 1:25110's own bounding width */
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* the site's established secondary-text size */
+    line-height: 1.4;
+    color: var(--color-ink-alt);
+  }
+
+  .divider {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform: translateX(-50%);
+    background: var(--color-orange); /* node 1:25365's own sampled fill, #F37D2C — not a gray hairline */
+  }
+  .divider-spark {
+    position: absolute;
+    left: 50%;
+    bottom: 2.3rem; /* level with the two pill buttons, node 1:25366's own y vs the pills' shared y4245.94 */
+    transform: translate(-50%, 50%);
+    width: 2.01rem; /* 32.16px, node 1:25366 — same artwork as spark-row.svg, reused at a smaller size */
+    height: 2.01rem;
+  }
+
+  @media (max-width: 1023.98px) {
+    .columns {
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+    .column {
+      max-width: none;
+    }
+    .divider {
+      display: none; /* sanctioned adaptation: a vertical column-divider has no meaning once columns stack */
+    }
+    h2 {
+      font-size: clamp(2.4rem, 6vw, 4.0625rem);
+    }
+  }
+</style>
