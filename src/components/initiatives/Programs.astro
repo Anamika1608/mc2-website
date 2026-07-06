@@ -686,6 +686,19 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   .card.is-active .card-title {
     color: var(--color-orange); /* node 1:16781's own fill */
   }
+  /* Collapsed cards are pulled left UNDER the front card (the fan overlap), so their
+     title + chip row — which sit below the peek-through notch — get hidden behind it.
+     Shift that content right by var(--cut) (== the exact fraction of THIS card's own
+     width that the front card covers, the same constant the notch/overlap use) so the
+     full heading reads even when the card isn't active. The active card is itself the
+     front card (nothing covers its left), so `:not(.is-active)` leaves it at its normal
+     inset. */
+  .card:not(.is-active) .card-title {
+    margin-left: var(--cut);
+  }
+  .card:not(.is-active) .card-footer {
+    padding-left: var(--cut);
+  }
   .card-title--split {
     line-height: 1.08; /* 54.81px measured gap between O2's two real title-line nodes (1:16444/1:16445) / 50.89px */
   }
