@@ -91,18 +91,14 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     position: relative;
     overflow: hidden;
     background: var(--color-cream);
-    /* padding-top derived from the design's own header height (node 1:25617,
-       y0.14-110.79, i.e. 110.65px) vs the live shared header's own rendered
-       height (90.1875px, getBoundingClientRect — the same constant Home/
-       Initiatives' Hero.astro already cite for this identical component):
-       eyebrow (1:25510, canvas y311.55) sits 311.55-110.65 = 200.9px below
-       the design's own header bottom, so the live page needs that same
-       200.9px of clearance after the live header ends (algebraic value
-       12.556rem). A headless-Chrome render at 1920 with that value landed
-       the eyebrow ink 6px low (anti-aliased cap-height detection offset,
-       not a real spacing error); tightened by that same 6px (0.375rem) to
-       12.18rem, verified pixel-exact (row 291 = target 291) at 1920. */
-    padding-top: 12.18rem;
+    /* Was 12.18rem, derived from the design's own canvas coordinates (an
+       independent per-page calculation) — but About/Team's own heroes both
+       use a plain 6rem here, and measuring the LIVE header-to-eyebrow gap
+       confirms it: About and Team both render exactly 96px (6rem), Portfolio
+       was rendering 194.875px, roughly double. Matching the shared 6rem
+       convention instead of re-deriving a page-specific value, per user
+       request to use the same top spacing as every other page. */
+    padding-top: 6rem;
     padding-bottom: 4rem;
   }
   @media (min-width: 1024px) {
@@ -226,9 +222,26 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     position: relative;
     display: inline-flex;
     align-items: center;
-    width: 62.045rem; /* 992.72px, node 1:25367 — was max-width only, which let the bar shrink-to-fit its content (text+padding, ~944px) below Figma's fixed box size since inline-flex never grows past what content needs; explicit width forces the exact figma size regardless */
+    /* 58.97rem (943.46px) is the PILL's own width (node 1:25368's raw SVG
+       viewBox, 944.035x85.51) — node 1:25367 (992.72px, the earlier value
+       here) is the COMBINED badge+pill bounding box, not the pill alone; using
+       it for the pill's own width double-counted the badge's 49.26px overhang
+       and shifted the whole component 49px right of center (confirmed via
+       Playwright measurement: .hero-inner and h1 were centered at every
+       viewport width, .info-bar consistently was not). */
+    width: 58.97rem;
     max-width: 100%;
-    margin-inline: 3.079rem 0; /* clears space for the badge's own left overhang (49.26px, see below) so the whole component still centers under the copy column */
+    margin-inline: auto;
+    /* H1/lede column (node 1:25512, center 980.13) and the combined badge+
+       pill group (node 1:25367, center 979.36) share the same center in
+       Figma — but centering the pill ALONE (via margin-inline:auto) centers
+       the pill's own box, leaving the badge's one-sided left overhang to pull
+       the combined unit's true center left of that. Shifting the pill right
+       by half the overhang (49.26/2 = 24.63px) puts the combined unit's
+       center back on .hero-inner's center. Badge is position:absolute inside
+       this position:relative element, so this transform carries it along
+       too — their relative offset (badge's own -3.079rem) is unaffected. */
+    transform: translateX(1.539rem);
     border: 0.125rem solid var(--color-ink-alt); /* 2px, node 1:25368's own sampled stroke color; house convention for bordered pills (PillButton.ghost) uses the same 2px weight */
     /* Asymmetric, not a uniform stadium shape: the pill's raw SVG path (node
        1:25368) shows a full semicircular cap on the right (radius 42.5, half
