@@ -184,7 +184,12 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
   }
   .line-text {
     display: inline-block;
-    clip-path: inset(0 100% 0 0);
+    /* Vertical inset is -0.3em, not 0: a 0 inset clips exactly at the
+       inline-block's own box edge, which cut off descenders (e.g. the "g"
+       in "energy") that render slightly past it — the negative value
+       expands the clip region outward so descenders/ascenders survive while
+       the horizontal reveal (right inset) is unaffected. */
+    clip-path: inset(-0.3em 100% -0.3em 0);
     animation: line-reveal 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
   .line-1 .line-text {
@@ -198,13 +203,13 @@ import LineRevealStar from "../../assets/home/line-reveal-star.svg";
   }
   @keyframes line-reveal {
     0% {
-      clip-path: inset(0 100% 0 0);
+      clip-path: inset(-0.3em 100% -0.3em 0);
     }
     90% {
-      clip-path: inset(0 0% 0 0);
+      clip-path: inset(-0.3em 0% -0.3em 0);
     }
     100% {
-      clip-path: inset(0 0% 0 0);
+      clip-path: inset(-0.3em 0% -0.3em 0);
     }
   }
 
