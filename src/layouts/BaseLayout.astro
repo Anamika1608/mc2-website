@@ -34,3 +34,36 @@ const {
     <Footer />
   </body>
 </html>
+
+<script>
+  // Shared trigger for every `.reveal` element site-wide (Hero H1s + a
+  // handful of section headings) — see src/styles/global.css for the full
+  // reveal mechanism this drives. `.armed` (added immediately, confirming
+  // JS is running) switches each heading to its pre-reveal clipped state;
+  // `.in-view` (added once per element, on first intersection) starts the
+  // reveal. IntersectionObserver fires ~immediately for an element already
+  // on-screen at observe-time, so this ONE mechanism naturally covers both
+  // above-the-fold Heroes and below-the-fold headings — no separate
+  // load-triggered code path needed. No-JS / reduced-motion: skipped
+  // entirely, leaving every heading in its normal, fully-visible state.
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const targets = document.querySelectorAll<HTMLElement>(".reveal");
+
+  if (targets.length && !prefersReducedMotion && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.3 },
+    );
+    for (const target of targets) {
+      target.classList.add("armed");
+      observer.observe(target);
+    }
+  }
+</script>
