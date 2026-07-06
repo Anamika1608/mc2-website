@@ -1,0 +1,239 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, node 1:12591 (Board of Directors + Advisory
+// Board share one big group; this component only covers the Advisory Board
+// half): eyebrow "GUIDANCE" (1:12978), H2 "Advisory Board" (1:12979), 2-line
+// subheading (vectorized paragraph, 1:12980), 4 advisor cards (1:12593 Abhay,
+// 1:12679 Madhukar, 1:12751 Neelkanth, 1:12826 Pawan) each photo-top + name +
+// description, centered, one row, with a single orange spark (1:13347)
+// centered below the row. See exact derivations in the style block below.
+import { Image } from "astro:assets";
+import SparkOrange from "../../assets/team/spark-orange.svg";
+import abhay from "../../assets/team/adv-abhay.png";
+import madhukar from "../../assets/team/adv-madhukar.png";
+import neelkanth from "../../assets/team/adv-neelkanth.png";
+import pawan from "../../assets/team/adv-pawan.png";
+
+// Copy verbatim from the task brief. Literal "&" is used here (not the
+// "&amp;" entity), same house convention as BoardOfDirectors.astro's DIRECTORS
+// array: Astro's `{}` text interpolation auto-escapes "&" to "&amp;" in the
+// rendered HTML, so storing the literal entity text here would double-escape
+// to "&amp;amp;".
+const ADVISORS = [
+  {
+    photo: abhay,
+    name: "Dr. Abhay Karandikar",
+    desc: "Member, NITI Aayog. Former Secretary, Department of Science & Technology, Government of India",
+  },
+  {
+    photo: madhukar,
+    name: "Dr. Madhukar Garg",
+    desc: "Former President, R&D, Refining and Petrochemicals, Reliance Industries Ltd.",
+  },
+  {
+    photo: neelkanth,
+    name: "Shri Neelkanth Mishra",
+    desc: "Chief Economist, Axis Bank; Head of Global Research and Board member, Axis Capital",
+  },
+  {
+    photo: pawan,
+    name: "Dr. Pawan Goenka",
+    desc: "Chairperson, IN-SPACe, Department of Space, Government of India",
+  },
+];
+---
+
+<section class="advisory">
+  <div class="container">
+    <p class="eyebrow">GUIDANCE</p>
+    <h2>Advisory Board</h2>
+    <p class="subheading">
+      Independent experts across energy, deep-tech research and public policy
+      who guide theme strategy and selection.
+    </p>
+
+    <div class="grid">
+      {ADVISORS.map((a) => (
+        <article class="card">
+          <Image
+            src={a.photo}
+            alt={a.name}
+            widths={[227, 454]}
+            sizes="(max-width: 559.98px) 45vw, (max-width: 1023.98px) 30vw, 227px"
+            class="photo"
+          />
+          <h3>{a.name}</h3>
+          <p class="desc">{a.desc}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="spark-wrap">
+      <SparkOrange class="spark" aria-hidden="true" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .advisory {
+    background: var(--color-cream);
+    /* Figma gap: Advisory-top 2013 − Board-bottom 1878 ≈ 135px. Single-ownership (bottom 0). */
+    padding-block: 8.43rem 0;
+  }
+
+  /* Eyebrow (node 1:12978): real text, Faculty, 27.07px, tracking 6.7675px ->
+     6.7675/27.07 = 0.25em (identical treatment to BoardOfDirectors' own
+     "GOVERNANCE" eyebrow). get_design_context reports fill #ff7400, an exact
+     match for --color-orange-bright. */
+  .eyebrow {
+    margin: 0 0 1.3rem;
+    font-family: var(--font-display);
+    font-size: 1.69rem; /* 27.07px, node 1:12978 */
+    letter-spacing: 0.25em;
+    color: var(--color-orange-bright);
+    text-align: center;
+  }
+
+  /* H2 (node 1:12979): real text, Faculty 65px. get_design_context reports
+     fill #1e1e3c, an exact match for --color-ink-alt. */
+  h2 {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:12979 */
+    color: var(--color-ink-alt);
+    text-align: center;
+  }
+
+  /* Subheading (node 1:12980) is a vectorized 2-line paragraph, not real
+     text, same technique as BoardOfDirectors' own subheading: cap-height
+     (steep ink-transition edge to baseline-drop edge) ~14.1px on both lines
+     -> 14.1 / 0.73 (Sora capHeight/upm, same constant used throughout this
+     repo's derivations) ~= 19.3px ~= 1.2rem. get_metadata line-1-top-to-
+     line-2-top pitch measures 32.46px -> line-height 32.46/19.2 ~= 1.69,
+     rounded to the same 1.667 constant BoardOfDirectors already established
+     for this body-text scale (visually indistinguishable at this size).
+     Max-width 46.97rem = the frame's own measured width (751.51px, node
+     1:12980, driven by line 1 being the longer of the two lines). */
+  .subheading {
+    max-width: 46.97rem;
+    margin: 0 auto 4.5rem;
+    font-family: var(--font-sans);
+    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    line-height: 1.667;
+    color: var(--color-gray);
+    text-align: center;
+  }
+
+  /* Grid: 4 advisor cards, one row. get_metadata shows the photos themselves
+     (rounded-rectangle nodes 1:12678/1:12750/1:12825/1:12886) sit at a
+     perfectly uniform 204.54px edge-to-edge gap (e.g. photo 2 starts at
+     x=638.22, photo 1 ends at x=433.68 -> 204.54px; same gap repeats for
+     photos 3 and 4), but the surrounding text-content groups are
+     content-hugging (non-uniform widths driven by each name's own text
+     length), same pattern BoardOfDirectors already documented and worked
+     around. Reproducing the exact 204.54px (12.78rem) gap in a responsive
+     4-up CSS grid would force very wide tracks at typical viewport widths,
+     so per that same precedent this uses equal minmax(0,1fr) tracks with a
+     smaller, uniform gap instead — documented simplification, not a missed
+     measurement. */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 2.5rem;
+    row-gap: 3rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Photo (rounded-rectangle nodes 1:12678/1:12750/1:12825/1:12886, all
+     226.8x226.8 = 14.175rem square, identical size across all 4 cards).
+     get_design_context on the rectangle itself returns a plain
+     overflow-hidden container with no rounded-* class, so no border-radius
+     is applied (same finding as BoardOfDirectors' own director photos). The
+     4 adv-*.png assets were pixel-sampled (13x13 grid) and come back within
+     9 RGB units/channel of pure gray — the same tolerance BoardOfDirectors'
+     own dir-*.png assets measured at — so no CSS grayscale filter is added;
+     these are already effectively grayscale. */
+  .photo {
+    display: block;
+    width: 100%;
+    max-width: 14.175rem;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin: 0 0 0.72rem; /* 11.48px photo-bottom -> name-top gap, node metadata */
+  }
+
+  /* Name: real text, Faculty 30.102px. get_design_context reports fill
+     #1e1e3e (literal) on every one of the 4 cards — the same literal
+     BoardOfDirectors' own director names and descriptions use, not
+     --color-ink-alt. */
+  h3 {
+    margin: 0 0 0.64rem; /* ~10.3px name-bottom -> desc-top gap, node metadata */
+    font-family: var(--font-display);
+    font-size: 1.88rem; /* 30.102px */
+    line-height: 1.3;
+    color: #1e1e3e;
+  }
+
+  /* Description is a vectorized paragraph (not real text), same technique as
+     the subheading: cap-height ~13.5-14px on a no-descender line -> /0.73
+     ~= 19px = 1.2rem, matching the subheading's own derived size (kept as
+     one shared body-text scale for the section, same as BoardOfDirectors).
+     Line pitch measures ~25.1px -> line-height 25.1/19.2 ~= 1.3, matching
+     BoardOfDirectors' own .desc line-height. CORRECTION vs the task brief's
+     guess of #1e1e3e: a direct pixel sample of the rendered screenshot at
+     the description text (checked on all 4 cards) returns RGB(148,148,148),
+     1 unit/channel from --color-gray (#959595) — treated as that token, the
+     same tolerance BoardOfDirectors used for its own .role color. Figma
+     (via pixel sample) wins over the brief's guess here. */
+  .desc {
+    margin: 0;
+    max-width: 20rem;
+    font-family: var(--font-sans);
+    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    line-height: 1.3;
+    color: var(--color-gray);
+  }
+
+  /* Spark (node 1:13347): a single spark centered below the row (unlike
+     BoardOfDirectors' per-card corner sparks). get_metadata places it at
+     x=934, y=2667.6, width/height=45.92x45.92 (2.875rem square, the exact
+     same size as BoardOfDirectors' own card-corner spark). Its own center
+     (x=956.96) sits within ~3px of the section's overall horizontal center
+     (x=960.5, derived from the eyebrow/H2's own centered position) —
+     confirmed centered under the row, not under any single card. Vertical
+     gap from the tallest card's own description bottom (2567.84, the
+     3-line "Abhay" card) to the spark's top (2667.6) measures 99.76px,
+     rounded to 6.25rem below the grid here since actual per-card heights
+     vary with description line count in a real responsive layout. */
+  .spark-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 6.25rem;
+  }
+  .spark {
+    width: 2.875rem;
+    height: 2.875rem;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 559.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

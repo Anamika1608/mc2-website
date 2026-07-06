@@ -1,0 +1,281 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: header group 1:13348 (eyebrow 1:13349
+// "OPERATING TEAM", H2 1:13350 "A lean team built to deliver.") + card group
+// 1:11944 (6 role cards in a plus/cross grid: row 1 = 4 cards under columns
+// 1-4, row 2 = 2 cards under columns 2-3). Exact derivations documented in
+// the style block below.
+//
+// CORRECTION vs the task brief: the brief's "verified fact" claimed the
+// eyebrow is --color-orange-bright (#ff7400), citing the same treatment as
+// BoardOfDirectors.astro's "GOVERNANCE" eyebrow. But node 1:13349's own
+// reference code returns text-[#949494] (not an orange literal), and a
+// pixel-sample of the isolated header screenshot confirms the darkest ink is
+// RGB(148,148,148) = #949494 — 1 unit/channel from --color-gray (#959595),
+// the same rounding tolerance already used for TeamHero's/Board's role text.
+// Figma wins: this eyebrow renders in --color-gray, not --color-orange-bright.
+import SparkOrange from "../../assets/team/spark-orange.svg";
+
+const TEAM = [
+  {
+    title: "Chief Executive Officer",
+    dept: "REPORTS TO THE STATUTORY BOARD",
+    desc: "Sets platform strategy, owns alignment with the energy majors and is accountable to the Board for delivery.",
+  },
+  {
+    title: "Chief Incubation Officer",
+    dept: "PROGRAMMES, GRANTS AND COHORTS",
+    desc: "Runs incubation end to end, from sourcing and selection through mentorship and venture readiness.",
+  },
+  {
+    title: "Manager, Programmes",
+    dept: "COHORT DELIVERY",
+    desc: "Designs the cohort journey and matches ventures to live energy major challenge briefs and pilots.",
+  },
+  {
+    title: "Manager, Partnerships",
+    dept: "ENERGY MAJORS AND NODES",
+    desc: "Builds and manages the network of energy majors, IITs and research labs that host and mentor ventures.",
+  },
+  {
+    title: "Manager, Grants",
+    dept: "NON-DILUTIVE FUNDING",
+    desc: "Administers grant flows and milestone-linked disbursement to incubated ventures.",
+  },
+  {
+    title: "Finance Manager",
+    dept: "CONTROLS AND COMPLIANCE",
+    desc: "Owns financial controls, Section 8 compliance and fund administration across the platform.",
+  },
+];
+---
+
+<section class="operating-team">
+  <div class="container">
+    <p class="eyebrow">OPERATING TEAM</p>
+    <h2>A lean team built to deliver.</h2>
+
+    <div class="grid">
+      {TEAM.map((m, i) => (
+        <article class="card">
+          {(i === 1 || i === 2 || i === 3) && (
+            <SparkOrange class="spark spark-top" aria-hidden="true" />
+          )}
+          {(i === 1 || i === 3) && (
+            <SparkOrange class="spark spark-bottom" aria-hidden="true" />
+          )}
+          {i === 5 && <SparkOrange class="spark spark-top" aria-hidden="true" />}
+          {i === 5 && <SparkOrange class="spark spark-bottom" aria-hidden="true" />}
+          <h3>{m.title}</h3>
+          <p class="dept">{m.dept}</p>
+          <p class="desc">{m.desc}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .operating-team {
+    background: var(--color-cream);
+    /* Figma gap: Operating-top 2820 − Advisory-bottom (incl. trailing spark) 2713 ≈ 107px. Single-ownership (bottom 0). */
+    padding-block: 6.67rem 0;
+  }
+
+  /* Eyebrow (node 1:13349): real text, Faculty 27.07px, tracking 6.7675px ->
+     6.7675/27.07 = 0.25 exactly, the same clean tracking ratio used by every
+     other Faculty eyebrow in this repo. Color: see the CORRECTION note in the
+     frontmatter above — pixel-sampled to #949494 = --color-gray, not
+     --color-orange-bright as the task brief guessed. */
+  .eyebrow {
+    margin: 0 0 1.3rem;
+    font-family: var(--font-display);
+    font-size: 1.69rem; /* 27.07px, node 1:13349 */
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-gray);
+    text-align: center;
+  }
+
+  /* H2 (node 1:13350): real text, Faculty 65px. Pixel-sampled darkest ink =
+     RGB(30,30,60) = #1e1e3c = --color-ink-alt, matching the brief and every
+     other section H2 in this repo. */
+  h2 {
+    margin: 0 0 4rem;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:13350 */
+    color: var(--color-ink-alt);
+    text-align: center;
+  }
+
+  /* Grid: 4 columns; the 6 cards fall into a plus/cross shape — row 1 holds
+     cards 1-4 (auto-placed, no explicit column needed), row 2 holds cards 5
+     and 6 explicitly pinned to columns 2 and 3 so CSS grid's auto-placement
+     drops them into row 2 under those same columns (row 1's columns 2 and 3
+     are already occupied, so the algorithm advances to the next row) —
+     matching the brief's required alignment with no grid-row rules needed.
+     No column-gap/row-gap here: the divider lines below are plain borders on
+     the cards themselves, and a css `gap` would leave a visible break in
+     those borders between tracks (same reasoning Scale.astro's dividers rely
+     on padding instead of gap for). */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .card {
+    position: relative;
+    text-align: left;
+    padding-inline: 1.75rem;
+  }
+
+  /* Row 1 (cards 1-4): padding-bottom before the row divider, and a
+     border-bottom on every row-1 card so the horizontal hairline runs
+     continuously under the full width of the grid — pixel-sampled in the
+     full-grid screenshot: the divider line (RGB 255,116,0 = #f37d2c =
+     --color-orange at full strength, fading to a soft gradient trail further
+     from the sparks — that gradient trail is the same kind of "irregular
+     flourish" Scale.astro's own hairline comment already documented and
+     chose not to reproduce; this build keeps the readable solid-color core). */
+  .card:nth-child(-n + 4) {
+    padding-top: 0;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--color-orange);
+  }
+
+  /* Vertical dividers between row-1's 4 columns: cards 2, 3, 4 each own the
+     boundary to their left. Card 6 (Finance Manager, row 2 col 3) continues
+     the col2/3 boundary down through row 2 — the only internal boundary row 2
+     has, since it only spans columns 2-3. Card 5's (Manager, Grants, col 2)
+     bottom-left corner sits at the same point as card 2's bottom-left corner
+     used to before repositioning, so only ONE spark is rendered at that
+     shared intersection (via card 6's spark-top below), avoiding a duplicate
+     overlapping spark. */
+  .card:nth-child(2),
+  .card:nth-child(3),
+  .card:nth-child(4),
+  .card:nth-child(6) {
+    border-left: 1px solid var(--color-orange);
+  }
+
+  /* Row 2 (cards 5, 6): explicit column placement + top padding to mirror
+     row 1's bottom padding on the other side of the divider. */
+  .card:nth-child(5) {
+    grid-column: 2;
+    padding-top: 3rem;
+  }
+  .card:nth-child(6) {
+    grid-column: 3;
+    padding-top: 3rem;
+  }
+
+  /* Sparks: measured 35x35px diamond (spark bbox at the col2/3-top
+     intersection, node group 1:12458 family) = 2.1875rem, rounded to 2.2rem.
+     Centered directly on each corner point with a transform, rather than
+     Scale.astro's fixed left/top offsets, since here the intersections sit
+     at actual card corners (top-left for the grid-top and row-divider-top
+     cases, bottom-left for the row-divider-bottom and row-2-terminal cases)
+     instead of a divider's two fixed ends. spark-top covers: the true top of
+     the grid (cards 2/3/4) AND the row-divider's cross intersection under
+     col2/3 (card 6, whose box starts exactly at the row-divider line).
+     spark-bottom covers: the row-divider's two T-intersections (cards 2 and
+     4, i.e. the col1/2 and col3/4 boundaries, which don't continue into row
+     2) AND row 2's own terminal end of the col2/3 divider (card 6). */
+  .spark {
+    position: absolute;
+    left: 0;
+    width: 2.2rem;
+    height: 2.2rem;
+    pointer-events: none;
+  }
+  .spark-top {
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+  .spark-bottom {
+    bottom: 0;
+    transform: translate(-50%, 50%);
+  }
+
+  /* Title (real text nodes, e.g. 1:11946/1:11947): font-['Faculty_Glyphic:Regular']
+     text-[#1e1e3e] text-[39.7px] per the Figma reference code — 39.7/16 =
+     2.48125rem. Color is the literal #1e1e3e (not --color-ink-alt), matching
+     the task brief's documented fact and BoardOfDirectors.astro's identical
+     name-color literal. Line-height derived from the two-line "Chief
+     Executive"/"Officer" baseline pitch in the full-grid screenshot: cap-top
+     121 -> baseline 152 for line 1, cap-top 167 -> baseline 199 for line 2;
+     baseline-to-baseline = 47px -> 47/39.7 ~= 1.18. Margin-bottom: label top
+     (229) - title baseline (199) = 30px = 1.875rem. */
+  .card h3 {
+    margin: 0 0 1.875rem;
+    font-family: var(--font-display);
+    font-size: 2.48rem; /* 39.7px */
+    line-height: 1.18;
+    color: #1e1e3e;
+  }
+
+  /* Dept label (real text nodes, e.g. 1:12475-1:12480): font-[Faculty_Glyphic]
+     text-[#949494] text-[14.88px] tracking-[1.488px] uppercase per the Figma
+     reference code. 1.488/14.88 = 0.1 exactly. Color pixel-sampled to
+     RGB(148,148,148) = #949494, 1 unit/channel from --color-gray (#959595) —
+     treated as that token, the same tolerance BoardOfDirectors.astro's own
+     role text uses. Margin-bottom: description cap-top (263) - label
+     baseline (241) = 22px = 1.375rem. */
+  .dept {
+    margin: 0 0 1.375rem;
+    font-family: var(--font-display);
+    font-size: 0.93rem; /* 14.88px */
+    letter-spacing: 0.1em; /* 1.488px / 14.88px */
+    text-transform: uppercase;
+    color: var(--color-gray);
+  }
+
+  /* Description is a vectorized paragraph (no real text node), same
+     technique used throughout this repo: cap height of the "S" in "Sets"
+     (card 1's first description, isolated in the full-grid screenshot)
+     measures 18px -> against Sora's capHeight/upm constant of 0.73 (used by
+     Scale.astro's intro and BoardOfDirectors.astro's subheading/desc) ->
+     18 / 0.73 ~= 24.66px = 1.54rem. Line-height derived from line-1-to-line-2
+     baseline pitch (280 -> 312 = 32px) -> 32 / 24.66 ~= 1.3, matching
+     BoardOfDirectors.astro's own desc line-height exactly. Color
+     pixel-sampled to the SAME literal RGB(30,30,62) = #1e1e3e as the title —
+     not --color-ink-alt, the same gray-vs-navy-literal split
+     BoardOfDirectors.astro already documented for its own desc. */
+  .desc {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.54rem; /* 24.66px, derived — see comment above */
+    line-height: 1.3;
+    color: #1e1e3e;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 3rem;
+    }
+    .card,
+    .card:nth-child(-n + 4),
+    .card:nth-child(5),
+    .card:nth-child(6) {
+      grid-column: auto;
+      padding: 0 1.5rem;
+      border: 0;
+    }
+    .spark {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+      row-gap: 2.5rem;
+    }
+    .card {
+      padding-inline: 0;
+    }
+  }
+</style>

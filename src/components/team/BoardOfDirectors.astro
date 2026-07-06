@@ -1,0 +1,265 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, node 1:12591 (Board of Directors + Advisory
+// Board share one big group; this component only covers the Board of Directors
+// half): eyebrow "GOVERNANCE" (1:12888), H2 "Board of Directors" (1:12889),
+// 2-line subheading (vectorized paragraph, 1:12890), card grid (1:13078) with
+// 5 director cards (1:13079 Neeraj, 1:13131 Vikas, 1:13171 Sanjay, 1:13283
+// Akshay, 1:13211 Sandeep). See exact derivations in the style block below.
+import { Image } from "astro:assets";
+import SparkOrange from "../../assets/team/spark-orange.svg";
+import neeraj from "../../assets/team/dir-neeraj.png";
+import vikas from "../../assets/team/dir-vikas.png";
+import sanjay from "../../assets/team/dir-sanjay.png";
+import akshay from "../../assets/team/dir-akshay.png";
+import sandeep from "../../assets/team/dir-sandeep.png";
+
+// Copy verbatim from the task brief. Literal "&" is used here (not the
+// "&amp;" entity) to match the house convention already established by
+// SponsorStrip.astro's SPONSORS data array ("Oil & Natural Gas") — Astro's
+// `{}` text interpolation auto-escapes "&" to "&amp;" in the rendered HTML,
+// so storing the literal entity text here would double-escape to "&amp;amp;".
+const DIRECTORS = [
+  {
+    photo: neeraj,
+    name: "Dr. Neeraj Mittal",
+    role: "CHAIRMAN & DIRECTOR",
+    desc: "Secretary, Ministry of Petroleum and Natural Gas",
+  },
+  {
+    photo: vikas,
+    name: "Shri Vikas Kaushal",
+    role: "DIRECTOR",
+    desc: "Chairman & Managing Director, HPCL",
+  },
+  {
+    photo: sanjay,
+    name: "Shri Sanjay Khanna",
+    role: "DIRECTOR",
+    desc: "Chairman & Managing Director, BPCL",
+  },
+  {
+    photo: akshay,
+    name: "Shri Akshay Kumar Singh",
+    role: "DIRECTOR",
+    desc: "Managing Director and Chief Executive Officer, Petronet LNG Ltd.",
+  },
+  {
+    photo: sandeep,
+    name: "Shri Sandeep Maheshwari",
+    role: "DIRECTOR & CHIEF EXECUTIVE OFFICER",
+    desc: "Executive Director, Corporate Strategy & Business Development, HPCL",
+  },
+];
+---
+
+<section class="board">
+  <div class="container">
+    <p class="eyebrow">GOVERNANCE</p>
+    <h2>Board of Directors</h2>
+    <p class="subheading">
+      Nominee directors from the seven energy majors, chaired from the
+      Ministry of Petroleum &amp; Natural Gas.
+    </p>
+
+    <div class="grid">
+      {DIRECTORS.map((p) => (
+        <article class="card">
+          <div class="photo-wrap">
+            <SparkOrange class="card-spark" aria-hidden="true" />
+            <Image src={p.photo} alt={p.name} widths={[216, 432]} sizes="216px" class="photo" />
+          </div>
+          <div class="meta">
+            <h3>{p.name}</h3>
+            <p class="role">{p.role}</p>
+            <p class="desc">{p.desc}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .board {
+    background: var(--color-cream);
+    /* Figma gap: Board-top 1162 − Hero-bottom 984 ≈ 178px. Single-ownership:
+       each section owns only its top gap (bottom 0), mirroring the About page. */
+    padding-block: 11.15rem 0;
+  }
+
+  /* Eyebrow (node 1:12888): real text, Faculty, 27.07px. Pixel-sampled darkest
+     ink = RGB(255,116,0) = #ff7400, an EXACT match for --color-orange-bright
+     (the token's own comment cites this exact node as its source) — unlike
+     TeamHero's eyebrow (which turned out gray on inspection), this one really
+     is the bright-orange token, matching the task brief's expectation. */
+  .eyebrow {
+    margin: 0 0 1.3rem;
+    font-family: var(--font-display);
+    font-size: 1.69rem; /* 27.07px, node 1:12888 */
+    letter-spacing: 0.25em; /* same tracking formula as TeamHero's eyebrow, node 1:13353 */
+    color: var(--color-orange-bright);
+    text-align: center;
+  }
+
+  /* H2 (node 1:12889): real text, Faculty 65px. Pixel-sampled darkest ink =
+     RGB(30,30,60) = #1e1e3c, an exact match for --color-ink-alt (identical
+     treatment to SponsorStrip's H2). */
+  h2 {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:12889 */
+    color: var(--color-ink-alt);
+    text-align: center;
+  }
+
+  /* Subheading (node 1:12890) is a vectorized 2-line paragraph, not real text.
+     Isolated screenshot + row-by-row ink scan gives a cap-height (steep
+     ink-transition edge to baseline-drop edge) of ~14px on both lines ->
+     14 / 0.73 (Sora capHeight/upm, same constant used throughout this repo's
+     derivations) ~= 19.2px = 1.2rem. Baseline-to-baseline distance between
+     the two lines measures ~32px -> line-height 32/19.2 ~= 1.667. Darkest
+     ink pixel = RGB(149,149,149) = #959595, an exact match for --color-gray.
+     Max-width 44.64rem = line 1's own measured width (714.19px, node 1:12890). */
+  .subheading {
+    max-width: 44.64rem;
+    margin: 0 auto 4.5rem;
+    font-family: var(--font-sans);
+    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    line-height: 1.667; /* derived — see comment above */
+    color: var(--color-gray);
+    text-align: center;
+  }
+
+  /* Grid: 5 director cards, 3-then-2 layout. Figma (node 1:13078) actually
+     lays these out as content-hugging groups with non-uniform card widths and
+     gaps (e.g. col1->col2 pitch 621.84px vs col2->col3 pitch 566.79px) rather
+     than a strict equal-width grid, and its row gap is closer to 0 (row 2's
+     photos start 5-8px BEFORE row 1's photos end — confirmed by both the
+     coordinate math and a direct pixel crop showing the two photos touching,
+     with the spark sitting right at the seam). Both of those are impractical
+     to reproduce with a robust, responsive CSS grid, so per the task's own
+     instruction this uses equal minmax(0,1fr) tracks with a normal, uniform
+     gap instead — documented simplification, not a missed measurement.
+     3 columns + 5 items auto-places item 4 under column 1 and item 5 under
+     column 2 for free, matching the brief's required row-2 alignment with no
+     extra rules needed. */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 2.5rem;
+    row-gap: 3rem;
+  }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* 24.21px measured gap between photo right edge and text left edge, node 1:13079 */
+  }
+
+  /* Photo (rounded-rectangle node 1:13126/1:13166/etc, 216x216 = 13.5rem
+     square). get_design_context on the rectangle itself returns a plain
+     `overflow-hidden` container with no rounded-* class, so no border-radius
+     is applied. No separate border/stroke node was found around the photo
+     (only the two hairline gradient trails documented below, which are
+     omitted); the assets are already grayscale on a cream background. */
+  .photo-wrap {
+    position: relative;
+    flex: 0 0 13.5rem;
+    width: 13.5rem;
+  }
+  /* Fixed width+height (not width:100%/aspect-ratio:1) is deliberate: Astro's
+     <Image> always emits width/height HTML attributes (here 1080x1080), and
+     verified live in Chrome — width:100%+aspect-ratio:1 combined with those
+     attributes renders the img box hugely tall (a real layout bug, confirmed
+     by isolated repro outside Astro too), not a 216x216 square. Fixed
+     px-equivalent dimensions sidestep it entirely. */
+  .photo {
+    display: block;
+    width: 13.5rem;
+    height: 13.5rem;
+    object-fit: cover;
+  }
+
+  /* Spark: CORRECTION vs the task brief's "top-left corner" — coordinate math
+     (spark bbox center within ~3px of the photo's own top-RIGHT corner point,
+     for every one of the 5 cards) and a cropped screenshot both confirm the
+     spark sits centered on the photo's top-right corner (the seam between
+     photo and text), not the top-left. Figma wins; brief corrected here.
+     Size: measured spark bbox 45.92x45.92px = 2.875rem square (node 1:13128).
+     Two extra hairline gradient-orange trail lines (<1px thick, fading from
+     the spark outward) were found in the Figma node alongside the star glyph
+     itself, but are too subtle/fiddly to reproduce faithfully and aren't
+     required by the task brief — omitted; only the star spark is rendered. */
+  .card-spark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    width: 2.875rem;
+    height: 2.875rem;
+    pointer-events: none;
+  }
+
+  .meta {
+    min-width: 0;
+  }
+
+  /* Name: real text, Faculty ~30px. Pixel-sampled darkest ink = RGB(30,30,62)
+     = #1e1e3e (literal, documented in the task brief — not --color-ink-alt). */
+  .meta h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.3;
+    color: #1e1e3e;
+  }
+
+  /* Role: real text, Faculty ~14.88px uppercase, tracked ~1.49px. Pixel-sampled
+     darkest ink = RGB(148,148,148), 1 unit/channel from --color-gray (#959595)
+     — treated as that token (same as TeamHero's eyebrow correction). Margins:
+     6.47px gap above (name->role) / 13.94px gap below (role->desc), node 1:13080. */
+  .role {
+    margin: 0.4rem 0 0.85rem;
+    font-family: var(--font-display);
+    font-size: 0.93rem; /* 14.88px */
+    letter-spacing: 0.093em; /* 1.49px / 14.88px */
+    text-transform: uppercase;
+    color: var(--color-gray);
+  }
+
+  /* Description (node 1:13082) is a vectorized paragraph, not real text, same
+     technique as the subheading: cap-height ~13.5-14px on a no-descender line
+     -> /0.73 ~= 19px = 1.2rem, matching the subheading's own derived size
+     (kept as one shared body-text scale for the section). Darkest ink pixel
+     = RGB(30,30,62) = #1e1e3e — the SAME literal as the name, not
+     --color-ink-alt as the brief guessed (Figma wins). */
+  .desc {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.2rem; /* 19.2px, derived — see comment above */
+    line-height: 1.3;
+    color: #1e1e3e;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+    }
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 679.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .photo-wrap {
+      width: 13.5rem;
+    }
+  }
+</style>

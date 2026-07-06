@@ -1,5 +1,16 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TeamHero from "../components/team/TeamHero.astro";
+import BoardOfDirectors from "../components/team/BoardOfDirectors.astro";
+import AdvisoryBoard from "../components/team/AdvisoryBoard.astro";
+import OperatingTeam from "../components/team/OperatingTeam.astro";
+import TeamCta from "../components/team/TeamCta.astro";
 ---
 
-<StubPage name="Team" />
+<BaseLayout title="Team · MC²+">
+  <TeamHero />
+  <BoardOfDirectors />
+  <AdvisoryBoard />
+  <OperatingTeam />
+  <TeamCta />
+</BaseLayout>
