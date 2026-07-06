@@ -1,0 +1,446 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, frame 1:19224. Support-stack source:
+// paired card groups 1:19227 and 1:19947, illustrations 1:20698 / 1:20756 /
+// 1:20788 / 1:20844. Body copy is vectorized in Figma, transcribed from the
+// native 1920x4790 screenshot saved during context gathering.
+import { Image } from "astro:assets";
+import SparkOrange from "../../assets/about/spark-orange.svg";
+import CapitalArt from "../../assets/support/capital-art.png";
+import ExpertiseArt from "../../assets/support/expertise-art.png";
+import InfrastructureArt from "../../assets/support/infrastructure-art.png";
+import PilotingArt from "../../assets/support/piloting-art.png";
+
+const CARDS = [
+  {
+    key: "capital",
+    eyebrow: "01 | WHAT WE FUND",
+    title: "Capital",
+    subtitle: "Grants, seed and scale-up",
+    intro:
+      "Structured access to seed funding for early validation and scale-up capital for ventures demonstrating commercial traction in the energy and industrial sector.",
+    bullets: [
+      "Seed grants for proof-of-concept and prototype stages",
+      "Scale-up equity for ventures with demonstrated traction",
+      "Warm introductions to co-investors and strategic partners",
+      "Non-dilutive grants for specific technology challenges",
+    ],
+  },
+  {
+    key: "expertise",
+    eyebrow: "02 | WHO YOU WORK WITH",
+    title: "Expertise",
+    subtitle: "Mentorship and research partnerships",
+    intro:
+      "Deep mentorship and research partnerships with premier Indian and global institutions, bringing domain knowledge that shortens the path from lab to commercial deployment.",
+    bullets: [
+      "Partnerships with IITs, IIMs, CSIR labs and global universities",
+      "Mentors from senior technical and commercial teams",
+      "Access to global energy-transition research networks",
+      "Regulatory guidance and policy navigation support",
+    ],
+  },
+  {
+    key: "infrastructure",
+    eyebrow: "03 | WHERE YOU BUILD",
+    title: "Infrastructure",
+    subtitle: "Labs, rigs and workspace",
+    intro:
+      "Shared access to world-class R&D laboratories, testing rigs, fabrication workshops and technical facilities across energy-major sites spanning multiple cities nationwide.",
+    bullets: [
+      "Lab and testing facility access at energy-major R&D centres",
+      "Shared incubation workspace across multiple cities",
+      "Technical equipment and safety-certified environments",
+      "Storage, fabrication and prototyping infrastructure",
+    ],
+  },
+  {
+    key: "piloting",
+    eyebrow: "04 | HOW YOU PILOT",
+    title: "Piloting Opportunities",
+    subtitle: "Field pilots and procurement",
+    intro:
+      "Real-world deployment access at operating energy-major sites including refineries, pipelines and terminals to test, iterate and validate technology at industrial scale.",
+    bullets: [
+      "First-of-a-kind field pilots at refineries, terminals and gas grids",
+      "Structured problem statements from energy-major technology teams",
+      "Fast-tracked procurement pathways for successful pilots",
+      "Access to operating assets across multiple geographies",
+    ],
+  },
+];
+---
+
+<section class="support-stack" aria-labelledby="support-stack-title">
+  <h2 id="support-stack-title" class="sr-only">The MC²+ support stack</h2>
+
+  <div class="stage">
+    <div class="line line-v line-left" aria-hidden="true"></div>
+    <div class="line line-v line-mid" aria-hidden="true"></div>
+    <div class="line line-v line-right" aria-hidden="true"></div>
+    <div class="line line-h line-top" aria-hidden="true"></div>
+    <div class="line line-h line-one" aria-hidden="true"></div>
+    <div class="line line-h line-two" aria-hidden="true"></div>
+    <div class="line line-h line-three" aria-hidden="true"></div>
+
+    {
+      ["a", "b", "c", "d", "e", "f"].map((id) => (
+        <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
+      ))
+    }
+
+    <Image
+      src={CapitalArt}
+      alt=""
+      class="art art-capital"
+      widths={[469, 938]}
+      sizes="469px"
+    />
+    <Image
+      src={ExpertiseArt}
+      alt=""
+      class="art art-expertise"
+      widths={[253, 506]}
+      sizes="253px"
+    />
+    <Image
+      src={InfrastructureArt}
+      alt=""
+      class="art art-infrastructure"
+      widths={[247, 494]}
+      sizes="247px"
+    />
+    <Image
+      src={PilotingArt}
+      alt=""
+      class="art art-piloting"
+      widths={[443, 886]}
+      sizes="443px"
+    />
+
+    {CARDS.map((card) => (
+      <article class={`support-card support-card-${card.key}`}>
+        <p class="card-eyebrow">{card.eyebrow}</p>
+        <h3>{card.title}</h3>
+        <p class="subtitle">{card.subtitle}</p>
+        <p class="intro">{card.intro}</p>
+        <ul>
+          {card.bullets.map((bullet) => (
+            <li>{bullet}</li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .support-stack {
+    background: var(--color-cream);
+    padding-block: 0 4.75rem;
+    overflow-x: clip;
+  }
+
+  .stage {
+    position: relative;
+    max-width: 109.87rem; /* 1757.92px, node 1:19227/1:19947 combined width */
+    height: 168rem; /* 2688px, support stack top to bottom */
+    margin-inline: auto;
+  }
+
+  .line {
+    position: absolute;
+    z-index: 0;
+    background: var(--color-orange);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .line-v {
+    width: 1px;
+  }
+
+  .line-h {
+    height: 1px;
+  }
+
+  .line-left {
+    left: 9.95rem;
+    top: 10.1rem;
+    height: 99rem;
+  }
+
+  .line-mid {
+    left: 50%;
+    top: 0;
+    height: 152rem;
+  }
+
+  .line-right {
+    right: 2rem;
+    top: 43rem;
+    height: 90rem;
+  }
+
+  .line-top {
+    left: 15rem;
+    top: 0;
+    width: 23.75rem;
+  }
+
+  .line-one {
+    left: 0;
+    right: 0;
+    top: 41.8rem;
+  }
+
+  .line-two {
+    left: 3.5rem;
+    right: 1.5rem;
+    top: 87.9rem;
+  }
+
+  .line-three {
+    left: 37rem;
+    right: 2rem;
+    top: 144.2rem;
+  }
+
+  .spark {
+    position: absolute;
+    z-index: 1;
+    width: 3.125rem;
+    height: 3.125rem;
+    pointer-events: none;
+  }
+
+  .spark-a {
+    left: 8.39rem;
+    top: 10.1rem;
+  }
+
+  .spark-b {
+    left: calc(50% - 1.5625rem);
+    top: -1.5625rem;
+  }
+
+  .spark-c {
+    right: 0.44rem;
+    top: 40.2rem;
+  }
+
+  .spark-d {
+    left: 8.39rem;
+    top: 86.34rem;
+  }
+
+  .spark-e {
+    left: calc(50% - 1.5625rem);
+    top: 86.34rem;
+  }
+
+  .spark-f {
+    right: 0.44rem;
+    top: 142.6rem;
+  }
+
+  .art {
+    position: absolute;
+    z-index: 1;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .art-capital {
+    left: 63.86rem; /* node 1:20698 */
+    top: 14.69rem;
+    width: 29.15rem;
+  }
+
+  .art-expertise {
+    left: 27.32rem; /* node 1:20756 */
+    top: 55.23rem;
+    width: 15.66rem;
+  }
+
+  .art-infrastructure {
+    left: 67.8rem; /* node 1:20788 */
+    top: 93.84rem;
+    width: 15.3rem;
+  }
+
+  .art-piloting {
+    left: 20.07rem; /* node 1:20844 */
+    top: 129.73rem;
+    width: 27.52rem;
+  }
+
+  .support-card {
+    position: absolute;
+    z-index: 2;
+    width: 36.25rem;
+    background: var(--color-cream);
+  }
+
+  .support-card-capital {
+    left: 15.18rem;
+    top: 7.16rem;
+  }
+
+  .support-card-expertise {
+    left: 60.56rem;
+    top: 43.11rem;
+  }
+
+  .support-card-infrastructure {
+    left: 15.18rem;
+    top: 79.06rem;
+  }
+
+  .support-card-piloting {
+    left: 60.56rem;
+    top: 114.98rem;
+  }
+
+  .card-eyebrow {
+    margin: 0 0 0.28rem;
+    font-family: var(--font-display);
+    font-size: 1.1406rem; /* 18.25px, text nodes 1:19371/1:19738/1:20104/1:20466 */
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #949494;
+  }
+
+  h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2.7006rem; /* 43.21px, card title text nodes */
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-orange);
+  }
+
+  .subtitle {
+    margin: -0.15rem 0 0;
+    font-family: var(--font-display);
+    font-size: 1.6919rem; /* 27.07px, card subtitle text nodes */
+    line-height: 1.3;
+    color: var(--color-ink-alt);
+  }
+
+  .intro {
+    max-width: 35.1rem;
+    margin: 4.85rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1.23rem;
+    line-height: 1.33;
+    color: #1e1e3e;
+  }
+
+  ul {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 32rem;
+    margin: 1.7rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-sans);
+    font-size: 1.18rem;
+    line-height: 1.28;
+    color: #1e1e3e;
+  }
+
+  li {
+    position: relative;
+    padding-inline-start: 2rem;
+  }
+
+  li::before {
+    content: "";
+    position: absolute;
+    left: 0.45rem;
+    top: 0.47rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-top: 2px solid var(--color-ink-alt);
+    border-right: 2px solid var(--color-ink-alt);
+    transform: rotate(45deg);
+  }
+
+  @media (max-width: 1759.98px) {
+    .stage {
+      width: min(100% - 2.5rem, 48rem);
+      height: auto;
+      display: grid;
+      gap: 4rem;
+      padding-block: 2rem 5rem;
+    }
+
+    .line,
+    .spark {
+      display: none;
+    }
+
+    .art,
+    .support-card {
+      position: static;
+      width: min(100%, 36rem);
+    }
+
+    .support-card {
+      background: transparent;
+    }
+
+    .art {
+      justify-self: center;
+      max-width: 70%;
+    }
+
+    .support-card {
+      justify-self: center;
+    }
+
+    .intro {
+      margin-top: 2rem;
+    }
+
+    .support-card-capital {
+      order: 1;
+    }
+    .art-capital {
+      order: 2;
+    }
+    .support-card-expertise {
+      order: 3;
+    }
+    .art-expertise {
+      order: 4;
+    }
+    .support-card-infrastructure {
+      order: 5;
+    }
+    .art-infrastructure {
+      order: 6;
+    }
+    .support-card-piloting {
+      order: 7;
+    }
+    .art-piloting {
+      order: 8;
+    }
+  }
+
+  @media (max-width: 559.98px) {
+    h3 {
+      font-size: clamp(2rem, 10vw, 2.7006rem);
+    }
+
+    .subtitle {
+      font-size: clamp(1.25rem, 6vw, 1.6919rem);
+    }
+
+    .intro,
+    ul {
+      font-size: 1rem;
+    }
+  }
+</style>

@@ -1,5 +1,12 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SupportHero from "../components/support/SupportHero.astro";
+import SupportStack from "../components/support/SupportStack.astro";
+import SupportCta from "../components/support/SupportCta.astro";
 ---
 
-<StubPage name="Support" />
+<BaseLayout title="Support · MC²+">
+  <SupportHero />
+  <SupportStack />
+  <SupportCta />
+</BaseLayout>

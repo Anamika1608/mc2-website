@@ -1,0 +1,158 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ, frame 1:19224. Hero source nodes:
+// orbit art 1:21030, eyebrow 1:21041, H1 1:21045/1:21046/1:21047,
+// vectorized lede 1:21048, scroll cue inside 1:21039.
+import { Image } from "astro:assets";
+import HeroOrbit from "../../assets/support/hero-orbit.png";
+import ScrollArrow from "../../assets/about/scroll-arrow.svg";
+---
+
+<section class="support-hero">
+  <Image
+    src={HeroOrbit}
+    alt=""
+    class="orbit"
+    loading="eager"
+    widths={[960, 1440, 1920]}
+    sizes="100vw"
+  />
+
+  <div class="hero-inner">
+    <p class="eyebrow">SUPPORT</p>
+    <div class="rule" aria-hidden="true"></div>
+
+    <h1>
+      <span>Everything an</span>
+      <span>energy venture needs,</span>
+      <span><span class="accent">under one roof</span><span class="period">.</span></span>
+    </h1>
+
+    <p class="lede">
+      Capital is rarely the whole problem. MC<sup>2</sup>+ pairs funding with
+      the expertise, infrastructure and market access that energy hardware
+      actually needs to reach industrial scale.
+    </p>
+
+    <ScrollArrow class="scroll" aria-hidden="true" />
+  </div>
+</section>
+
+<style>
+  .support-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-cream);
+    padding-block: 6rem 0;
+  }
+
+  @media (min-width: 1024px) {
+    .support-hero {
+      min-height: 62rem;
+    }
+  }
+
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 0;
+    width: 100%;
+    min-width: 120rem;
+    height: auto;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 58rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.6919rem; /* 27.07px, node 1:21041 */
+    letter-spacing: 0.25em;
+    color: #949494;
+  }
+
+  .rule {
+    width: 11.7656rem; /* 188.25px, node 1:21040 */
+    height: 1px;
+    margin: 2.81rem auto 1.73rem;
+    background: #000;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 5rem; /* 80px, nodes 1:21045-1:21047 */
+    font-weight: 400;
+    line-height: 1.095;
+    color: #1e1e3e;
+  }
+
+  h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  h1 .accent,
+  h1 .period {
+    display: inline;
+  }
+
+  h1 .accent {
+    color: var(--color-orange-bright);
+  }
+
+  h1 .period {
+    color: #1e1e3e;
+  }
+
+  .lede {
+    max-width: 49.03rem; /* 784.52px, node 1:21048 */
+    margin: 1.23rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 1.9375rem; /* vectorized Sora paragraph, same derived scale as About/Team hero */
+    line-height: 1.31;
+    color: #1e1e3e;
+  }
+
+  .lede sup {
+    font-size: 0.58em;
+    line-height: 0;
+  }
+
+  .scroll {
+    display: block;
+    margin: 6.12rem auto 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    .support-hero {
+      min-height: 48rem;
+    }
+
+    .orbit {
+      min-width: 90rem;
+    }
+
+    h1 {
+      font-size: clamp(2.65rem, 7vw, 5rem);
+    }
+
+    h1 span {
+      white-space: normal;
+    }
+
+    .lede {
+      max-width: 90%;
+      font-size: clamp(1.2rem, 3vw, 1.9375rem);
+    }
+  }
+</style>
