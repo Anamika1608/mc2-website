@@ -209,7 +209,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
        for its own eyebrow — verified per-instance, not page-wide; see
        Scale.astro's own note that this file mixes both within one page). */
     font-family: var(--font-sans);
-    font-size: 1.6919rem; /* 27.07px, node 1:16966 */
+    font-size: var(--text-hero-eyebrow); /* 27.07px, node 1:16966 — normalized to home hero scale per user directive 2026-07-06 */
     letter-spacing: 0.25em; /* 6.7675px / 27.07px, node 1:16966 */
     color: var(--color-gray); /* #959595 exact match */
   }
@@ -223,8 +223,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 5.08rem; /* 81.3px, nodes 1:16970/1:16971 — identical to About's AboutHero H1 size */
-    line-height: 1.08; /* baseline delta 87.57px (505.25-417.68) / 81.3px = 1.077, same derivation and result as AboutHero.astro */
+    font-size: var(--text-hero-h1); /* 81.3px, nodes 1:16970/1:16971 — identical to About's AboutHero H1 size — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-h1-lh); /* baseline delta 87.57px (505.25-417.68) / 81.3px = 1.077, same derivation and result as AboutHero.astro — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt); /* #1e1e3c exact match */
   }
   h1 .line {
@@ -248,8 +248,8 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
        independently land on ~31px. Line-height, likewise re-derived from the
        4 lines' baseline deltas (~40.5px avg / 31px ≈ 1.31), matches AboutHero's
        lede exactly. */
-    font-size: 1.9375rem; /* 31px, derived — see comment above */
-    line-height: 1.31; /* derived — see comment above */
+    font-size: var(--text-hero-lede); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-lede-lh); /* derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
     /* Fill sampled directly from this node's own vector paths: #1E1E3C
        (--color-ink-alt) — NOT --color-ink like About's lede (which is a
        DIFFERENT node, #1e1e3a; About's own comment notes this was itself a
@@ -293,7 +293,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
        (37.1px / 28.42px ≈ 1.31) matches the SAME 1.31 constant as .lede and
        About's lede — a consistent house-wide body-copy line-height regardless
        of font-size. */
-    font-size: 1.7763rem; /* 28.42px, derived — see comment above */
+    font-size: 1.1463rem; /* 18.34px — notice text was 0.9168× the hero lede in the design (28.42/31); rescaled with the lede: 20px × 0.9168 — normalized to home hero scale per user directive 2026-07-06 */
     line-height: 1.31;
     color: var(--color-white); /* sampled fill: literal "white" in the node's own paths */
     text-align: left;
@@ -316,7 +316,7 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
 
   @media (max-width: 1023.98px) {
     h1 {
-      font-size: clamp(2.4rem, 7vw, 5.08rem);
+      font-size: var(--text-hero-h1-fluid); /* was clamp(2.4rem, 7vw, 5.08rem) — normalized to home hero scale per user directive 2026-07-06 */
     }
     .lede {
       max-width: 90%;

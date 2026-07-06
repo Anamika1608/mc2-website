@@ -75,7 +75,7 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
   .eyebrow {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.6919rem; /* 27.07px, node 1:21041 */
+    font-size: var(--text-hero-eyebrow); /* 27.07px, node 1:21041 — normalized to home hero scale per user directive 2026-07-06 */
     letter-spacing: 0.25em;
     color: #949494;
   }
@@ -90,9 +90,9 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 5rem; /* 80px, nodes 1:21045-1:21047 */
+    font-size: var(--text-hero-h1); /* 80px, nodes 1:21045-1:21047 — normalized to home hero scale per user directive 2026-07-06 */
     font-weight: 400;
-    line-height: 1.095;
+    line-height: var(--text-hero-h1-lh); /* was 1.095 — normalized to home hero scale per user directive 2026-07-06 */
     color: #1e1e3e;
   }
 
@@ -118,12 +118,16 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     max-width: 49.03rem; /* 784.52px, node 1:21048 */
     margin: 1.23rem auto 0;
     font-family: var(--font-sans);
-    font-size: 1.9375rem; /* vectorized Sora paragraph, same derived scale as About/Team hero */
-    line-height: 1.31;
+    font-size: var(--text-hero-lede); /* vectorized Sora paragraph, same derived scale as About/Team hero — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-lede-lh); /* was 1.31 — normalized to home hero scale per user directive 2026-07-06 */
     color: #1e1e3e;
   }
 
   .lede sup {
+    /* Relative to the lede's own font-size (em, not a hero token): at the
+       normalized 20px lede this renders 11.6px (0.58 × 20px), down from
+       ~17.98px (0.58 × 31px) pre-normalization — verified legible (the "2"
+       superscript in "MC2+") in the after-render at all 4 widths. */
     font-size: 0.58em;
     line-height: 0;
   }
@@ -143,7 +147,7 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     }
 
     h1 {
-      font-size: clamp(2.65rem, 7vw, 5rem);
+      font-size: var(--text-hero-h1-fluid); /* was clamp(2.65rem, 7vw, 5rem) — normalized to home hero scale per user directive 2026-07-06 */
     }
 
     h1 span {
@@ -152,7 +156,11 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
 
     .lede {
       max-width: 90%;
-      font-size: clamp(1.2rem, 3vw, 1.9375rem);
+      /* was clamp(1.2rem, 3vw, 1.9375rem) — fixed to the hero lede token,
+         matching Home's <1024 lede behavior (keeps the token size, only
+         constrains width) — normalized to home hero scale per user
+         directive 2026-07-06 */
+      font-size: var(--text-hero-lede);
     }
   }
 </style>

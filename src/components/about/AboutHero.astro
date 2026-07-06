@@ -86,7 +86,7 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
   .eyebrow {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.69rem; /* 27.07px, node 1:9501 */
+    font-size: var(--text-hero-eyebrow); /* 27.07px, node 1:9501 — normalized to home hero scale per user directive 2026-07-06 */
     letter-spacing: 0.25em; /* 6.7675px / 27.07px = 0.25em exactly, node 1:9501 */
     color: var(--color-gray); /* #959595 exact match, node 1:9501 */
   }
@@ -100,8 +100,8 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
   h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 5.08rem; /* 81.3px, nodes 1:9505/1:9506/1:9507 */
-    line-height: 1.08; /* baseline delta ~87.57px / 81.3px = 1.077, confirms plan's ~1.08 estimate */
+    font-size: var(--text-hero-h1); /* 81.3px, nodes 1:9505/1:9506/1:9507 — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-h1-lh); /* baseline delta ~87.57px / 81.3px = 1.077, confirms plan's ~1.08 estimate — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt); /* #1e1e3c exact match */
   }
   h1 .line {
@@ -127,8 +127,8 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
     max-width: 49.65rem;
     margin: 1.5rem auto 0;
     font-family: var(--font-sans);
-    font-size: 1.9375rem; /* 31px, derived — see comment above */
-    line-height: 1.31; /* derived — see comment above */
+    font-size: var(--text-hero-lede); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    line-height: var(--text-hero-lede-lh); /* derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink);
   }
 
@@ -139,7 +139,7 @@ import ScrollArrow from "../../assets/about/scroll-arrow.svg";
 
   @media (max-width: 1023.98px) {
     h1 {
-      font-size: clamp(2.4rem, 7vw, 5.08rem);
+      font-size: var(--text-hero-h1-fluid); /* was clamp(2.4rem, 7vw, 5.08rem) — normalized to home hero scale per user directive 2026-07-06 */
     }
     .lede {
       max-width: 90%;
