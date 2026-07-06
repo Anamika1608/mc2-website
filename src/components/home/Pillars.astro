@@ -1,7 +1,5 @@
 ---
 import PillButton from "../PillButton.astro";
-import IllusMentorship from "../../assets/home/illus-mentorship.svg";
-import IllusMarket from "../../assets/home/illus-market.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
 
 // Folder-tab notch (Figma nodes 1:1073 / 1:1191 / 1:1339 / 1:1476) — a single
@@ -54,24 +52,17 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
              notch, no body text or illustration node). Body sourced verbatim from
              the reference screenshot provided for this task. Hidden until this
              card is active — see .card-content CSS below.
-             Icon (round 5): a real Infrastructure icon now exists at
-             public/Globe-Gray.png — a raster PNG, not an importable src/assets SVG
-             like O2/O3/O4's icons, so it's a plain <img> here rather than the
-             inline-SVG component pattern (can't use currentColor on it, but it
-             ships pre-colored gray, matching this card's own muted illustration
-             role). Sized via .card-illus--raster below, same height cap as O4's
-             icon for visual consistency. -->
+             Icon (round 11): public/icon01.png — a raster PNG replacing the
+             old Globe-Gray.png, plain <img> like every other card's icon now
+             (round 11 swapped O3/O4 off inline-SVG components onto matching
+             raster PNGs too, so all four share one sizing rule below). -->
         <div class="card-content">
           <p class="card-body">
             Shared access to world-class R&D labs, testing rigs, fabrication
             workshops and technical facilities across India's energy majors
             and research institutions.
           </p>
-          <img
-            src="/Globe-Gray.png"
-            alt=""
-            class="card-illus card-illus--raster"
-          />
+          <img src="/icon01.png" alt="" class="card-illus" />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -86,11 +77,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
             Structured access to seed funding for early validation and
             scale-up capital for ventures demonstrating commercial traction.
           </p>
-          <img
-            src="/Icons.png"
-            alt=""
-            class="card-illus card-illus--raster"
-          />
+          <img src="/icon02.png" alt="" class="card-illus" />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -106,7 +93,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
             institutions and enterprises, shortening the path from lab to
             deployment.
           </p>
-          <IllusMentorship class="card-illus" aria-hidden="true" />
+          <img src="/icon03.png" alt="" class="card-illus" />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -122,7 +109,7 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
             Structured pathways to field pilots, procurement and first
             reference customers across the energy majors' operating sites.
           </p>
-          <IllusMarket class="card-illus" aria-hidden="true" />
+          <img src="/icon04.png" alt="" class="card-illus" />
         </div>
         <Fragment set:html={NOTCH} />
       </article>
@@ -340,10 +327,26 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      1700→418, 1800→418, 1920→418 (each roughly 26-27px below round 5's numbers,
      confirming the trim landed evenly on every card rather than just O1). Refit
      the same two-segment shape with a ~15px margin at each anchor; outer clamp
-     bounds also lowered (49rem ceiling, 26.5rem floor) to match. */
+     bounds also lowered (49rem ceiling, 26.5rem floor) to match.
+
+     Round 10 (per direct feedback: shorter cards shouldn't be force-stretched
+     to match O1's height — it's not compulsory every card be the same size,
+     each should end right after its own content): dropped the min-height
+     override here entirely. The anti-shake fix never actually depended on
+     every ACTIVE CARD sharing one height — it depended on `.pillars-row`
+     itself never resizing (see its own min-height above, unchanged). A
+     flex row with `align-items: flex-end` doesn't let one item's height
+     affect another's, so once the row's own footprint is already pinned,
+     each active card is free to size to its own content via `.card`'s base
+     `min-height: 6.5663rem` (naturally exceeded once `.card-content` shows).
+     O1 still ends up tallest and still fits inside the row's reserved
+     height (nothing above changed); shorter cards (O2/O4) now end shortly
+     after their own icon instead of stretching to fill O1's height, and
+     simply float lower within the same reserved space — the leftover gap
+     moves from "inside the card, below the icon" to "above the card,"
+     which is the same reserved-space mechanism collapsed cards already use. */
   .card.is-active {
     background: var(--color-orange); /* #F37D2C, Figma 1:1201 */
-    min-height: var(--pillar-active-height);
   }
   /* O1 previously bled off the container's left edge by a Figma-matched constant
      (~33.8px past the viewport edge) — removed per direct user feedback: it read
@@ -436,43 +439,20 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     color: var(--color-ink-alt); /* on-orange body copy is navy, not gray — applies to whichever card is currently active, not just O3 */
   }
 
+  /* Round 11: all four cards' icons are now plain <img> raster PNGs
+     (public/icon01-04.png) sharing the same 2:1 aspect ratio and properly
+     cropped to their own content (unlike the old Globe-Gray.png/Icons.png,
+     which had huge built-in transparent padding and needed per-card size
+     hacks — O2's 9rem override, O4's separate SVG height cap — to
+     compensate). One shared rule now covers every card. Height matches the
+     long-standing convention already used for the SVG-era icons
+     (illus-mentorship's native 178x89, also 2:1). */
   .card-illus {
     display: block;
-    height: auto;
+    height: 5.5625rem; /* 89px */
+    width: auto;
     max-width: 100%;
     margin-left: 2.1rem; /* illustrations sit right of the body-text column (Figma insets vary ~34px beyond the body text's own inset, per card) */
-  }
-  /* Round 4 (per direct feedback on the gap below the active card's icon): traced
-     the real cause — illus-market.svg (O4's icon) is natively 240x133px, nearly
-     2x the height of illus-capital (212x65) or illus-mentorship (178x89), and
-     with no explicit size here every icon rendered at its own raw intrinsic
-     pixels. O4's oversized icon was the single biggest driver of how tall the
-     shared active min-height above had to be — shrinking just this one icon to
-     be roughly proportional to its siblings (rather than inflating the shared
-     budget to fit it) directly reduces the empty space every shorter card shows
-     below its own icon. O2/O3's icons are untouched (still their native size). */
-  .card--o4 .card-illus {
-    height: 5.5625rem; /* 89px, matching O3's illus-mentorship native height */
-    width: auto;
-  }
-  /* O1's icon (round 5, public/Globe-Gray.png) and O2's icon (round 10,
-     public/Icons.png) — raster PNGs, not src/assets SVGs, so they need their
-     own rule rather than the shared `.card-illus` base (height:auto would
-     render them at their native pixel dimensions otherwise). Same height cap
-     as O4's icon above, for visual consistency across all four cards. */
-  .card-illus--raster {
-    height: 5.5625rem; /* 89px, matches .card--o4 .card-illus above */
-    width: auto;
-  }
-  /* O2's icon (public/Icons.png) has a lot of built-in transparent padding
-     around the actual glyph (1080x1080 canvas, glyph occupies only the
-     middle ~11% of it), so the shared raster cap above renders it barely
-     visible. Sized up on top of that base rule, per direct feedback, so the
-     glyph itself reads at roughly the same visual weight as the other three
-     cards' icons. */
-  .card--o2 .card-illus--raster {
-    height: 9rem;
-    width: auto;
   }
 
   /* :global — this SVG is injected via set:html (it's shared, colour-swapped
