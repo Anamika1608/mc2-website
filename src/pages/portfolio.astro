@@ -1,5 +1,12 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/portfolio/Hero.astro";
+import Explorer from "../components/portfolio/Explorer.astro";
+import CtaDuo from "../components/portfolio/CtaDuo.astro";
 ---
 
-<StubPage name="Portfolio" />
+<BaseLayout title="Portfolio · MC²+">
+  <Hero />
+  <Explorer />
+  <CtaDuo />
+</BaseLayout>
