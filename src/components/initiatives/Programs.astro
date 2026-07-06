@@ -752,8 +752,9 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     flex-wrap: wrap;
     gap: 0.8575rem 1.5781rem; /* 13.72px row-gap (O1's own two chip rows), 25.25px column-gap (O1's chip1-to-chip3 gap) */
   }
-  /* Resting/collapsed chip style (#F3F2EB ≈ --color-cream, node 1:15868's own raw fill)
-     is the base now — this used to be an O2/O3/O4-only override; O1 is just the first
+  /* Resting/collapsed chip style: a visible light-tan pill (--color-line #e8e6da,
+     matching Figma's rendered #E7E5D8 for node 1:15905's unhovered chips). This is
+     the base now — the active card overrides it to orange below. O1 is just the first
      card to ever be active, not a permanently special case. */
   .chip {
     display: inline-flex;
@@ -763,7 +764,9 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     font-family: var(--font-sans);
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920, same glyph-cap-height evidence + viewport scale/floor as the header label */
     line-height: 1;
-    background: var(--color-cream);
+    text-transform: uppercase; /* Figma renders all chip labels uppercase (node 1:15905, e.g. "LAB RESIDENCY") */
+    letter-spacing: 0.04em;
+    background: var(--color-line); /* #e8e6da — Figma's visible light-tan fill (sampled #E7E5D8), NOT the page-matching cream that made these pills invisible */
     color: var(--color-ink-alt);
     transition:
       background-color 200ms ease,
@@ -773,12 +776,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     background: var(--color-orange); /* node 1:16724's own raw fill */
     color: var(--color-white);
   }
-  /* #F3F2EB (node 1:15868's own raw fill) is numerically `--color-cream`, i.e. the SAME
-     color as this section's own background (see .programs comment above): a collapsed
-     card's chips are genuinely low-contrast/washed-out by the design's own declared
-     fill, distinguished only by their text, not a visible pill boundary — a deliberate
-     recede-into-the-background treatment for the tucked-behind cards, not a bug. Now
-     driven by `.is-active` above rather than being permanently tied to O2/O3/O4. */
 
   /* New: status pill ("Coming soon" / "Affiliate · Coming soon", see markup comments —
      no Figma node exists for this anywhere, styled from this component's own existing
