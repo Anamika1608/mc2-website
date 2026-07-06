@@ -6,7 +6,7 @@
 // 5 director cards (1:13079 Neeraj, 1:13131 Vikas, 1:13171 Sanjay, 1:13283
 // Akshay, 1:13211 Sandeep). See exact derivations in the style block below.
 import { Image } from "astro:assets";
-import SparkOrange from "../../assets/team/spark-orange.svg";
+import SparkOrange from "../../assets/team/board-spark.svg";
 import neeraj from "../../assets/team/dir-neeraj.png";
 import vikas from "../../assets/team/dir-vikas.png";
 import sanjay from "../../assets/team/dir-sanjay.png";
@@ -188,7 +188,7 @@ const DIRECTORS = [
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(50%, -50%) rotate(45deg); /* upright star (points align with the hairlines) */
+    transform: translate(50%, -50%); /* exact Figma spark (1:13128) — points already vertical/horizontal */
     width: 2.875rem; /* 45.9px, node 1:13128 */
     height: 2.875rem;
     z-index: 2;
