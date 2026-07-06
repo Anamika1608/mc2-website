@@ -276,7 +276,7 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   .row-name {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 3.25rem; /* 52px — reduced from Figma's 65px per user (looked too big on desktop) */
+    font-size: 2.625rem; /* 42px — reduced further from 52px (itself already reduced from Figma's 65px) per user directive 2026-07-06, still read as oversized */
     line-height: 1.1;
     font-weight: 400;
     color: var(--color-ink-alt);
@@ -309,7 +309,7 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     margin: 0;
     max-width: 42rem; /* 671.88px, node 1:24206's own bounding width */
     font-family: var(--font-sans);
-    font-size: 1.25rem; /* the site's established secondary-text size */
+    font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06, matches the body-copy target used on /team and /contact */
     line-height: 1.4;
     color: var(--color-ink-alt);
   }
@@ -344,7 +344,7 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
       flex: 1 1 100%;
     }
     .row-name {
-      font-size: clamp(2.4rem, 6vw, 4.0625rem);
+      font-size: clamp(2.4rem, 6vw, 2.625rem); /* ceiling was still the original 65px, never updated when desktop was first cut to 52px */
     }
     .row-spark {
       display: none;

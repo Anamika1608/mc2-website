@@ -92,7 +92,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 3.25rem; /* 52px — matches Explorer.astro's .row-name (the card title above this section), reduced from Figma's 65px per user request */
+    font-size: 2.625rem; /* 42px — matches Explorer.astro's .row-name, reduced further from 52px per user directive 2026-07-06, still read as oversized */
     line-height: 1.1;
     font-weight: 400;
     color: var(--color-ink-alt);
@@ -102,7 +102,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     margin: 0.75rem 0 2.1rem; /* ~11.7px heading-to-paragraph, ~33.8px paragraph-to-pill, both this section's own measurements */
     max-width: 40rem; /* 638.76px, node 1:25110's own bounding width */
     font-family: var(--font-sans);
-    font-size: 1.25rem; /* the site's established secondary-text size */
+    font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06, matches Explorer.astro's .row-desc */
     line-height: 1.4;
     color: var(--color-ink-alt);
   }
@@ -137,7 +137,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       display: none; /* sanctioned adaptation: a vertical column-divider has no meaning once columns stack */
     }
     h2 {
-      font-size: clamp(2.2rem, 6vw, 3.25rem);
+      font-size: clamp(2.2rem, 6vw, 2.625rem);
     }
   }
 </style>
