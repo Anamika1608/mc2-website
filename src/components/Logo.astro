@@ -27,6 +27,23 @@ const Svg = variant === "footer" ? FooterSvg : HeaderSvg;
 }
 
 <style>
+  /* Real SVG logos (logo.svg/logo-footer.svg) ship with their own hardcoded
+     intrinsic width/height (148x54 and 258x94 respectively) and, unlike the
+     text fallback below, had no governing CSS at all -- rendering at those
+     raw pixel sizes on every viewport. Sized down here (height + width:auto,
+     preserving each file's own ~2.74 aspect ratio) to read as one consistent
+     logo scale between header and footer instead of the previous 54px vs
+     94px mismatch, and to stop being oversized on mobile/tablet where there
+     was previously no responsive scaling whatsoever. */
+  .logo--header {
+    height: 2.375rem;
+    width: auto;
+  }
+  .logo--footer {
+    height: 2.875rem;
+    width: auto;
+  }
+
   .logo--text {
     font-family: var(--font-display);
     color: var(--color-ink);
