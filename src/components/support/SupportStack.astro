@@ -344,7 +344,19 @@ const CARDS = [
   .card-eyebrow {
     margin: 0 0 0.28rem;
     font-family: var(--font-display);
-    font-size: 1.375rem; /* 22px — increased from 18.25px per user directive 2026-07-07, this was actually smaller than the eyebrow scale used everywhere else on the site */
+    /* calc()'d against --support-stage-scale (set by the script below on
+       .stage, inherited here) rather than a plain 1.375rem: .stage-artboard
+       is transform:scale()'d down at any viewport under ~1798px (its own
+       width is capped at the 1757.92px Figma canvas), which was shrinking
+       this text right along with the diagram geometry -- e.g. ~29px
+       instead of the intended 32px h3 at a common 1600px laptop width,
+       confirmed via pixel measurement. Dividing by the same scale factor
+       counteracts it, keeping the text's rendered size constant regardless
+       of viewport, while the lines/sparks/illustrations still scale
+       normally to keep their Figma-derived proportions. The var()'s `, 1`
+       fallback makes this a no-op below 1200px (where the script removes
+       the property entirely) and at >=1798px (where scale is already 1). */
+    font-size: calc(1.375rem / var(--support-stage-scale, 1)); /* 22px, increased from 18.25px per user directive 2026-07-07 */
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #949494;
@@ -353,7 +365,7 @@ const CARDS = [
   h3 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 2rem; /* 32px — reduced from 43.21px per user directive 2026-07-07, was larger than any comparable secondary heading elsewhere on the site */
+    font-size: calc(2rem / var(--support-stage-scale, 1)); /* 32px, reduced from 43.21px per user directive 2026-07-07 -- see .card-eyebrow comment above for the scale counter-compensation */
     font-weight: 400;
     line-height: 1.3;
     color: var(--color-orange);
@@ -362,7 +374,7 @@ const CARDS = [
   .subtitle {
     margin: -0.15rem 0 0;
     font-family: var(--font-display);
-    font-size: 1.375rem; /* 22px — reduced from 27.07px per user directive 2026-07-07, matches the standard label cut used everywhere else */
+    font-size: calc(1.375rem / var(--support-stage-scale, 1)); /* 22px, reduced from 27.07px per user directive 2026-07-07 -- see .card-eyebrow comment above for the scale counter-compensation */
     line-height: 1.3;
     color: var(--color-ink-alt);
   }
@@ -371,7 +383,7 @@ const CARDS = [
     max-width: 35.1rem;
     margin: 4.85rem 0 0;
     font-family: var(--font-sans);
-    font-size: 1.0625rem; /* 17px — reduced from 19.68px per user directive 2026-07-07 */
+    font-size: calc(1.0625rem / var(--support-stage-scale, 1)); /* 17px, reduced from 19.68px per user directive 2026-07-07 -- see .card-eyebrow comment above for the scale counter-compensation */
     line-height: 1.33;
     color: #1e1e3e;
   }
@@ -384,7 +396,7 @@ const CARDS = [
     padding: 0;
     list-style: none;
     font-family: var(--font-sans);
-    font-size: 1.0625rem; /* 17px — reduced from 18.88px per user directive 2026-07-07 */
+    font-size: calc(1.0625rem / var(--support-stage-scale, 1)); /* 17px, reduced from 18.88px per user directive 2026-07-07 -- see .card-eyebrow comment above for the scale counter-compensation */
     line-height: 1.28;
     color: #1e1e3e;
   }
