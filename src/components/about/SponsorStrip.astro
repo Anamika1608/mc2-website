@@ -5,25 +5,25 @@
 // ghost pill "Meet the team" (1:8932) + filled pill "Explore initiatives" (1:8953) —
 // same node IDs PillButton.astro was already derived from in an earlier task, so its
 // pill sizing/colors are reused as-is here. See exact derivations in style block below.
-import { Image } from "astro:assets";
 import PillButton from "../PillButton.astro";
 import SparkOrange from "../../assets/about/spark-orange.svg";
-import hpcl from "../../assets/about/sponsor-hpcl.png";
-import ongc from "../../assets/about/sponsor-ongc.png";
-import indianoil from "../../assets/about/sponsor-indianoil.png";
-import bpcl from "../../assets/about/sponsor-bpcl.png";
-import gail from "../../assets/about/sponsor-gail.png";
-import oilindia from "../../assets/about/sponsor-oilindia.png";
-import petronet from "../../assets/about/sponsor-petronet.png";
 
+// Sources swapped 2026-07-07 (user directive) from the old src/assets/about/
+// sponsor-*.png imports to new logo exports dropped directly in public/ --
+// referenced as plain <img src="/...png"> since public/ files aren't
+// processed by astro:assets. width/height are each logo's Figma design bbox
+// (node 1:354's children, confirmed against Figma metadata node 1:194 to the
+// pixel) -- same values Home's SponsorStrip.astro uses, replacing the old
+// flat height:7.5rem/object-fit:contain approximation that didn't match
+// Figma's actual varying per-logo box sizes.
 const SPONSORS = [
-  { img: hpcl, caption: "Hindustan Petroleum", alt: "Hindustan Petroleum Corporation" },
-  { img: ongc, caption: "Oil & Natural Gas", alt: "Oil and Natural Gas Corporation" },
-  { img: indianoil, caption: "Indian Oil Corp", alt: "Indian Oil Corporation" },
-  { img: bpcl, caption: "Bharat Petroleum", alt: "Bharat Petroleum Corporation" },
-  { img: gail, caption: "Gas Authority", alt: "GAIL (India) Limited" },
-  { img: oilindia, caption: "Oil India Ltd", alt: "Oil India Limited" },
-  { img: petronet, caption: "Petronet LNG", alt: "Petronet LNG Limited" },
+  { img: "/hindustan-petroleum.png", width: 124, height: 161, caption: "Hindustan Petroleum", alt: "Hindustan Petroleum Corporation" },
+  { img: "/oil-naural-gas.png", width: 126, height: 126, caption: "Oil & Natural Gas", alt: "Oil and Natural Gas Corporation" },
+  { img: "/indian-oil.png", width: 140, height: 149, caption: "Indian Oil Corp", alt: "Indian Oil Corporation" },
+  { img: "/bharat-petroleum.png", width: 101, height: 126, caption: "Bharat Petroleum", alt: "Bharat Petroleum Corporation" },
+  { img: "/gas-authority.png", width: 176, height: 132, caption: "Gas Authority", alt: "GAIL (India) Limited" },
+  { img: "/oil-india.png", width: 104, height: 153, caption: "Oil India Ltd", alt: "Oil India Limited" },
+  { img: "/petronet-lng.png", width: 97, height: 129, caption: "Petronet LNG", alt: "Petronet LNG Limited" },
 ];
 ---
 
@@ -35,7 +35,9 @@ const SPONSORS = [
     <ul class="logos">
       {SPONSORS.map((s) => (
         <li>
-          <Image src={s.img} alt={s.alt} widths={[120, 240]} sizes="120px" class="logo" />
+          <span class="logo-frame">
+            <img src={s.img} alt={s.alt} width={s.width} height={s.height} class="logo" />
+          </span>
           <span class="caption">{s.caption}</span>
         </li>
       ))}
@@ -88,40 +90,35 @@ const SPONSORS = [
     margin: 0 0 2.5rem; /* ~40px gap to the logo row, measured from the full-section screenshot */
   }
 
-  /* Logo row (7 icon groups under 1:9102, 7 caption groups under 1:9000). Each
-     icon group was screenshotted individually (isolated, unscaled): heights
-     measured 120, 120, 126, 123, 153, 142, 142px across the 7 logos — the
-     design does NOT use one uniform pixel height per logo (varying aspect,
-     bottom-aligned row). For this build a single shared display height is
-     used (per the starter template's align-items:end + object-fit:contain
-     approach). CRISPNESS CHECK: the 7 exported sponsor PNGs are natively
-     185-336px wide / 240-306px tall (smallest: bpcl 192x241, petronet
-     185x246). Choosing the CONSERVATIVE end of the measured Figma range
-     (120px = 7.5rem, matching the two logos that measured exactly 120px)
-     keeps every logo downscaled at least ~2x from its native height at 1x
-     DPR (240/120 = 2.0 for the smallest), and only a mild ~1.1x upscale at
-     2x DPR for the three shortest-native logos (bpcl/ongc/petronet,
-     240-246px native vs 264px needed) — negligible, imperceptible softening.
-     A taller display height (e.g. the 132px Figma average) would push that
-     2x-DPR upscale further, so 120px was chosen deliberately. */
+  /* Logo row (7 icon groups under 1:9102, 7 caption groups under 1:9000).
+     width/height per logo are Figma-exact (node 1:194/1:354, matching Home's
+     SponsorStrip.astro values) rather than the old flat 120px-height
+     approximation. Was also display:grid + repeat(7,minmax(0,1fr)), which
+     stretched the row across the full container width, inflating gaps well
+     past Figma's own ~103px-average, centered-natural-width layout (confirmed
+     via get_screenshot on node 1:194) -- same fix as Home's SponsorStrip. */
   .logos {
     list-style: none;
     margin: 0 0 3rem; /* gap to the CTAs — approximate, not pixel-derived (see report) */
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 1.5rem;
-    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem 6.44rem; /* row-gap unchanged; column-gap = 103px, the average measured Figma gap -- same documented simplification as Home's SponsorStrip */
   }
   .logos li {
     display: grid;
     gap: 0.75rem;
     justify-items: center;
   }
+  .logo-frame {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 10.0625rem; /* 161px, the tallest logo (Hindustan Petroleum) -- bottom-aligns every logo inside a box this tall so the row reads level, same technique as Home's SponsorStrip.astro */
+  }
   .logo {
-    height: 7.5rem; /* 120px, conservative end of the measured 120-153px Figma range */
-    width: auto;
-    object-fit: contain;
+    display: block;
   }
 
   /* Captions (7 groups under 1:9000) are ALSO vectorized paragraphs, not real
@@ -162,12 +159,14 @@ const SPONSORS = [
       font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .logos {
+      display: grid;
       grid-template-columns: repeat(4, 1fr);
       row-gap: 2rem;
     }
   }
   @media (max-width: 559.98px) {
     .logos {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
     .ctas {
