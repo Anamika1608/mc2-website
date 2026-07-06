@@ -87,11 +87,11 @@ function cornerFlag(stroke: string) {
     <path d="M1 1 L20.07 88.07 H114.62" stroke="${stroke}" stroke-width="2" fill="none" vector-effect="non-scaling-stroke" />
   </svg>`;
 }
-const FLAG_ORANGE = cornerFlag("#F37D2C");
-const FLAG_NAVY = cornerFlag("#1E1E3C");
+const FLAG_ORANGE = cornerFlag("var(--color-orange)");
+const FLAG_NAVY = cornerFlag("var(--color-ink-alt)");
 ---
 
-<section class="programs">
+<section class="programs" aria-label="Programs">
   <div class="container">
     <div class="programs-row">
       <!--
@@ -348,7 +348,7 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
   .card--o1 {
     width: 37.47%; /* 572.54 / 1527.85px row span, see frontmatter */
     z-index: 4;
-    border-color: #f37d2c;
+    border-color: var(--color-orange);
     --cut: 20.02%; /* 114.62 / 572.54 */
     --cut-end: 16.689%; /* 95.55 / 572.54 */
   }
@@ -453,7 +453,7 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
     color: var(--color-ink-alt);
   }
   .card--o1 .card-num {
-    color: #f37d2c;
+    color: var(--color-orange);
   }
   /* O4's numeral is a sequence-completion (see markup comment) — hidden in the desktop
      collage (the composite shows none; the source's own label geometry occupies its
@@ -507,7 +507,7 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
     color: var(--color-ink-alt);
   }
   .card--o1 .card-title {
-    color: #f37d2c; /* node 1:16781's own fill */
+    color: var(--color-orange); /* node 1:16781's own fill */
   }
   .card-title--split {
     line-height: 1.08; /* 54.81px measured gap between O2's two real title-line nodes (1:16444/1:16445) / 50.89px */
@@ -542,7 +542,7 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
     padding: 2.4044rem 2.36rem 2.24rem; /* 38.47px divider-to-chip-row gap; 35.86px chip-row-to-card-bottom gap */
   }
   .card--o1 .card-footer {
-    border-top-color: #f37d2c;
+    border-top-color: var(--color-orange);
   }
 
   .chips {
@@ -558,7 +558,7 @@ const FLAG_NAVY = cornerFlag("#1E1E3C");
     font-family: var(--font-sans);
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920, same glyph-cap-height evidence + viewport scale/floor as the header label */
     line-height: 1;
-    background: #f37d2c; /* node 1:16724's own raw fill */
+    background: var(--color-orange); /* node 1:16724's own raw fill */
     color: var(--color-white);
   }
   .card--o2 .chip,

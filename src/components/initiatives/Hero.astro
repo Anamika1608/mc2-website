@@ -70,44 +70,59 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
     position: relative;
     overflow: hidden;
     background: var(--color-cream);
-    /* padding-top fix (Task 6 whole-page fidelity pass, carried item 5 —
-       cross-section vertical rhythm): the base 6rem was never independently
-       derived from Figma (just a reused default); a whole-page render showed
-       the Hero→HowItWorks gap was 381.8px at 1920 vs the design's measured
-       161.28px (chevron 1:16967 bottom 1044.16 → eyebrow 1:15970 top
-       1205.44), while 1024/1366 already matched the design almost exactly
-       (161.27px, because min-height doesn't bind at those widths — natural
-       content height already exceeds it there). Root cause: at 1920 only,
-       the curves' own min-height (below) exceeds this section's natural
-       content-flow height by 220.55px (886.48px content vs 1107.03px
-       min-height, confirmed by temporarily zeroing min-height and by a raw
-       pixel scan of the reference PNG showing genuine curve ink up to
-       y≈1100, i.e. the curve truly needs its full height, not a case of
-       over-generous padding) — that's pure unfilled dead space between the
-       chevron and the section's own bottom edge, on top of which
-       HowItWorks' own 6.08rem padding-top piles further gap.
-       Fix: grow padding-top by exactly that shortfall, but ONLY once the
-       curve's own vw-driven height (same clamp() as min-height, below)
-       exceeds this section's fixed content-only height (726.48px content +
-       64px padding-bottom = 790.48px = 49.405rem) — below that crossover
-       (~1371px viewport), max() keeps the base 6rem untouched, preserving
-       the already-correct 1024/1366 gap exactly. At 1920 this evaluates to
-       19.784rem (316.55px), which makes the section's natural height equal
-       min-height exactly (zero dead space) and reproduces the design's
-       161.28px gap to <0.01px (verified: 96px‑old + 220.55px = 316.55px). */
-    padding-top: max(6rem, clamp(40rem, 57.66vw, 69.19rem) - 49.405rem);
+    /* padding-top fix (final-review pass, supersedes Task 6's version below):
+       Task 6 grew padding-top to close a real dead-space bug (the
+       Hero→HowItWorks gap was 381.8px at 1920 vs design's 161.28px) but
+       calibrated the growth against the curve's FULL 1107px height — wrong
+       anchor. The design's 1920×1107 curve box (node 1:16398) sits at
+       canvas y0, i.e. BEHIND the shared header (a full-page Figma capture,
+       `figma-initiatives-full-1920.png`, confirms the header's own bottom
+       border at pixel row y≈110 and the eyebrow's ink starting at y≈318 —
+       both measured in that same full-page canvas). Our live header is
+       in-flow (not overlaid), so this section's true content-flow origin
+       already starts right where the header ends; sizing min-height off the
+       curve's full 1107px (instead of the ~1017px actually visible below the
+       header) over-grew padding-top by the header's own height, pushing the
+       whole copy stack (eyebrow/H1/lede/notice/chevron) too far down —
+       verified: old padding-top put the eyebrow at document y≈406.7px vs the
+       live header's own measured height (90.1875px, `getBoundingClientRect`,
+       identical at 768–1920) + design target (318px − 90.1875px ≈ 227.8px)
+       ≈ 316.5–318px, an ~88–90px overshoot matching the live header's own
+       height almost exactly — confirming the double-counted header as the
+       root cause. Fix: rebase the same clamp() (below) on
+       curve-height-minus-header (1107px − 90.1875px = 1016.8125px =
+       63.55rem / 52.96vw) instead of the raw 1107px. The subtracted
+       constant (content 726.48px + 64px padding-bottom = 790.48px =
+       49.405rem) is unchanged — those child elements didn't move — so this
+       remains algebraically the same "grow padding-top only once min-height
+       exceeds natural content height" invariant Task 6 established (zero
+       dead space when the second branch binds, hence the Hero→HowItWorks
+       gap is preserved to <0.01px regardless of which min-height cap is
+       used — the cap cancels out of that specific difference). At 1920 this
+       now evaluates to 14.145rem (226.32px), landing the eyebrow at
+       document y≈316.5px — within 4px of the 318px target — instead of the
+       old 406.7px. Below the new crossover (~1674px viewport) max() keeps
+       the base 6rem untouched, so 1024/1366 are unaffected (min-height
+       still doesn't bind there — verified byte-identical). */
+    padding-top: max(6rem, clamp(40rem, 52.96vw, 63.55rem) - 49.405rem);
     padding-bottom: 4rem;
   }
   @media (min-width: 1024px) {
     .hero {
       /* Design's own curves box (node 1:16398, hero-curves.svg viewBox) is
-         1920x1107 — matching Home's "curves scales its *height* down with
-         viewport width" fluid-min-height technique so the section never falls
-         shorter than the scaled background at any ≥1024px width:
-         1107/1920 = 57.66vw at the 1920px reference, capped at 1107px = 69.19rem;
-         40rem floor is a sanity backstop, not expected to bind at any ≥1024px
-         width (same rationale as Home's Hero.astro). */
-      min-height: clamp(40rem, 57.66vw, 69.19rem);
+         1920x1107, but (see padding-top comment above) that box sits BEHIND
+         the shared header in the design's own canvas — only curveHeight
+         minus the live header's own rendered height (1107px − 90.1875px =
+         1016.8125px) is actually visible below the header in a real page,
+         matching Home's own "min-height derived from the band BELOW the
+         header" convention (its comment cites "page y110.65 header end" for
+         its own header/curve pair; this page's shared header measures
+         90.1875px instead — same component, verified via
+         getBoundingClientRect, constant across 768–1920). Ratio: 1016.8125 /
+         1920 = 52.96vw at the 1920px reference, capped at 1016.8125px =
+         63.55rem; 40rem floor is a sanity backstop, not expected to bind at
+         any ≥1024px width (same rationale as Home's Hero.astro). */
+      min-height: clamp(40rem, 52.96vw, 63.55rem);
     }
   }
 
@@ -115,10 +130,30 @@ import ScrollArrow from "../../assets/home/scroll-arrow.svg";
      separate sibling nodes (1:16403/1:16404, Task 1 export), positioned as
      percentages of the curves SVG's own 1920x1107 box so they stay locked to
      the curve intersections at any viewport width (same technique as Home's
-     Hero.astro and this page's Task 1 report positioning note). */
+     Hero.astro and this page's Task 1 report positioning note).
+     Vertical offset (final-review fix, pairs with the padding-top/min-height
+     fix above): the design's curve box sits at canvas y0, BEHIND the shared
+     header (see padding-top comment above — the header's own bottom border
+     sits at canvas y≈110 in the full-page reference render). Our live header
+     is in normal flow (not overlaid), so `.orbit`'s own top:0 would otherwise
+     render canvas y0 starting right at this section's top — i.e. right after
+     the header — one header-height too low relative to the design's own
+     canvas alignment, and (verified in a real render) it also left the
+     curve's OWN full 1107px height poking ~90px past the section's new
+     (header-adjusted) bottom edge, `overflow: hidden` slicing clean through
+     two live stroke paths rather than cropping only genuine dead space.
+     Shifting `.orbit` up by the header's own rendered height re-anchors
+     canvas y0 to document y0 (matching the design exactly — verified via
+     Figma metadata, node 1:16398's own y≈-7.67, i.e. essentially canvas y0)
+     and, since the section's min-height above was independently sized to
+     curveHeight-minus-header, now lands the curve's own bottom edge almost
+     exactly on the section's bottom edge (zero-crop, no more sliced
+     strokes) — confirmed in a render. Sparks are positioned as percentages
+     of `.orbit`'s own height (unaffected by this offset), so they stay
+     locked to the curve exactly as before. */
   .orbit {
     position: absolute;
-    top: 0;
+    top: -5.6367rem; /* -90.1875px, the shared header's own rendered height (getBoundingClientRect, identical 768–1920) */
     left: 0;
     width: 100%;
     z-index: 0;
