@@ -82,7 +82,9 @@ const DIRECTORS = [
 <style>
   .board {
     background: var(--color-cream);
-    padding-block: 6rem;
+    /* Figma gap: Board-top 1162 − Hero-bottom 984 ≈ 178px. Single-ownership:
+       each section owns only its top gap (bottom 0), mirroring the About page. */
+    padding-block: 11.15rem 0;
   }
 
   /* Eyebrow (node 1:12888): real text, Faculty, 27.07px. Pixel-sampled darkest

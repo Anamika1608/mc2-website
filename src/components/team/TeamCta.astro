@@ -17,6 +17,7 @@ import PillButton from "../PillButton.astro";
 <section class="team-cta">
   <div class="container">
     <h2>Want to build with this team?</h2>
+    {/* "We&rsquo;re": curly apostrophe matches the Figma outlined glyph — intentional, not a spec divergence. */}
     <p class="lede">We&rsquo;re hiring operators and onboarding mentors as Cohort 1 spins up.</p>
 
     <div class="ctas">
@@ -29,7 +30,9 @@ import PillButton from "../PillButton.astro";
 <style>
   .team-cta {
     background: var(--color-cream);
-    padding-block: 6rem;
+    /* Last section before footer, so it owns BOTH gaps. Figma: top = CTA-top 3852 −
+       Operating-bottom 3684 ≈ 167px; bottom = Footer-top 4267 − CTA-bottom 4112 ≈ 155px. */
+    padding-block: 10.46rem 9.71rem;
     text-align: center;
   }
 

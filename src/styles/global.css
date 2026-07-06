@@ -8,7 +8,7 @@
   --color-ink-alt: #1e1e3c;      /* navy variant present in some design fills */
   --color-orange: #f37d2c;       /* vivid orange — highlights, CTAs, footer */
   --color-orange-soft: #e58341;  /* muted orange — decorative curves, illustrations */
-  --color-orange-bright: #ff7400; /* team eyebrows, H1 accents, sparks — Figma 1:12888 */
+  --color-orange-bright: #ff7400; /* team eyebrows (GOVERNANCE/GUIDANCE) + H1 accents — Figma 1:12888. Sparks use --color-orange. */
   --color-cream: #f3f2eb;        /* page background */
   --color-cream-alt: #f4f3ed;    /* alternate surface */
   --color-line: #e8e6da;         /* hairline borders / dividers */
