@@ -87,7 +87,7 @@ const STATS = [
     color: var(--color-gray);
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    font-size: 1.6919rem; /* 27.07px, node 1:9175 */
+    font-size: 1.375rem; /* 22px — reduced from 27.07px per user directive 2026-07-07 (desktop type felt oversized on sub-1920 laptops) */
     margin: 0 0 1.25rem;
   }
 
@@ -96,7 +96,7 @@ const STATS = [
      treatment to Mission.astro's and SponsorStrip.astro's H2s. */
   h2 {
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-07 (desktop type felt oversized on sub-1920 laptops) */
     color: var(--color-ink-alt);
     margin: 0 0 1.75rem;
   }
@@ -116,7 +116,7 @@ const STATS = [
     max-width: 44rem;
     margin: 0 auto 3rem;
     font-family: var(--font-sans);
-    font-size: var(--text-body); /* 26.25px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.26;
     color: var(--color-gray);
   }
@@ -181,7 +181,7 @@ const STATS = [
   }
   .stat-value {
     font-family: var(--font-display);
-    font-size: 2.2rem; /* 35.23px, derived — see comment above */
+    font-size: 1.75rem; /* 28px — reduced from 35.23px per user directive 2026-07-07, matches Audiences' analogous column-title cut on Home */
     color: var(--color-orange);
     margin: 0 0 0.75rem;
     line-height: 1.1;
@@ -199,7 +199,7 @@ const STATS = [
 
   @media (max-width: 1023.98px) {
     h2 {
-      font-size: clamp(2.2rem, 6vw, 4.0625rem);
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
     .stats {
       grid-template-columns: repeat(2, 1fr);

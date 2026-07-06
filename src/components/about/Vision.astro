@@ -65,7 +65,7 @@ import VideoFeature from "./VideoFeature.astro";
   h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 4.0625rem; /* 65px, node 1:8262 */
+    font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-07 (desktop type felt oversized on sub-1920 laptops) */
     color: var(--color-ink-alt);
   }
 
@@ -82,7 +82,7 @@ import VideoFeature from "./VideoFeature.astro";
   .body p {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: var(--text-body-lg); /* 31px, derived — see comment above — normalized to home hero scale per user directive 2026-07-06 */
+    font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-07 (overridden locally, same approach as Mission.astro) */
     line-height: 1.4; /* was 1.31, matched Mission's derived body line-height — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink);
   }
@@ -100,7 +100,7 @@ import VideoFeature from "./VideoFeature.astro";
       gap: 1rem;
     }
     h2 {
-      font-size: clamp(2.4rem, 6vw, 4.0625rem);
+      font-size: clamp(2.4rem, 6vw, 3.25rem);
     }
   }
 
