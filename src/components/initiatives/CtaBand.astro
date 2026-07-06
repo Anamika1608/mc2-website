@@ -1,0 +1,137 @@
+---
+// Figma file u4NLOVKuXUTKULhSn0sAJQ: CTA group 1:16266 (y2978.28-3254.11).
+// H2 1:16268 "Found your entry point?" (real text node, reports
+// Faculty_Glyphic:Regular, 65px, fill #1e1e3c — genuine serifs confirmed on a
+// direct screenshot, so no "wrapping-group misreports Faculty" correction is
+// needed here, unlike the eyebrows elsewhere on this page/Home).
+// Paragraph 1:16269 (outlined, no text node — ~180 glyph-outline vectors,
+// 2 lines). Pill group 1:16367 ("Register your interest": 1:16368 pill body,
+// 1:16370/1:16373 arrow circle + glyph, 1:16374/1:16377 label glyph group
+// 1:16378-1:16397) — screenshot-confirmed as the same navy-pill/orange-circle/
+// navy-arrow "filled" treatment already built into PillButton.astro (no
+// variant fork needed).
+//
+// SectionHeading-vs-own-markup decision (required by this task's brief): NO
+// eyebrow sibling exists anywhere near this heading. Verified exhaustively —
+// get_metadata swept every node with y in [2840, 3400] (the full span from
+// Programs' O-card row bottom to the Footer chrome's own top, 1:17186 at
+// y3394): 128 nodes total, every single one accounted for as either the H2
+// text, one of the paragraph's glyph-outline vectors, or one of the pill's
+// own fill/circle/arrow/label paths. No text node, no vector group, nothing
+// eyebrow-shaped. So this section uses its own markup rather than
+// SectionHeading (whose contract is eyebrow+H2) — the same call Hero.astro
+// made for its H1 (see that file's own frontmatter for the parallel
+// reasoning) and exactly Home's CtaBand precedent (also eyebrow-less).
+//
+// Decoration inventory (house rule: every visible design element is in
+// scope, per the plan's Global Constraints): the SAME exhaustive y[2840,3400]
+// sweep found ZERO sparks/curves/chevrons/decorative vectors in or around
+// this section — confirmed against the screenshot too (flat cream
+// background, no ornament). Unlike its siblings (Hero's orbital curves +
+// sparks, HowItWorks'/Programs' chevrons + flourish), this section is
+// genuinely bare, matching Home's CtaBand (also zero decoration) rather than
+// the plan preamble's "sibling sections here have sparks/curves" caveat —
+// that line describes the page overall, not every section on it.
+//
+// Glyph-verify (brief requirement): a 6x-zoomed render of the paragraph node
+// shows a plain straight apostrophe in "you're" (a simple vertical stroke,
+// not the angled teardrop of a curly '), unlike Hero.astro's "India's" (node
+// 1:16971, curly &rsquo;, verified independently in Task 2) — kept literal
+// here rather than normalized to the house's more common curly form,
+// per the standing verify-per-node-not-per-house-pattern principle already
+// established across this page (see e.g. Hero.astro's .lede fill-color
+// comment). "MC²+" glyph-verified as a true superscript 2 (matches Hero's
+// MC&sup2;+ treatment) via the same zoomed render.
+import PillButton from "../PillButton.astro";
+---
+
+<section class="cta-band">
+  <div class="container heading">
+    <h2>Found your entry point?</h2>
+    <p class="body">
+      The first MC&sup2;+ cohort launches in August 2026. Applications open
+      soon. Tell us what you're building in the meantime.
+    </p>
+    <div class="cta">
+      <!-- No dedicated "apply"/"register" route exists anywhere in the
+           site's nav/route map (see src/data/nav.ts) for this CTA — /contact
+           is the user's standing catch-all destination for CTAs without a
+           home of their own. -->
+      <PillButton label="Register your interest" href="/contact" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    background: var(--color-cream);
+    /* Gap from Programs' own card row bottom (all four O-cards share height
+       606.86px on a shared top y2239.91, per Programs.astro's own comment —
+       bottom 2846.77) to this H2's own top (1:16268, y2978.28) is 131.51px.
+       Programs.astro already contributes 6rem/96px of that via its own
+       padding-bottom (untouched — out of this task's file scope), leaving
+       131.51 - 96 = 35.51px (2.2194rem) as this section's own share — same
+       "subtract the already-built neighbor's contribution" technique as
+       Home's CtaBand top-padding derivation. */
+    padding-top: 2.2194rem;
+    /* Gap from this section's own bottom (the pill, 1:16367, bottom
+       y3254.11) to the Footer chrome's own top (1:17186, y3394 exactly) is
+       139.89px (8.7431rem). Footer is chrome/untouched, so — per Home's
+       CtaBand precedent, which attributed its own equivalent gap entirely to
+       itself rather than splitting it with Footer's internal top padding —
+       this section's padding-bottom carries the full measured gap. */
+    padding-bottom: 8.7431rem;
+  }
+
+  .heading {
+    text-align: center;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:16268 (real text node, direct report) */
+    line-height: 1.07; /* site-wide constant for this exact Faculty-65px H2 role (Pillars/Audiences/Home's CtaBand baseline-derived; this H2 is single-line so can't be independently re-derived, reusing the confirmed constant rather than guessing) */
+    color: var(--color-ink-alt); /* #1e1e3c exact match */
+  }
+
+  .body {
+    /* 9.97px, gap between the H2's own bbox bottom (1:16268, ends y3062.28)
+       and the paragraph group's bbox top (1:16269, starts y3072.25). */
+    margin: 0.6231rem auto 0;
+    /* 749.9999px, node 1:16269's own bbox width — matches its parent group
+       1:16267's width exactly, confirming (like Home's CtaBand paragraph)
+       that this outlined paragraph's own longest wrapped line is the widest
+       element in the group. */
+    max-width: 46.875rem;
+    font-family: var(--font-sans);
+    /* Outlined vectors, no text node (node 1:16269's ~180 child paths) —
+       same situation as Home's CtaBand .body. font-size reused from that
+       exact sibling (1.4375rem/23px, itself empirically verified there as
+       the smallest size reproducing its design's own line-break points) as
+       a starting point, then independently re-verified here in a real
+       browser at THIS paragraph's own text and 46.875rem column: it
+       reproduces this design's own confirmed 2-line break ("...Applications"
+       / "open soon...") exactly, so no further adjustment was needed. */
+    font-size: 1.4375rem;
+    line-height: 1.4; /* reused from Home's CtaBand .body — same outlined-Sora-body-copy role */
+    color: var(--color-gray);
+  }
+
+  .cta {
+    display: flex;
+    justify-content: center;
+    /* 47.41px, gap between the paragraph group's bbox bottom (1:16269, ends
+       y3130.70) and the pill's own top (1:16367, starts y3178.11). */
+    margin-top: 2.9631rem;
+  }
+
+  @media (max-width: 1023.98px) {
+    h2 {
+      font-size: clamp(2.25rem, 6vw, 4.0625rem);
+    }
+    .body {
+      max-width: 90%;
+    }
+  }
+</style>
