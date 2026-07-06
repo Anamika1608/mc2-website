@@ -1,0 +1,271 @@
+---
+// Figma 1:29036 (form card) + 1:29237/1:29318 (enquiry column). H2 "Send us a
+// message" 1:29037 (Faculty 50px). Static form UI (no submission backend wired).
+const ROLES = ["FOUNDER", "RESEARCHER", "INSTITUTION", "CORPORATE / INVESTOR", "PRESS"];
+
+const CONTACTS = [
+  { label: "GENERAL ENQUIRIES", email: "hello@mcplus.in" },
+  { label: "ENERGY MAJOR PARTNERSHIPS", email: "partnerships@mcplus.in" },
+  { label: "INVESTOR / LP ENQUIRIES", email: "invest@mcplus.in" },
+  { label: "PRESS & MEDIA", email: "press@mcplus.in" },
+];
+---
+
+<section class="contact-section">
+  <div class="container grid">
+    <!-- Form card -->
+    <form class="card" action="#" novalidate>
+      <h2>Send us a message</h2>
+
+      <fieldset class="chips">
+        <legend>I AM A</legend>
+        {
+          ROLES.map((role, i) => (
+            <label class="chip">
+              <input type="radio" name="role" value={role} checked={i === 0} />
+              <span>{role}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+
+      <div class="row">
+        <div class="field">
+          <label for="full-name">FULL NAME</label>
+          <input id="full-name" name="full-name" type="text" placeholder="Your name" />
+        </div>
+        <div class="field">
+          <label for="email">EMAIL</label>
+          <input id="email" name="email" type="email" placeholder="you@company.com" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="org">ORGANISATION</label>
+        <input id="org" name="organisation" type="text" placeholder="Company, lab or institution" />
+      </div>
+
+      <div class="field">
+        <label for="help">HOW CAN WE HELP?</label>
+        <textarea id="help" name="message" rows="5" placeholder="Tell us what you&rsquo;re building or exploring…"></textarea>
+      </div>
+
+      <button type="submit" class="submit">
+        <span>Send Message</span>
+        <span class="arrow" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
+            <path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+      </button>
+    </form>
+
+    <!-- Enquiry column -->
+    <div class="info">
+      {
+        CONTACTS.map((c) => (
+          <div class="info-block">
+            <p class="info-label">{c.label}</p>
+            <a class="info-email" href={`mailto:${c.email}`}>{c.email}</a>
+          </div>
+        ))
+      }
+      <div class="info-block">
+        <p class="info-label">REGISTERED OFFICE</p>
+        <p class="info-office">
+          MC²+ Foundation<br />
+          c/o Ministry of Petroleum &amp; Natural Gas<br />
+          Shastri Bhawan, New Delhi, 110001
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-section {
+    background: var(--color-cream);
+    padding-block: 2rem 6rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 57rem) minmax(0, 30rem);
+    gap: 4rem;
+    align-items: start;
+  }
+
+  /* Form card — folded top-right corner (notch) per the design. */
+  .card {
+    background: var(--color-white);
+    border: 1px solid var(--color-line);
+    padding: 2.5rem;
+    clip-path: polygon(0 0, calc(100% - 1.75rem) 0, 100% 1.75rem, 100% 100%, 0 100%);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 3.125rem; /* 50px, node 1:29037 */
+    color: var(--color-ink-alt);
+    margin: 0 0 2rem;
+  }
+
+  .chips {
+    border: 0;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .chips legend {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--color-ink-alt);
+    padding: 0;
+    margin-bottom: 0.9rem;
+    width: 100%;
+  }
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip span {
+    display: inline-block;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    background: var(--color-cream);
+    color: var(--color-ink-alt);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .chip input:checked + span {
+    background: var(--color-orange);
+    color: var(--color-white);
+  }
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .field {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .field label {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--color-ink-alt);
+    margin-bottom: 0.6rem;
+  }
+  .field input,
+  .field textarea {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-ink);
+    background: #e8e4d9; /* warm-gray input fill, sampled from the design form */
+    border: 1px solid var(--color-line);
+    border-radius: 0.6rem;
+    padding: 0.85rem 1rem;
+    width: 100%;
+    resize: vertical;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--color-gray);
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 1px;
+  }
+
+  .submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 1rem auto 0;
+    background: var(--color-ink);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.6rem 0.7rem 0.6rem 1.75rem;
+    cursor: pointer;
+  }
+  .submit .arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    background: var(--color-orange);
+    color: var(--color-white);
+    transition: transform 150ms ease;
+  }
+  .submit:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  /* Enquiry column */
+  .info {
+    display: grid;
+    gap: 1.75rem;
+    padding-top: 1rem;
+  }
+  .info-label {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    color: var(--color-gray);
+    margin: 0 0 0.4rem;
+  }
+  .info-email {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    color: var(--color-orange);
+    text-decoration: none;
+  }
+  .info-email:hover {
+    text-decoration: underline;
+  }
+  .info-office {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--color-ink-alt);
+    margin: 0;
+  }
+
+  @media (max-width: 1023.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+  @media (max-width: 559.98px) {
+    .card {
+      padding: 1.75rem;
+    }
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    h2 {
+      font-size: clamp(2.2rem, 9vw, 3.125rem);
+    }
+  }
+</style>

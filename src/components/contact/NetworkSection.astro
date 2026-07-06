@@ -1,0 +1,156 @@
+---
+// Figma 1:28677 network section: H2 1:28682, hub-and-spoke diagram group
+// 1:28755 (exported to /public/network-map.svg — text baked as vectors for an
+// exact match), expansion banner 1:28683.
+const LOCATIONS = [
+  {
+    kind: "HUB",
+    name: "MC²+ Hub",
+    city: "ONGC · NEW DELHI",
+    address: "Deendayal Urja Bhawan, 5 Nelson Mandela Marg, Vasant Kunj, New Delhi 110070.",
+  },
+  {
+    kind: "SPOKE",
+    name: "HPCL Green R&D Centre",
+    city: "BENGALURU",
+    address: "KIADB Industrial Area, Tarabanahalli, Hosakote, Bengaluru, Karnataka 560067.",
+  },
+  {
+    kind: "SPOKE",
+    name: "IndianOil R&D Centre",
+    city: "FARIDABAD",
+    address: "Sector 13, Faridabad, Haryana 121007.",
+  },
+  {
+    kind: "SPOKE",
+    name: "IIT Guwahati node",
+    city: "GUWAHATI",
+    address: "Technology Incubation Centre, IIT Guwahati, Amingaon, Guwahati, Assam 781039.",
+  },
+];
+---
+
+<section class="network">
+  <div class="container">
+    <h2>The MC²+ network</h2>
+
+    <img
+      class="map"
+      src="/network-map.svg"
+      alt="MC²+ hub-and-spoke network: the ONGC New Delhi hub connects to spokes at HPCL Green R&D Centre (Bengaluru), IndianOil R&D Centre (Faridabad), and the IIT Guwahati node (Guwahati)."
+      width="1284"
+      height="533"
+    />
+
+    <ul class="locations" aria-hidden="false">
+      {
+        LOCATIONS.map((l) => (
+          <li class:list={["loc", l.kind === "HUB" && "hub"]}>
+            <span class="tag">{l.kind}</span>
+            <h3>{l.name}</h3>
+            <p class="city">{l.city}</p>
+            <p class="addr">{l.address}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="banner">
+      Spokes are expanding across GAIL, BPCL, Petronet and Oil India sites
+      nationwide.
+    </p>
+  </div>
+</section>
+
+<style>
+  .network {
+    background: var(--color-cream);
+    padding-block: 6rem;
+    text-align: center;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 4.0625rem; /* 65px, node 1:28682 */
+    color: var(--color-ink-alt);
+    margin: 0 0 3rem;
+  }
+  .map {
+    display: block;
+    width: 100%;
+    max-width: 80.25rem; /* 1284px, the diagram's own width (1:28755) */
+    height: auto;
+    margin-inline: auto;
+  }
+
+  /* Mobile fallback: the diagram's baked text is unreadable when the 1284px
+     SVG shrinks below ~768px, so swap it for a stacked, readable location list. */
+  .locations {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+    text-align: left;
+  }
+  .loc {
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-white);
+  }
+  .tag {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--color-gray);
+  }
+  .loc h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #1e1e3e;
+    margin: 0.35rem 0 0.15rem;
+  }
+  .loc.hub h3 {
+    color: var(--color-orange);
+  }
+  .loc .city {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: var(--color-gray);
+    margin: 0 0 0.5rem;
+  }
+  .loc .addr {
+    font-family: var(--font-sans);
+    color: #1e1e3e;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .banner {
+    margin: 3rem auto 0;
+    max-width: 43.75rem; /* 700px, node 1:28683 */
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    line-height: 1.45;
+    padding: 1.25rem 2.5rem;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 767.98px) {
+    .map {
+      display: none;
+    }
+    .locations {
+      display: grid;
+    }
+    h2 {
+      font-size: clamp(2.2rem, 8vw, 4.0625rem);
+    }
+    .banner {
+      border-radius: 1.25rem;
+    }
+  }
+</style>

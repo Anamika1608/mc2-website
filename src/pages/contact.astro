@@ -1,5 +1,12 @@
 ---
-import StubPage from "../components/StubPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactHero from "../components/contact/ContactHero.astro";
+import NetworkSection from "../components/contact/NetworkSection.astro";
+import ContactForm from "../components/contact/ContactForm.astro";
 ---
 
-<StubPage name="Contact" />
+<BaseLayout title="Contact · MC²+">
+  <ContactHero />
+  <NetworkSection />
+  <ContactForm />
+</BaseLayout>
