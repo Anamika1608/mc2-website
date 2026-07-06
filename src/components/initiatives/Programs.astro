@@ -851,18 +851,56 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     .card-footer {
       margin-top: 2.4044rem; /* no longer flex-pinned to the bottom once height is auto; same gap value as the divider-to-content spacing above */
     }
-    /* Full-width cards: restore the fixed design type sizes (the desktop vw clamps
-       exist only because the collage's cards compress with the viewport — these don't). */
+    /* Per direct feedback: O2/O3/O4's titles and chip rows were shifted way off to
+       the right below 1024px, out of line with the numeral/label/body above them,
+       and the chips — squeezed into the sliver of width left over — wrapped to one
+       per row and read as vertically stacked/centered instead of flowing from the
+       left. Root cause: `.card:not(.is-active) .card-title`'s `margin-left:
+       var(--cut)` and `.card:not(.is-active) .card-footer`'s `padding-left:
+       var(--cut)` (both defined above, desktop-only in intent) exist to shift a
+       collapsed desktop card's content clear of the fan-overlap notch — but
+       neither rule was ever scoped to desktop, so it kept applying here too, at
+       whatever fixed `--cut` this breakpoint sets (114.62px — a lot of a
+       ~375-430px phone screen). There's no overlap in this stacked full-width
+       layout to compensate for, so both are reset back to the same inset every
+       other element in the card already uses. */
+    .card:not(.is-active) .card-title {
+      margin-left: 2.36rem;
+    }
+    .card:not(.is-active) .card-footer {
+      padding-left: 2.36rem;
+    }
+    /* Per direct feedback: these used to be flat fixed sizes (the exact desktop-1920
+       design px) applied across the ENTIRE <1024px range — fine at tablet widths close
+       to 1024, but way oversized on phones (chips especially, at a flat 20px/1.25rem
+       plus their own pill padding, read as "too too large" on a ~375-430px screen), and
+       inconsistent since only .card-num/.card-title got a further step-down at <640px
+       while chips/labels/body never did. Replaced with one continuous `clamp()` per
+       role spanning the whole <1024px range instead of a flat value: each ceiling
+       matches the exact value that used to apply right at the 1024px boundary (so
+       nothing changes at 1024 itself, and desktop — governed by its own separate ≥1024
+       rules above, untouched — never sees any of this), scaling down smoothly via vw
+       as the viewport narrows, down to a floor chosen for legibility at small phone
+       widths (~375px and below, where every one of these floors is what actually
+       renders, same "phones get one consistent size, tablets scale" shape as the
+       desktop clamps elsewhere in this file). Removed the old separate <640px
+       overrides for `.card-num`/`.card-title` entirely — they'd fight this new
+       continuous scaling if they stuck around (a fixed value later in the cascade
+       would just override the floor these clamps already provide, undoing the fix
+       specifically in the phone range this was meant to fix). */
     .card-num {
-      font-size: 3.5988rem;
+      font-size: clamp(1.9rem, 5.622vw, 3.5988rem);
     }
     .card-label,
     .card-subtitle,
     .chip {
-      font-size: 1.25rem;
+      font-size: clamp(0.85rem, 1.953vw, 1.25rem);
     }
     .card-title {
-      font-size: 3.1806rem;
+      font-size: clamp(1.7rem, 4.97vw, 3.1806rem);
+    }
+    .card-body {
+      font-size: clamp(0.95rem, 1.953vw, 1.25rem);
     }
   }
 
@@ -876,9 +914,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
       gap: 0.9rem;
       padding-inline: 1.5rem;
     }
-    .card-num {
-      font-size: 2.8rem;
-    }
     .card-title,
     .card-subtitle,
     .card-body {
@@ -888,8 +923,15 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     .card-footer {
       padding-inline: 1.5rem;
     }
-    .card-title {
-      font-size: 2.5rem;
+    /* Re-tightened versions of the >=1024px overrides just above (2.36rem there,
+       1.5rem here) — same `:not(.is-active)` targeting so collapsed cards' title/
+       footer insets keep matching the active card's, now at this narrower width's
+       own tighter spacing instead of drifting back apart. */
+    .card:not(.is-active) .card-title {
+      margin-left: 1.5rem;
+    }
+    .card:not(.is-active) .card-footer {
+      padding-left: 1.5rem;
     }
   }
 </style>
