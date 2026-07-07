@@ -85,7 +85,7 @@ const CARDS = [
       <div class="line line-h line-four" aria-hidden="true"></div>
 
       {
-        ["a", "b", "c", "d", "e", "f", "g"].map((id) => (
+        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"].map((id) => (
           <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
         ))
       }
@@ -211,9 +211,12 @@ const CARDS = [
   }
 
   .line-mid {
+    /* Was 152rem — didn't reach .line-three (161.14rem, the last/piloting
+       closing line), so that crossing didn't exist at all. Extended so it
+       does, per user request. */
     left: 50%;
     top: 0;
-    height: 152rem;
+    height: 161.14rem;
   }
 
   .line-right {
@@ -269,8 +272,13 @@ const CARDS = [
   .line-three {
     /* Piloting-closing (this is the line the user originally flagged).
        Was 144.2rem, then 153.7rem after this session's first attempt —
-       still short of the Figma-derived offset by ~7.4rem. */
-    left: 37rem;
+       still short of the Figma-derived offset by ~7.4rem.
+       left was 37rem, extending too far left per user report — the actual
+       Figma-derived value for this specific closing hairline (found earlier
+       this session: HLINE 20690, local x 46.0rem to 109.86rem) is 46rem, a
+       9rem reduction. Still comfortably left of .line-mid's own x (54.94rem)
+       so that crossing is unaffected. */
+    left: 46rem;
     right: 2rem;
     top: 161.14rem;
   }
@@ -322,6 +330,44 @@ const CARDS = [
     /* Paired with .line-three (piloting-closing). Was 142.6rem, then
        152.1rem after this session's first attempt. */
     right: 0.44rem;
+    top: 159.58rem;
+  }
+
+  /* The 5 sparks below fill in true line×line crossings that existed
+     geometrically but had no spark (user-reported), plus the new
+     .line-mid x .line-three crossing created by extending .line-mid above.
+     Each is centered on its crossing using the same convention as the
+     existing sparks (left:8.39rem for .line-left crossings,
+     calc(50% - 1.5625rem) for .line-mid, right:0.44rem for .line-right —
+     all three already used by spark-a/-d and spark-b/-e and spark-c/-g/-f
+     respectively). */
+  .spark-h {
+    /* .line-one x .line-left. */
+    left: 8.39rem;
+    top: 51.73rem;
+  }
+
+  .spark-i {
+    /* .line-one x .line-mid. */
+    left: calc(50% - 1.5625rem);
+    top: 51.73rem;
+  }
+
+  .spark-j {
+    /* .line-two x .line-right. */
+    right: 0.44rem;
+    top: 87.68rem;
+  }
+
+  .spark-k {
+    /* .line-four x .line-mid. */
+    left: calc(50% - 1.5625rem);
+    top: 123.62rem;
+  }
+
+  .spark-l {
+    /* .line-mid x .line-three — the newly-created crossing. */
+    left: calc(50% - 1.5625rem);
     top: 159.58rem;
   }
 
