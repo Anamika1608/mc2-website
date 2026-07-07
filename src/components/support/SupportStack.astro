@@ -78,14 +78,13 @@ const CARDS = [
       <div class="line line-v line-left" aria-hidden="true"></div>
       <div class="line line-v line-mid" aria-hidden="true"></div>
       <div class="line line-v line-right" aria-hidden="true"></div>
-      <div class="line line-h line-top" aria-hidden="true"></div>
       <div class="line line-h line-one" aria-hidden="true"></div>
       <div class="line line-h line-two" aria-hidden="true"></div>
       <div class="line line-h line-three" aria-hidden="true"></div>
       <div class="line line-h line-four" aria-hidden="true"></div>
 
       {
-        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"].map((id) => (
+        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"].map((id) => (
           <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
         ))
       }
@@ -205,9 +204,13 @@ const CARDS = [
   }
 
   .line-left {
+    /* Was 99rem (ending at 109.1rem) — didn't reach .line-four (125.18rem,
+       the infrastructure-closing line), so that crossing didn't exist.
+       Extended so it does, per user request — same fix as .line-mid/
+       .line-right above. */
     left: 9.95rem;
     top: 10.1rem;
-    height: 99rem;
+    height: 115.08rem;
   }
 
   .line-mid {
@@ -220,15 +223,12 @@ const CARDS = [
   }
 
   .line-right {
+    /* Was 90rem (spanning 43-133rem) — didn't reach .line-three (161.14rem),
+       so the pre-existing spark-f sat without a true crossing beneath it
+       (user-reported). Extended to reach it, same fix as .line-mid above. */
     right: 2rem;
     top: 43rem;
-    height: 90rem;
-  }
-
-  .line-top {
-    left: 15rem;
-    top: 0;
-    width: 23.75rem;
+    height: 118.14rem;
   }
 
   /* All 4 closing-line positions below (.line-one/-two/-four/-three, one per
@@ -263,8 +263,13 @@ const CARDS = [
   .line-four {
     /* Infrastructure-closing — newly added, this card had no closing line
        before. Reuses .line-one's full-width style since Infrastructure
-       shares Capital's card-left/art-right layout. */
-    left: 0;
+       shares Capital's card-left/art-right layout.
+       left was 0, then 9.95rem (trimmed to align with .line-left's
+       crossing) — now matched exactly to .line-two's own left (3.5rem) per
+       user request, so the two closing lines above/below this card share
+       the same left edge. Still comfortably left of .line-left's x
+       (9.95rem) so that crossing/spark-m is unaffected. */
+    left: 3.5rem;
     right: 0;
     top: 125.18rem;
   }
@@ -273,12 +278,13 @@ const CARDS = [
     /* Piloting-closing (this is the line the user originally flagged).
        Was 144.2rem, then 153.7rem after this session's first attempt —
        still short of the Figma-derived offset by ~7.4rem.
-       left was 37rem, extending too far left per user report — the actual
-       Figma-derived value for this specific closing hairline (found earlier
-       this session: HLINE 20690, local x 46.0rem to 109.86rem) is 46rem, a
-       9rem reduction. Still comfortably left of .line-mid's own x (54.94rem)
-       so that crossing is unaffected. */
-    left: 46rem;
+       left was 37rem, then 46rem (the Figma-derived offset for this hairline,
+       HLINE 20690) — but 46rem still sat under .art-piloting's own x-range
+       (20.07-47.59rem), reading as an "extra portion" hanging below the
+       globe illustration per user report. Halved the leg before the
+       .line-mid crossing (46 to 54.94rem) so it starts at 50.47rem instead
+       — clears the image's footprint while keeping that crossing intact. */
+    left: 50.47rem;
     right: 2rem;
     top: 161.14rem;
   }
@@ -369,6 +375,13 @@ const CARDS = [
     /* .line-mid x .line-three — the newly-created crossing. */
     left: calc(50% - 1.5625rem);
     top: 159.58rem;
+  }
+
+  .spark-m {
+    /* .line-left x .line-four — the newly-created crossing (Infrastructure
+       section). */
+    left: 8.39rem;
+    top: 123.62rem;
   }
 
   .art {
