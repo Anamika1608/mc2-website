@@ -10,6 +10,30 @@ import ExpertiseArt from "../../assets/support/expertise-art.png";
 import InfrastructureArt from "../../assets/support/infrastructure-art.png";
 import PilotingArt from "../../assets/support/piloting-art.png";
 
+// Each card's own decorative group (2 vertical lines, 3 horizontal lines, 4
+// sparks) re-derived directly from Figma's actual node tree (fileKey
+// u4NLOVKuXUTKULhSn0sAJQ, node 1:19224) via get_metadata, walked as real
+// parent/child XML (not bbox-matched -- the 4 card containers overlap in
+// absolute space, which gives false matches). Each card is an INDEPENDENT
+// decorative group built from the same reusable template, not a shared
+// page-spanning line system -- they only look continuous because the
+// template's relative offsets happen to align between adjacent cards.
+// `deco.x/y` = this card's own container origin (matches its
+// `.support-card-*` position exactly). `deco.h` = container height (63.281rem
+// for all except Piloting's 60.156rem, since it's the last card). `deco.vbTop`
+// / `deco.vbH` = the shorter, left-hand vertical line's own top/height (a
+// per-card exception besides h-b/container-height/small-c-x below).
+// `deco.hbX` / `deco.hbW` = the short line above the eyebrow, whose x/width
+// vary by card. `deco.smallCX` = the small spark paired with that short line
+// -- for 3 of the 4 cards it sits on the RIGHT (at the tall vertical), but
+// Infrastructure's actual Figma data has it on the LEFT (at the short
+// vertical, matching its own h-b, which is also mirrored to the left) --
+// confirmed by re-checking each card's own Figma screenshot individually
+// after an initial pass wrongly assumed this position was uniform. All other
+// template values (the tall vertical, the closing line, the
+// subtitle-underline line, the other 3 spark sizes/positions) are identical
+// across all 4 cards and live directly in the shared CSS below, not
+// duplicated here.
 const CARDS = [
   {
     key: "capital",
@@ -24,6 +48,7 @@ const CARDS = [
       "Warm introductions to co-investors and strategic partners",
       "Non-dilutive grants for specific technology challenges",
     ],
+    deco: { x: 0, y: 0, h: 63.281, vbTop: 9.583, vbH: 48.584, hbX: 29.83, hbW: 30.616, smallCX: 55.257 },
   },
   {
     key: "expertise",
@@ -38,6 +63,7 @@ const CARDS = [
       "Access to global energy-transition research networks",
       "Regulatory guidance and policy navigation support",
     ],
+    deco: { x: 46.006, y: 35.951, h: 63.281, vbTop: 9.583, vbH: 48.584, hbX: 26.08, hbW: 34.366, smallCX: 55.257 },
   },
   {
     key: "infrastructure",
@@ -52,6 +78,7 @@ const CARDS = [
       "Technical equipment and safety-certified environments",
       "Storage, fabrication and prototyping infrastructure",
     ],
+    deco: { x: 0, y: 71.894, h: 63.281, vbTop: 0.324, vbH: 57.842, hbX: 4.065, hbW: 30.616, smallCX: 9.261 },
   },
   {
     key: "piloting",
@@ -66,6 +93,7 @@ const CARDS = [
       "Fast-tracked procurement pathways for successful pilots",
       "Access to operating assets across multiple geographies",
     ],
+    deco: { x: 46.006, y: 107.845, h: 60.156, vbTop: 9.583, vbH: 49.834, hbX: 26.08, hbW: 34.366, smallCX: 55.257 },
   },
 ];
 ---
@@ -75,19 +103,23 @@ const CARDS = [
 
   <div class="stage" data-support-stage>
     <div class="stage-artboard" data-support-artboard>
-      <div class="line line-v line-left" aria-hidden="true"></div>
-      <div class="line line-v line-mid" aria-hidden="true"></div>
-      <div class="line line-v line-right" aria-hidden="true"></div>
-      <div class="line line-h line-one" aria-hidden="true"></div>
-      <div class="line line-h line-two" aria-hidden="true"></div>
-      <div class="line line-h line-three" aria-hidden="true"></div>
-      <div class="line line-h line-four" aria-hidden="true"></div>
-
-      {
-        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"].map((id) => (
-          <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
-        ))
-      }
+      {CARDS.map((card) => (
+        <div
+          class="card-deco"
+          style={`--deco-x:${card.deco.x}rem;--deco-y:${card.deco.y}rem;--deco-h:${card.deco.h}rem;--vb-top:${card.deco.vbTop}rem;--vb-h:${card.deco.vbH}rem;--hb-x:${card.deco.hbX}rem;--hb-w:${card.deco.hbW}rem;--small-c-x:${card.deco.smallCX}rem;`}
+          aria-hidden="true"
+        >
+          <div class="deco-line deco-v-a"></div>
+          <div class="deco-line deco-v-b"></div>
+          <div class="deco-line deco-h-a"></div>
+          <div class="deco-line deco-h-b"></div>
+          <div class="deco-line deco-h-c"></div>
+          <SparkOrange class="deco-spark deco-spark-big-a" />
+          <SparkOrange class="deco-spark deco-spark-big-b" />
+          <SparkOrange class="deco-spark deco-spark-small-c" />
+          <SparkOrange class="deco-spark deco-spark-tiny-d" />
+        </div>
+      ))}
 
       <Image
         src={CapitalArt}
@@ -187,201 +219,127 @@ const CARDS = [
     transform-origin: top center;
   }
 
-  .line {
+  /* Each card's decorative group is independent (see the CARDS array comment
+     for the full derivation). .card-deco is positioned at the card's own
+     container origin (--deco-x/-y, from CARDS[].deco) and sized to its own
+     container (63.864rem wide x --deco-h tall, 63.281rem for 3 cards,
+     60.156rem for Piloting since it's the last card). Every child below is
+     positioned relative to THIS wrapper, not the shared artboard. */
+  .card-deco {
+    position: absolute;
+    left: var(--deco-x);
+    top: var(--deco-y);
+    width: 63.864rem;
+    height: var(--deco-h);
+    pointer-events: none;
+  }
+
+  .deco-line {
     position: absolute;
     z-index: 0;
     background: var(--color-orange);
     opacity: 0.7;
-    pointer-events: none;
   }
 
-  .line-v {
+  .deco-v-a,
+  .deco-v-b {
     width: 1px;
   }
 
-  .line-h {
+  .deco-h-a,
+  .deco-h-b,
+  .deco-h-c {
     height: 1px;
   }
 
-  .line-left {
-    /* Was 99rem (ending at 109.1rem) — didn't reach .line-four (125.18rem,
-       the infrastructure-closing line), so that crossing didn't exist.
-       Extended so it does, per user request — same fix as .line-mid/
-       .line-right above. */
-    left: 9.95rem;
-    top: 10.1rem;
-    height: 115.08rem;
-  }
-
-  .line-mid {
-    /* Was 152rem — didn't reach .line-three (161.14rem, the last/piloting
-       closing line), so that crossing didn't exist at all. Extended so it
-       does, per user request. */
-    left: 50%;
+  /* Tall vertical, right side — identical across all 4 cards, always spans
+     the wrapper's full height (100%, so it still works for Piloting's
+     shorter 60.156rem container without a separate variable). */
+  .deco-v-a {
+    left: 56.21rem;
     top: 0;
-    height: 161.14rem;
+    height: 100%;
   }
 
-  .line-right {
-    /* Was 90rem (spanning 43-133rem) — didn't reach .line-three (161.14rem),
-       so the pre-existing spark-f sat without a true crossing beneath it
-       (user-reported). Extended to reach it, same fix as .line-mid above. */
-    right: 2rem;
-    top: 43rem;
-    height: 118.14rem;
+  /* Shorter vertical, left side — top/height are the one real per-card
+     exception (--vb-top/--vb-h, from CARDS[].deco): Infrastructure's starts
+     near the very top (0.324rem) and runs longer (57.842rem) than the other
+     3 cards (9.583rem / 48.584rem). */
+  .deco-v-b {
+    left: 10.212rem;
+    top: var(--vb-top);
+    height: var(--vb-h);
   }
 
-  /* All 4 closing-line positions below (.line-one/-two/-four/-three, one per
-     card) were re-derived from Figma directly (fileKey u4NLOVKuXUTKULhSn0sAJQ,
-     node 1:19224): found each card's own eyebrow text node to establish the
-     conversion between Figma's absolute canvas y and this artboard's local
-     y (figma_y − 1067.23 = local_y, confirmed against all 4 cards' own
-     `top` values), then found each card's actual "closing" hairline (the
-     widest h-line in its own decorative group) and converted its y the same
-     way. Previously only 3 lines existed for 4 cards, and none were at the
-     Figma-derived offset — line-one/-two were each too early (crossing the
-     end of their own card's content) and line-three, despite this session's
-     earlier attempt to fix it, was still short of piloting's true offset
-     (161.14rem, not the ~153.7rem estimated last time from live content
-     bounds alone). Infrastructure (point 3) had no closing line at all.
-     Left/right (width) values are intentionally untouched — this is a
-     y-position-only fix. */
-  .line-one {
-    /* Capital-closing. Was 41.8rem. */
+  /* The "closing" line — full container width, identical across all 4
+     cards. This is the line each card's own big corner sparks sit on. */
+  .deco-h-a {
     left: 0;
-    right: 0;
-    top: 53.29rem;
+    top: 53.289rem;
+    width: 63.864rem;
   }
 
-  .line-two {
-    /* Expertise-closing. Was 87.9rem. */
-    left: 3.5rem;
-    right: 1.5rem;
-    top: 89.24rem;
+  /* Short line above the eyebrow — x/width are the other real per-card
+     exception (--hb-x/--hb-w, from CARDS[].deco), since each card's own
+     content width differs slightly. */
+  .deco-h-b {
+    left: var(--hb-x);
+    top: 4.65rem;
+    width: var(--hb-w);
   }
 
-  .line-four {
-    /* Infrastructure-closing — newly added, this card had no closing line
-       before. Reuses .line-one's full-width style since Infrastructure
-       shares Capital's card-left/art-right layout.
-       left was 0, then 9.95rem (trimmed to align with .line-left's
-       crossing) — now matched exactly to .line-two's own left (3.5rem) per
-       user request, so the two closing lines above/below this card share
-       the same left edge. Still comfortably left of .line-left's x
-       (9.95rem) so that crossing/spark-m is unaffected. */
-    left: 3.5rem;
-    right: 0;
-    top: 125.18rem;
+  /* Line just below the subtitle — identical across all 4 cards. */
+  .deco-h-c {
+    left: 3.896rem;
+    top: 17.345rem;
+    width: 56.549rem;
   }
 
-  .line-three {
-    /* Piloting-closing (this is the line the user originally flagged).
-       Was 144.2rem, then 153.7rem after this session's first attempt —
-       still short of the Figma-derived offset by ~7.4rem.
-       left was 37rem, then 46rem (the Figma-derived offset for this hairline,
-       HLINE 20690) — but 46rem still sat under .art-piloting's own x-range
-       (20.07-47.59rem), reading as an "extra portion" hanging below the
-       globe illustration per user report. Halved the leg before the
-       .line-mid crossing (46 to 54.94rem) so it starts at 50.47rem instead
-       — clears the image's footprint while keeping that crossing intact. */
-    left: 50.47rem;
-    right: 2rem;
-    top: 161.14rem;
-  }
-
-  .spark {
+  .deco-spark {
     position: absolute;
     z-index: 1;
-    width: 3.125rem;
-    height: 3.125rem;
     pointer-events: none;
   }
 
-  .spark-a {
-    left: 8.39rem;
-    top: 10.1rem;
+  /* Large spark at deco-v-a x deco-h-a (right corner of the closing line).
+     Center (56.237, 53.316), 3.799rem square — identical across all 4 cards. */
+  .deco-spark-big-a {
+    left: 54.3375rem;
+    top: 51.4165rem;
+    width: 3.799rem;
+    height: 3.799rem;
   }
 
-  .spark-b {
-    left: calc(50% - 1.5625rem);
-    top: -1.5625rem;
+  /* Large spark at deco-v-b x deco-h-a (left corner of the closing line).
+     Center (10.242, 53.316), 3.799rem square — identical across all 4 cards. */
+  .deco-spark-big-b {
+    left: 8.3425rem;
+    top: 51.4165rem;
+    width: 3.799rem;
+    height: 3.799rem;
   }
 
-  .spark-c {
-    /* Paired with .line-one. Was 40.2rem — moved with it, keeping the same
-       1.6rem spark-to-line gap used throughout this diagram. */
-    right: 0.44rem;
-    top: 51.73rem;
+  /* Small spark paired with deco-h-b (the short top line), at whichever end
+     meets a vertical -- --small-c-x (from CARDS[].deco.smallCX): right side
+     (55.257rem, center 56.237) at deco-v-a for 3 of 4 cards, but LEFT side
+     (9.261rem, center 10.241) at deco-v-b for Infrastructure specifically,
+     since its own h-b is mirrored to the left too. Confirmed per-card via
+     Figma screenshot -- this was wrongly assumed uniform on the first pass. */
+  .deco-spark-small-c {
+    left: var(--small-c-x);
+    top: 3.699rem;
+    width: 1.96rem;
+    height: 1.96rem;
   }
 
-  .spark-d {
-    /* Paired with .line-two. Was 86.34rem. */
-    left: 8.39rem;
-    top: 87.68rem;
-  }
-
-  .spark-e {
-    /* Paired with .line-two. Was 86.34rem. */
-    left: calc(50% - 1.5625rem);
-    top: 87.68rem;
-  }
-
-  .spark-g {
-    /* Paired with the new .line-four (infrastructure-closing). */
-    right: 0.44rem;
-    top: 123.62rem;
-  }
-
-  .spark-f {
-    /* Paired with .line-three (piloting-closing). Was 142.6rem, then
-       152.1rem after this session's first attempt. */
-    right: 0.44rem;
-    top: 159.58rem;
-  }
-
-  /* The 5 sparks below fill in true line×line crossings that existed
-     geometrically but had no spark (user-reported), plus the new
-     .line-mid x .line-three crossing created by extending .line-mid above.
-     Each is centered on its crossing using the same convention as the
-     existing sparks (left:8.39rem for .line-left crossings,
-     calc(50% - 1.5625rem) for .line-mid, right:0.44rem for .line-right —
-     all three already used by spark-a/-d and spark-b/-e and spark-c/-g/-f
-     respectively). */
-  .spark-h {
-    /* .line-one x .line-left. */
-    left: 8.39rem;
-    top: 51.73rem;
-  }
-
-  .spark-i {
-    /* .line-one x .line-mid. */
-    left: calc(50% - 1.5625rem);
-    top: 51.73rem;
-  }
-
-  .spark-j {
-    /* .line-two x .line-right. */
-    right: 0.44rem;
-    top: 87.68rem;
-  }
-
-  .spark-k {
-    /* .line-four x .line-mid. */
-    left: calc(50% - 1.5625rem);
-    top: 123.62rem;
-  }
-
-  .spark-l {
-    /* .line-mid x .line-three — the newly-created crossing. */
-    left: calc(50% - 1.5625rem);
-    top: 159.58rem;
-  }
-
-  .spark-m {
-    /* .line-left x .line-four — the newly-created crossing (Infrastructure
-       section). */
-    left: 8.39rem;
-    top: 123.62rem;
+  /* Tiny, non-square spark at deco-v-b x deco-h-c (left end of the
+     subtitle-underline line). Center (10.732, 17.375), 0.98 x 1.96rem —
+     identical across all 4 cards. */
+  .deco-spark-tiny-d {
+    left: 10.242rem;
+    top: 16.395rem;
+    width: 0.98rem;
+    height: 1.96rem;
   }
 
   .art {
@@ -535,8 +493,7 @@ const CARDS = [
       transform: none;
     }
 
-    .line,
-    .spark {
+    .card-deco {
       display: none;
     }
 
