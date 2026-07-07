@@ -2,14 +2,22 @@
 // Figma file u4NLOVKuXUTKULhSn0sAJQ: eyebrow 1:13353, underline 1:13352,
 // H1 lines 1:13357/1:13358/1:13359, lede group 1:13360, curves+spark group
 // 1:13475, scroll chevron 1:13354. See exact derivations in style block below.
+// Right-side spark: node 1:13480 (fileKey u4NLOVKuXUTKULhSn0sAJQ) -- verified
+// via get_metadata to be a SEPARATE sibling of the curves+spark group
+// (1:13475), not baked into hero-curves.svg. Confirmed shape matches
+// spark-orange.svg (viewBox 78x85 vs node's own 77.34x84.57) -- that asset
+// was already sitting in this folder unused (a prior comment here wrongly
+// assumed it wasn't needed).
 import HeroCurves from "../../assets/team/hero-curves.svg";
 import ScrollArrow from "../../assets/team/scroll-arrow.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
+import SparkOrange from "../../assets/team/spark-orange.svg";
 ---
 
 <section class="hero">
   <div class="orbit" aria-hidden="true">
     <HeroCurves class="curves" />
+    <SparkOrange class="right-spark" />
   </div>
 
   <div class="hero-inner reveal">
@@ -68,8 +76,14 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          (crosses cleanly just before its own intersection point rather than
          mid-stroke). Cuts the dead space to ~61px, matching the same
          fit-to-content pass Initiatives/Portfolio/Home's Heroes already
-         went through (per user request 2026-07-06). */
-      min-height: 42rem;
+         went through (per user request 2026-07-06).
+         Bumped 42rem -> 46.87rem: adding .right-spark (node 1:13480, see
+         above) revealed its bottom edge sits ~78px past .hero's old bottom,
+         so overflow:hidden was silently clipping almost the entire spark.
+         46.87rem is the exact floor for .right-spark's own bottom edge at
+         1920px width (74.19rem hero-top + spark-bottom 749.92px), not an
+         arbitrary bump. */
+      min-height: 46.87rem;
     }
   }
 
@@ -80,10 +94,11 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
      (Vector/Vector_2/Vector_3, matching nodes 1:13476/1:13477/1:13478) — the
      exported file has exactly 4 <path> elements, verified by inspecting the
      SVG source. Screenshot of 1:13475 shows only the one spark visible.
-     Like AboutHero (and unlike the home hero), no <SparkOrange> overlay is
-     needed: dropping the asset in reproduces the design with no manual
-     positioning. spark-orange.svg exists in src/assets/team/ but is
-     intentionally unused here for that reason. */
+     CORRECTION: a prior comment here claimed no <SparkOrange> overlay was
+     needed at all -- wrong. get_metadata on the hero's full node tree shows
+     a SECOND, separate spark (node 1:13480, x=1647.1 y=665.66 w=77.34
+     h=84.57 against the 1920x1012 canvas) as a sibling of 1:13475, not part
+     of the curves SVG. That's what .right-spark below renders. */
   .orbit {
     position: absolute;
     top: 0;
@@ -95,6 +110,21 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   .curves {
     display: block;
     width: 100%;
+    height: auto;
+  }
+
+  /* Node 1:13480 -- percentages (not fixed rem) since .orbit/.curves scale
+     fluidly with viewport width (width:100%, height:auto), unlike a
+     fixed-then-scaled artboard. left/top/width are each this node's own
+     Figma position/size as a % of the 1920x1012 canvas, so it scales in
+     lockstep with the curves SVG at any viewport width. Aspect ratio (78x85,
+     matching this asset's own viewBox almost exactly) is preserved via
+     height:auto. */
+  .right-spark {
+    position: absolute;
+    left: 85.786%;
+    top: 65.777%;
+    width: 4.028%;
     height: auto;
   }
 
