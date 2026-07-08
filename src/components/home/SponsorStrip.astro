@@ -71,25 +71,27 @@ const sponsors = [
   <div class="container">
     <h2>Built together by India's energy backbone:</h2>
 
-    <ul class="logos">
-      {
-        sponsors.map((sponsor) => (
-          <li>
-            <figure class="logo">
-              <span class="logo-frame">
-                <img
-                  src={sponsor.src}
-                  alt={sponsor.alt}
-                  width={sponsor.width}
-                  height={sponsor.height}
-                />
-              </span>
-              <figcaption>{sponsor.caption}</figcaption>
-            </figure>
-          </li>
-        ))
-      }
-    </ul>
+    <div class="logos-viewport">
+      <ul class="logos">
+        {
+          [...sponsors, ...sponsors].map((sponsor, i) => (
+            <li aria-hidden={i >= sponsors.length ? "true" : undefined}>
+              <figure class="logo">
+                <span class="logo-frame">
+                  <img
+                    src={sponsor.src}
+                    alt={sponsor.alt}
+                    width={sponsor.width}
+                    height={sponsor.height}
+                  />
+                </span>
+                <figcaption>{sponsor.caption}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
 
     <SparkOrange class="divider" aria-hidden="true" />
   </div>
@@ -114,25 +116,46 @@ const sponsors = [
     color: var(--color-ink);
   }
 
+  .logos-viewport {
+    overflow: hidden;
+    width: 100%;
+  }
+
   .logos {
     list-style: none;
     margin: 0;
     padding: 0;
-    /* Was display:grid + grid-template-columns:repeat(7,1fr) -- that stretched
-       the row across the full .container width, inflating the gaps between
-       logos well past Figma's own layout (confirmed via get_screenshot on
-       node 1:194: the 7-logo group has a fixed natural width and sits
-       centered with consistent ~103px gaps, not spread edge-to-edge).
-       flex + a fixed gap keeps every logo at its own natural size and centers
-       the whole group instead of stretching it. */
+    /* Marquee: the array above is rendered twice back-to-back, and the track
+       is animated left by exactly 50% of its own width (one full set) --
+       the instant the first set scrolls off, the second is sitting exactly
+       where the first started, so the loop is seamless. Requires nowrap
+       (a single continuous row, not centered -- centering an animated track
+       doesn't mean anything) instead of the old wrap/justify-center. */
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     align-items: start;
     gap: 2.5rem 3rem; /* column-gap bumped from 2rem to 3rem (48px) per user directive 2026-07-07 -- spreads the row out closer to Figma's own ~103px gap while still fitting one row at realistic desktop widths (see sponsors array comment above) */
+    width: max-content;
+    animation: sponsor-scroll 32s linear infinite;
+  }
+
+  @keyframes sponsor-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logos {
+      animation-play-state: paused;
+    }
   }
 
   .logo {
+    flex-shrink: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -169,21 +192,5 @@ const sponsors = [
     margin: 4.54rem auto 0;
     width: 3.0963rem; /* 49.54px, Figma 1:1026 */
     height: 3.0963rem;
-  }
-
-  @media (max-width: 1023.98px) {
-    .logos {
-      /* Restores the pre-existing grid layout at this breakpoint -- untouched
-         by the desktop-only flex change above. */
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media (max-width: 559.98px) {
-    .logos {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
 </style>
