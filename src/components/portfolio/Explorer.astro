@@ -80,7 +80,7 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
           }
         </div>
       </div>
-      <div class="filter-group">
+      <div class="filter-group filter-group--sector">
         <p class="filter-label">SECTOR</p>
         <div class="chip-row" role="group" aria-label="Filter by sector">
           {
@@ -97,6 +97,29 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
             ))
           }
         </div>
+        {/* Mobile-only alternative to the chip row above, CSS-toggled via
+           `.filter-group--sector` in the ≤639.98px media query below. SECTOR
+           has 11 options (vs BACKED BY's 8) and measured 8 wrapped rows /
+           392px tall at a 390px viewport -- alone it pushed every venture
+           card below the fold, so only THIS filter (the one with the actual
+           space problem) gets collapsed to a dropdown; BACKED BY keeps its
+           chip row everywhere, per user directive not to apply the treatment
+           where it isn't needed. The chip buttons stay in the DOM so desktop/
+           tablet are unaffected; the filter script keeps this <select> and
+           the chips in sync in both directions. */}
+        <select
+          class="sector-select"
+          aria-label="Filter by sector"
+          data-filter-select="sector"
+        >
+          {
+            SECTORS.map((s) => (
+              <option value={s.label}>
+                {s.label} ({s.count})
+              </option>
+            ))
+          }
+        </select>
       </div>
     </div>
 
@@ -221,10 +244,26 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     margin-inline: -1.25rem;
     border-radius: 0; /* sharp edges on the hover band (per user) */
     transition: background-color 250ms ease;
+    cursor: pointer; /* touch devices (notably iOS Safari) only reliably fire
+      :active on elements that already look "interactive" -- cursor:pointer is
+      the standard trick to opt a non-form block into that; harmless on
+      desktop since the row isn't a real control either way. */
+    -webkit-tap-highlight-color: transparent; /* suppress the OS's default
+      translucent gray/blue tap-flash so it doesn't wash out the orange
+      highlight below on the first tap. */
   }
-  /* Hover / focus highlight: the whole row turns orange with white text + marks. */
+  /* Hover / focus highlight: the whole row turns orange with white text + marks.
+     :active is included alongside :hover/:focus-within so the SAME highlight
+     fires on touch taps too -- mobile has no real hover, and :hover/
+     :focus-within don't reliably activate before a tapped `.row-link` (an
+     external, target="_blank" anchor) navigates away, which was reported as
+     "Visit Page doesn't highlight orange on tap". :active fires immediately
+     on touchstart across mobile browsers, giving the identical existing
+     orange treatment (same rules/tokens, nothing new invented) as tap
+     feedback. */
   .row:hover,
-  .row:focus-within {
+  .row:focus-within,
+  .row:active {
     background-color: var(--color-orange);
   }
   .row-name,
@@ -239,24 +278,31 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   }
   .row:hover .row-name,
   .row:focus-within .row-name,
+  .row:active .row-name,
   .row:hover .row-sector,
   .row:focus-within .row-sector,
+  .row:active .row-sector,
   .row:hover .row-desc,
   .row:focus-within .row-desc,
+  .row:active .row-desc,
   .row:hover .row-link,
-  .row:focus-within .row-link {
+  .row:focus-within .row-link,
+  .row:active .row-link {
     color: var(--color-white);
   }
   .row:hover .row-sector .dot,
-  .row:focus-within .row-sector .dot {
+  .row:focus-within .row-sector .dot,
+  .row:active .row-sector .dot {
     background: var(--color-white);
   }
   .row:hover .row-divider,
-  .row:focus-within .row-divider {
+  .row:focus-within .row-divider,
+  .row:active .row-divider {
     background: var(--color-white);
   }
   .row:hover .row-spark,
-  .row:focus-within .row-spark {
+  .row:focus-within .row-spark,
+  .row:active .row-spark {
     filter: brightness(0) invert(1); /* orange spark → white on the orange band */
   }
   .row-divider {
@@ -392,6 +438,24 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     .row-spark {
       display: none;
     }
+    /* .row-main/.row-side both use `justify-content: space-between` with no
+       gap, which only spaces children apart when the flex container is
+       TALLER than its content -- true on desktop (`.row-body`'s min-height:
+       7rem forces that column to stretch), but on mobile `.row-body` becomes
+       a single-column grid where each item's own row-track just shrinks to
+       its content height, so space-between had zero effect and the name/
+       sector-label lines sat directly against each other with no gap
+       (reported: "Industrial AI" touching the name above it). An explicit
+       gap fixes that regardless of container height, and doubles as a
+       general vertical-rhythm pass across the whole card on mobile. */
+    .row-main {
+      justify-content: flex-start;
+      gap: 0.6rem;
+    }
+    .row-side {
+      justify-content: flex-start;
+      gap: 1rem;
+    }
   }
 
   @media (max-width: 639.98px) {
@@ -403,6 +467,76 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
     .row-link {
       font-size: 1.0625rem;
     }
+
+    /* Item 1: filter chips are too large on phones -- SECTOR alone wrapped to
+       8 rows / 392px tall at 390px viewport width, pushing every venture
+       card below the fold. Two-part fix, phone-only (desktop/tablet chip
+       sizing is unchanged, it wasn't flagged as a problem there):
+       (a) shrink chip/label font-size + padding so each pill is more
+           compact and more fit per row;
+       (b) additionally collapse SECTOR specifically (not BACKED BY -- see
+           `.filter-group--sector` below) behind a native <select>, since
+           compaction alone still leaves an 11-option chip list several rows
+           tall. */
+    .filters {
+      gap: 1.1rem;
+    }
+    .filter-group {
+      gap: 0.7rem;
+    }
+    .filter-label {
+      font-size: 0.8125rem; /* 13px, compact mobile eyebrow */
+      letter-spacing: 0.15em;
+    }
+    .chip-row {
+      gap: 0.5rem;
+    }
+    .chip {
+      height: 1.9rem; /* ~30.4px, down from 38.51px */
+      padding-inline: 0.75rem;
+      gap: 0.3rem;
+      font-size: 0.8125rem; /* 13px, down from 16px */
+    }
+
+    /* SECTOR only: hide the (still-compacted) chip row and show a native
+       select instead. BACKED BY has just 8 options and stays as chips at
+       every width -- it wasn't the problem the user's screenshot flagged,
+       and collapsing it too would remove a fine desktop-style interaction
+       where it isn't actually needed. */
+    .filter-group--sector .chip-row {
+      display: none;
+    }
+    .filter-group--sector .sector-select {
+      display: block;
+    }
+  }
+
+  /* Select hidden by default (desktop + tablet keep the chip row); only
+     unhidden inside the ≤639.98px `.filter-group--sector` rule above. */
+  .sector-select {
+    display: none;
+    width: 100%;
+    height: 2.75rem;
+    padding-inline: 1rem;
+    border: 0.0625rem solid var(--color-line);
+    border-radius: 999px; /* same pill language as the chips it replaces */
+    background: var(--color-white);
+    color: var(--color-ink-alt);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    /* Custom chevron via a plain SVG data-URI (no new asset file needed) so
+       the native control still reads as a dropdown once its default OS
+       affordance is reset -- reuses --color-ink-alt already in this file. */
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%231e1e3c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+  .sector-select:focus-visible {
+    outline: 0.125rem solid var(--color-orange);
+    outline-offset: 0.125rem;
   }
 </style>
 
@@ -417,6 +551,10 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
   const rows = Array.from(explorer.querySelectorAll<HTMLElement>(".row"));
   const resultsCount = explorer.querySelector(".results-count")!;
   const emptyState = explorer.querySelector<HTMLElement>(".empty-state")!;
+  // Mobile-only SECTOR dropdown (Item 1b) -- same underlying filter state as
+  // the chips, kept in sync bidirectionally so switching between viewport
+  // widths (or briefly seeing both, e.g. during a resize) never desyncs.
+  const sectorSelect = explorer.querySelector<HTMLSelectElement>(".sector-select");
 
   const selected: Record<"backer" | "sector", string> = {
     backer: "All",
@@ -449,7 +587,21 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
           sibling.setAttribute("aria-pressed", String(sibling === chip));
         }
       }
+      if (filter === "sector" && sectorSelect) {
+        sectorSelect.value = value;
+      }
       applyFilters();
     });
   }
+
+  sectorSelect?.addEventListener("change", () => {
+    const value = sectorSelect.value;
+    selected.sector = value;
+    for (const sibling of chips) {
+      if (sibling.dataset.filter === "sector") {
+        sibling.setAttribute("aria-pressed", String(sibling.dataset.value === value));
+      }
+    }
+    applyFilters();
+  });
 </script>
