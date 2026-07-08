@@ -124,14 +124,10 @@ import SparkRow from "../../assets/portfolio/spark-row.svg";
               </div>
               <div class="row-side">
                 <p class="row-desc">{v.desc}</p>
-                {v.url ? (
+                {v.url && (
                   <a href={v.url} class="row-link" target="_blank" rel="noopener">
                     Visit Page <span aria-hidden="true">&rarr;</span>
                   </a>
-                ) : (
-                  <span class="row-link">
-                    Visit Page <span aria-hidden="true">&rarr;</span>
-                  </span>
                 )}
               </div>
             </div>
