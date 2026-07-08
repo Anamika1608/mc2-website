@@ -46,7 +46,9 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       industrial scale.
     </p>
 
-    <ScrollArrow class="scroll" aria-hidden="true" />
+    <button type="button" class="scroll" aria-label="Scroll to next section">
+      <ScrollArrow aria-hidden="true" />
+    </button>
   </div>
 </section>
 
@@ -99,23 +101,35 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     position: absolute;
     transform: translate(-50%, -50%);
   }
+  /* Fix (mobile decor bug, 2026-07-09 review): sizes were fixed rem
+     (1.9rem/1.9rem, 2.7rem/2.7rem) — unlike .curves (width:100%,
+     height:auto) and TeamHero's own .right-spark precedent, these did NOT
+     shrink with .orbit at narrower viewports, so as the curve linework
+     shrank toward mobile widths the sparks stayed pinned at full desktop
+     pixel size: curves fade to near-invisible hairlines while the sparks
+     read as oversized dots floating with nothing under them. Converted to
+     percentages of .orbit's own width (spark-orange.svg is a 50x50 square
+     viewBox, confirmed via its own <svg> tag, so width:X%/height:auto
+     reproduces the exact square at any scale) — this keeps the sparks
+     locked to the curve's own scale at any viewport, matching TeamHero's
+     convention, with no separate mobile-only override needed. */
   .spark-a {
     left: 5.17%;
     top: 66.88%;
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 1.583%; /* was 1.9rem — (1.9rem×16px) / (120rem×16px, the 1920px reference width) × 100 */
+    height: auto;
   }
   .spark-b {
     left: 13.66%;
     top: 74.73%;
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 1.583%; /* same derivation as spark-a — both were 1.9rem */
+    height: auto;
   }
   .spark-c {
     left: 80.63%;
     top: 26.98%;
-    width: 2.7rem;
-    height: 2.7rem;
+    width: 2.25%; /* was 2.7rem — (2.7rem×16px) / (120rem×16px) × 100 */
+    height: auto;
   }
 
   .hero-inner {
@@ -187,5 +201,49 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     .lede {
       max-width: 90%;
     }
+    /* Fix ("and" stranding, 2026-07-09 review): each of the 3 H1 lines is
+       its own hard <span class="line"> block (`h1 .line { display: block }`
+       above, needed at desktop so the 3 authored Figma line-breaks hold
+       exactly). At mobile widths line 2's own text ("institutes collaborate
+       and") is on its own long enough to wrap internally — but its hard
+       block boundary means the wrapped remainder can't share a row with
+       line 1 or line 3's text, so "and" ends up alone on its own row.
+       Switching to `inline` here lets all 3 lines' text reflow together as
+       one continuous run, so the browser's own line-breaking naturally
+       avoids stranding a single word — this is the same "sanctioned
+       adaptation below 1024px" the shared reveal-star system already
+       documents for exactly this case (global.css: a line can wrap onto
+       multiple visual rows at narrow widths, hence the animation itself
+       switches from the desktop clip-path reveal to a plain fade below this
+       breakpoint) — compatible, not a new mechanism. A trailing space is
+       needed between lines since the hard block boundaries used to supply
+       that gap for free; added as a single explicit space in each
+       `reveal-line-text` span's own markup would require touching 3 lines
+       of JSX-like markup for a purely-visual concern, so it's added here via
+       each line's own ::after instead, scoped to this breakpoint only. */
+    h1 .line {
+      display: inline;
+    }
+    h1 .line:not(:last-child)::after {
+      content: " ";
+    }
+    /* Considered (2026-07-09 review) and deliberately NOT adding a
+       SupportHero-style `.orbit { min-width: Xrem }` "zoom crop" here: tried
+       it directly (min-width: 50rem) in a real render at 500/600px and it
+       trades away more than it gains — spark-c (the top-right spark) is
+       pushed fully off-screen by the wider, left-anchored canvas, which
+       contradicts the user's own mobile screenshot (both spark clusters —
+       the single top-right one AND the two-spark lower-left cluster —
+       visible together, just smaller), and the curve strokes don't read any
+       more clearly at that crop factor to justify the loss (an SVG's
+       stroke width scales down with its own viewBox regardless of how much
+       of the canvas overflow:hidden happens to crop away — only rendering
+       .orbit near its full ~120rem desktop physical scale would meaningfully
+       thicken the strokes, which stops being a "mobile" treatment at all).
+       The .spark-a/b/c percentage-sizing fix above already resolves the
+       actual reported bug (sparks were rendering ~3.2x oversized relative
+       to the curves — fixed 1.9rem against a curve scaled to ~31% of its
+       natural size at a 600px viewport) while keeping both spark clusters
+       on-screen, matching the user's own screenshot composition. */
   }
 </style>
