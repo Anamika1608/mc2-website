@@ -173,6 +173,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        near-identical (one value off in the blue channel); this corrects an
        undocumented token slip to match that node exactly. */
     color: var(--color-ink);
+    text-align: justify; /* sitewide paragraph-justify pass: block stays centered via margin auto, only the text's own wrap edges even out */
   }
 
   .scroll {
@@ -186,6 +187,19 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     }
     .lede {
       max-width: 90%;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    /* sitewide paragraph-justify pass: this lede's font-size doesn't shrink below
+       1024px (no fluid clamp, unlike the h1), so once the column narrows to ~90%
+       of a phone viewport it only fits 2-3 words per justified line — verified via
+       Playwright screenshot at 390px, several lines stretched to ugly, oversized
+       word-gaps. Reverting to the pre-existing center alignment below this
+       breakpoint (matches every other hero's own fallback); justify is kept
+       ≥768px, where it renders cleanly (verified at 900/1920px). */
+    .lede {
+      text-align: center;
     }
   }
 </style>
