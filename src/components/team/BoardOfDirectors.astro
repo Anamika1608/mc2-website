@@ -142,58 +142,23 @@ const DIRECTORS = [
     text-align: center;
   }
 
-  /* Grid: 5 director cards, 3-then-2 layout. Figma (node 1:13078) actually
-     lays these out as content-hugging groups with non-uniform card widths and
-     gaps (e.g. col1->col2 pitch 621.84px vs col2->col3 pitch 566.79px) rather
-     than a strict equal-width grid, and its row gap is closer to 0 (row 2's
-     photos start 5-8px BEFORE row 1's photos end — confirmed by both the
-     coordinate math and a direct pixel crop showing the two photos touching,
-     with the spark sitting right at the seam). Both of those are impractical
-     to reproduce with a robust, responsive CSS grid, so per the task's own
-     instruction this uses equal minmax(0,1fr) tracks with a normal, uniform
-     gap instead — documented simplification, not a missed measurement.
-     3 columns + 5 items auto-places item 4 under column 1 and item 5 under
-     column 2 for free, matching the brief's required row-2 alignment with no
-     extra rules needed. */
+  /* Grid: 5 director cards. Was repeat(3, ...) (3-then-2 layout) — switched
+     to 2 columns (user directive, dev feedback deck) so every card gets
+     roughly double the column width, letting the longest names
+     ("Shri Akshay Kumar Singh", "Shri Sandeep Maheshwari") fit on one line
+     (see `.meta h3` white-space:nowrap below) at a normal, readable size
+     across the whole ≥1024px range — verified live via Playwright, a
+     3-column grid only fit those names unwrapped at ~1900px+ without
+     shrinking the font to an illegibly small size. 5 items in a 2-col grid
+     auto-places as [Neeraj, Vikas] / [Sanjay, Akshay] / [Sandeep alone],
+     needing no manual placement rules; unlike the old 3-column layout,
+     Sandeep's card is no longer the odd one out needing a span/width
+     override (see removed rules this replaced). */
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 3rem; /* widened from 2.5rem per user directive 2026-07-06 */
     row-gap: 3.75rem; /* widened from 3rem — measured ~22% tighter than reference, per user directive 2026-07-06 */
-  }
-
-  /* 5 cards in a 3-col grid auto-place row 2 as [Akshay, Sandeep], leaving row
-     2's 3rd column empty. Every .card's .meta column shrinks to the same
-     fixed width regardless of position (.photo-wrap is a non-shrinking
-     flex:0 0 15rem, .meta is the only flexible child), so the last card
-     ("Shri Sandeep Maheshwari" — the longest name) wraps to 3 lines and
-     overlaps .h-line at common laptop widths (confirmed live at 1440/1536px)
-     even though there's a whole free column beside it. Spanning 2 columns
-     here lets it claim that empty cell, so .meta gets extra width and the
-     name fits in 2 lines like its siblings — no font-size change needed. */
-  .card:last-child {
-    grid-column: span 2;
-  }
-  /* Spanning 2 columns above also doubles .desc's available width, so its
-     long paragraph ("Executive Director, Corporate Strategy & Business
-     Development, HPCL") no longer wraps at all and reads as one long line —
-     inconsistent with every sibling card's desc, which wraps to 2-3 lines
-     within its own single-column width (~283px at 1920px, i.e. ~17.7rem).
-     Capping to that same width makes this card wrap the same way; the extra
-     span-2 width still helps the name/role above, which aren't capped. */
-  .card:last-child .desc {
-    max-width: 18rem;
-  }
-  /* .h-line's left/width (below) are percentages of .card's own width, sized
-     for a normal single-column card. This card is double-width (spans 2
-     columns above), so at the same percentages the line starts and ends at
-     roughly double the absolute position/length — confirmed live at 1024px,
-     where it visibly ran straight through "Shri Sandeep Maheshwari" instead
-     of sitting above it. Halving both keeps the same absolute reach as
-     every sibling card's line. */
-  .card:last-child .h-line {
-    left: 27%;
-    width: 14.5%;
   }
 
   .card {
@@ -312,6 +277,7 @@ const DIRECTORS = [
     font-size: 1.5rem; /* 24px — reduced from 30px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
+    white-space: nowrap; /* user directive, dev feedback deck — names must not wrap; the 2-col grid above gives every card enough width for this at ≥1024px */
   }
 
   /* Role: real text, Faculty ~14.88px uppercase, tracked ~1.49px. Pixel-sampled
@@ -345,13 +311,19 @@ const DIRECTORS = [
     h2 {
       font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
-    .grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    /* Desktop-only fix (see .card:last-child above) — reset here so the
-       existing 2-column tablet layout is unaffected. */
-    .card:last-child {
-      grid-column: auto;
+    /* .grid is already 2 columns at every width now (see .grid above), so no
+       override needed here anymore — this block used to reset the
+       desktop-only 3-column grid back to 2 for tablet. */
+    /* Below 1024px, a 2-col grid's per-card width is too narrow for the
+       photo and an un-wrapped long name to sit side by side (confirmed live:
+       "Shri Akshay Kumar Singh"/"Shri Sandeep Maheshwari" overflowed the
+       page at 680-900px in row layout). Stacking the card (photo above
+       meta) gives the name the full card width instead of card-width minus
+       photo minus gap — the same stacked layout already used below 680px,
+       just extended up to cover this range too. */
+    .card {
+      flex-direction: column;
+      align-items: flex-start;
     }
     /* Decorative flourish is desktop-only per user request — removed
        completely on tablet and mobile, not just resized/hidden partially. */
@@ -365,10 +337,6 @@ const DIRECTORS = [
   @media (max-width: 679.98px) {
     .grid {
       grid-template-columns: 1fr;
-    }
-    .card {
-      flex-direction: column;
-      align-items: flex-start;
     }
   }
 </style>
