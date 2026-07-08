@@ -66,4 +66,41 @@ const {
       observer.observe(target);
     }
   }
+
+  // Site-wide scroll-arrow click-to-scroll: all 8 hero/section down-chevrons
+  // (Home/About/Contact/Initiatives/Portfolio/Support/Team Heroes +
+  // Initiatives' HowItWorks) share the identical markup shape — a
+  // `<button class="scroll">` wrapping a decorative, aria-hidden SVG — so one
+  // shared handler covers every instance instead of 8 near-duplicate inline
+  // scripts. Every one of these buttons sits as a descendant of its own
+  // top-level <section> (the hero/section root), and every page composes its
+  // sections as direct children of <main> (this file, above), so walking
+  // forward from that <section> to the next actual <section> sibling always
+  // resolves to the real next section on the page — verified per-page
+  // against each page's own .astro file, not assumed. Scoped to
+  // `button.scroll` (not the bare `.scroll` class still used by the SVG-only
+  // sizing rules inside each component) so this can never accidentally bind
+  // to a future non-interactive `.scroll` element elsewhere.
+  const scrollArrows = document.querySelectorAll<HTMLElement>("button.scroll");
+  for (const arrow of scrollArrows) {
+    arrow.addEventListener("click", () => {
+      const ownSection = arrow.closest("section");
+      // NOT a plain `.nextElementSibling` read: HowItWorks.astro (Initiatives
+      // page) owns a component-local `<script>` for its hover-to-activate
+      // cards, and Astro renders that as a literal `<script>` DOM node
+      // immediately after `</section>` (confirmed via the rendered page
+      // source, not assumed) rather than hoisting it out of the body — so a
+      // bare `nextElementSibling` read resolves to that `<script>` tag
+      // instead of the real next section (Programs), silently no-op'ing
+      // `scrollIntoView` on an element with no layout box. Walking forward
+      // until an actual `<section>` is found skips over any such incidental
+      // non-section siblings (a script, a style tag, etc.) and is a no-op
+      // everywhere else, where the immediate next sibling already is one.
+      let target = ownSection?.nextElementSibling ?? null;
+      while (target && target.tagName !== "SECTION") {
+        target = target.nextElementSibling;
+      }
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 </script>

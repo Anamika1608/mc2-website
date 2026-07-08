@@ -118,6 +118,24 @@ a {
   border: 0;
 }
 
+/* Site-wide scroll-arrow control (all 8 hero/section down-chevrons): each
+   one is now a real <button> wrapping the decorative SVG (was a bare
+   <svg class="scroll">) so it gets native keyboard support (Enter/Space
+   activation, tab focus, :focus-visible) for free — see BaseLayout.astro's
+   own <script> for the click→scroll behavior this enables. Unscoped (not
+   per-component) since every call site needs the identical reset: strip the
+   UA button chrome so it reads as the same plain decorative arrow it always
+   was, and each component's own scoped `.scroll { display:block; margin:... }`
+   rule (unchanged) continues to position/center it exactly as before. */
+button.scroll {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* ============================================================
    Star-led reveal system (shared across every Hero + selected section
    headings, site-wide). Originally built bespoke, once, on Home's Hero/
