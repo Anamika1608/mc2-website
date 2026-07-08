@@ -30,7 +30,7 @@ const STATS = [
           <span class="reveal-line-text">The industrial weight behind</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
-      </span>
+      </span>{" "}
       <span class="reveal-line">
         <span class="reveal-line-box">
           <span class="reveal-line-text">every venture.</span>
@@ -280,6 +280,80 @@ const STATS = [
     }
   }
   @media (max-width: 559.98px) {
+    /* Dev feedback: "every" was orphaning below "The industrial weight
+       behind" (itself wrapping to 2 internal rows at the narrowest phone
+       widths, since this heading's own 2 hardcoded `.reveal-line` spans
+       are unconditionally forced one-per-row below).
+
+       DEVIATION from the reviewed plan, in two parts, both verified live
+       before fixing:
+       1. The plan called for switching only `.reveal-line` to `display:
+          inline` and expected the nested `.reveal-line-box`/`.reveal-
+          line-text` (both `display: inline-block` in the shared
+          global.css) to reflow along with it. That doesn't work: an
+          inline-block's shrink-to-fit width, once its content is wider
+          than the available space, is assigned that full available width
+          as its own box — so even though its wrapped text visibly leaves
+          trailing space on its last internal row, the BOX itself still
+          claims the whole row, leaving no actual room for a sibling inline
+          element to sit in. `.reveal-line` alone becoming inline had no
+          visible effect for this reason — all 3 nesting levels need to
+          flatten to plain `inline` (scoped locally to this component, so
+          Hero.astro/Pillars.astro's own instances of the same shared
+          classes are untouched).
+       2. The plan suggested scoping this to the shared "sanctioned
+          adaptation below 1024px" breakpoint (matching where the star +
+          clip-path reveal already give way to a plain fade sitewide).
+          Tried that first and it overshot: in the ~640-1023px tablet
+          range each line already fits cleanly on its own full row without
+          wrapping (matching desktop's 2-line split, just at a smaller
+          fluid font-size) — joining them there didn't fix an orphan, it
+          CREATED one ("venture." landing alone on its own row). Scoped
+          instead to this file's own narrower 559.98px breakpoint, which
+          matches where "The industrial weight behind" actually starts
+          wrapping on its own (verified live: still wrapped at 500px,
+          clean single row by 560px).
+       Safe re: the star: `.reveal-star` is already `display: none` below
+       1024px sitewide, so there's no star-positioning concern from a
+       wrapped plain-inline containing block either way. */
+    h2 .reveal-line,
+    h2 .reveal-line-box,
+    h2 .reveal-line-text {
+      display: inline;
+    }
+    /* Two more DEVIATIONS, both needed once the plain-inline reflow above
+       actually started working, and both verified live at every width in
+       320-559px:
+       1. Without `nowrap` here, reflow can still produce a NEW single-word
+          orphan of its own: at 390px, "every venture." (line 2's full
+          text) split mid-phrase into "...behind every" / "venture." —
+          trading the original "every" orphan for a "venture." orphan.
+          Line 2's text is short enough to treat as one atomic unit:
+          nowrap means it either joins line 1's last wrapped row in full
+          (when there's room, e.g. 430-559px) or drops to its own full row
+          un-split (matching the original, acceptable "every venture."
+          together on one row — e.g. 320-390px, where there truly isn't
+          room for it to join) — it can never itself be torn across two
+          rows. Only line 2 needs this: line 1 is the long phrase that's
+          SUPPOSED to keep wrapping internally to make room.
+       2. Even with (1), line 1's OWN internal wrap could still land badly:
+          at 390px specifically, line 1 wrapped as "The industrial weight" /
+          "behind" with the atomic "every venture." bumped to its own row —
+          leaving "behind" alone, a new single-word orphan one word over
+          from the original bug. `text-wrap: balance` (applied to the h2,
+          which is still `display: block` — only its children flattened to
+          inline above) asks the browser to distribute line 1's wrapped
+          text more evenly instead of greedily maximizing each row, which
+          resolves this: "behind" rejoins "weight" ("The industrial" /
+          "weight behind") at 390px, with (1)'s atomic "every venture."
+          still bumped to its own row since there still isn't room — the
+          same non-orphaned fallback layout as the un-joinable widths. */
+    h2 .reveal-line:nth-of-type(2) .reveal-line-text {
+      white-space: nowrap;
+    }
+    h2 {
+      text-wrap: balance;
+    }
     .stats {
       grid-template-columns: 1fr;
     }

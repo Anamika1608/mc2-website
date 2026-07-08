@@ -13,10 +13,10 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
           <span class="reveal-line-text">Built for every builder</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
-      </span>
+      </span>{" "}
       <span class="line reveal-line">
         <span class="reveal-line-box">
-          <span class="reveal-line-text">in India’s energy story.</span>
+          <span class="reveal-line-text">in India’s energy&nbsp;story.</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
@@ -486,6 +486,66 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     .column:nth-child(3)::before,
     .column:nth-child(3) .divider-spark {
       display: none;
+    }
+  }
+
+  /* Dev feedback ("text formatting", arrow at the H2): at narrow phone
+     widths "story." was orphaning alone below "in India's energy" (and
+     "builder" similarly below "Built for every"), since this heading's 2
+     `.line.reveal-line` spans are unconditionally forced one-per-row
+     (h2 .line above). Same fix and same reasoning as Scale.astro's
+     analogous override (see that file's comment for the full derivation);
+     summary of the 3 deviations from the reviewed plan, all verified live:
+       1. `.line` alone becoming inline doesn't reflow the nested
+          `.reveal-line-box`/`.reveal-line-text` (shared global.css,
+          `display: inline-block`) — an inline-block's shrink-to-fit width
+          claims the full available row once its content is wider than
+          that space, leaving no real room for a sibling even on the
+          wrapped box's otherwise-mostly-empty last line. All 3 nesting
+          levels are flattened to plain `inline` here, scoped locally to
+          this component (Astro's per-component style scoping keeps this
+          off Hero.astro/Pillars.astro's own instances of the same shared
+          classes).
+       2. This is its OWN dedicated breakpoint, NOT the shared
+          "below 1024px" one Scale.astro also uses, and NOT this file's own
+          639.98px columns breakpoint: this heading's per-line wrap
+          boundary was measured live at exactly 400px-wraps/405px-doesn't
+          (font-size is at its clamped floor across this whole span, so the
+          boundary is driven by container width, not font scaling) — well
+          short of both of this file's other breakpoints. Reusing either
+          would apply the join logic into a range where each line already
+          renders cleanly on its own single row, which (as found in
+          Scale.astro) creates a NEW single-word orphan instead of fixing
+          the original one.
+       3. `text-wrap: balance` on the h2 is still required, same as
+          Scale.astro, to avoid the reflow itself producing a new orphan
+          ("builder" landing alone) at some width within the fixed range.
+          DEVIATION from Scale.astro's own fix, though: Scale's line 2
+          ("every venture.", 2 words) was short enough to keep together
+          with `white-space: nowrap` on the whole span without ever
+          overflowing its container. Verified live that this file's line 2
+          ("in India’s energy story.", 5 words) is NOT — even alone, it
+          wraps to 2 rows within these same viewports (320-400px), so
+          forcing the whole phrase to `nowrap` just pushed it past the
+          container edge instead of wrapping (visibly clipped/cut off in
+          the screenshot). Used the standard editorial fix instead: an
+          `&nbsp;` between just the last two words ("energy" / "story.",
+          see the markup above) so only THAT pair can't be split across a
+          line break — "in India's" is still free to wrap normally, and
+          there's no full-phrase overflow risk.
+     Safe re: the star: `.reveal-star` is already `display: none` below
+     1024px sitewide, so there's no star-positioning concern either way.
+     Selector is this file's own `.line` class (NOT `.reveal-line` as in
+     Scale.astro — different local layout-class name, same shared
+     `.reveal-line` the star-stagger keys off). */
+  @media (max-width: 404.98px) {
+    h2 .line,
+    h2 .reveal-line-box,
+    h2 .reveal-line-text {
+      display: inline;
+    }
+    h2 {
+      text-wrap: balance;
     }
   }
 
