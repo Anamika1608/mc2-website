@@ -103,7 +103,7 @@ const isActive = (href: string) =>
   }
   .nav-list a {
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-decoration: none;
@@ -113,6 +113,9 @@ const isActive = (href: string) =>
   .nav-list a:hover,
   .nav-list a[aria-current="page"] {
     color: var(--color-orange);
+  }
+  .nav-list a[aria-current="page"] {
+    font-weight: 700;
   }
   #menu-button {
     display: none;
