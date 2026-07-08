@@ -345,9 +345,32 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
      (illus-mentorship's native 178x89, also 2:1). */
   .card-illus {
     display: block;
-    height: 5.5625rem; /* 89px */
-    width: auto;
-    max-width: 100%;
+    /* Fix (mobile icon squish, O1-O3): was `height: 5.5625rem; width: auto;
+       max-width: 100%` — a fixed height with width deriving from it ONLY
+       until max-width:100% actually clamps the rendered width below that
+       natural value (which happens at the single-column 639.98px breakpoint,
+       where the card column is narrower than the icon's natural width at
+       89px-tall/2:1) — past that point the browser renders at the clamped
+       width while height stays pinned, distorting the 2:1 aspect (same
+       mechanism already diagnosed and fixed for O4 alone, below). Switching
+       to height:auto + max-width means it always follows the rendered width
+       1:1 with the image's real aspect ratio (confirmed 5906x2953 = exactly
+       2:1 via `sips`), so it can never distort at any card width. 11.125rem
+       (178px) reproduces the exact on-screen size the old rule rendered at
+       everywhere it didn't clip (5.5625rem height x 2:1 aspect = 178px
+       wide), so ≥640px is visually unchanged. Deliberately NOT also setting
+       `width: 100%` (unlike O4's own override below) — this is an <img>
+       (replaced element with intrinsic ratio) inside a flex column
+       (.card-content), and per spec `align-items:stretch` doesn't stretch
+       replaced elements with an intrinsic ratio, so it already sizes to
+       min(intrinsic width, max-width) with no explicit width needed —
+       avoids a latent risk in O4's own width:100%-plus-inherited-margin-left
+       combination (width:100% is computed against the content-box while
+       margin sits outside it, which can in principle push the box past the
+       container's right edge) without needing to touch O4's own shipped
+       rule below. */
+    height: auto;
+    max-width: 11.125rem; /* 178px, see derivation above */
     margin-left: 2.1rem; /* illustrations sit right of the body-text column (Figma insets vary ~34px beyond the body text's own inset, per card) */
     margin-top: auto; /* per direct feedback (equal card heights): pushes the icon to .card-content's own bottom edge, so the extra height every card now gets (to match the tallest) shows up as breathing room above the icon, not a gap after it. */
   }
