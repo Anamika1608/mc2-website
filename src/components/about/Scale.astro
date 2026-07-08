@@ -56,6 +56,20 @@ const STATS = [
           {i > 0 && <SparkOrange class="stat-spark stat-spark-bottom" aria-hidden="true" />}
         </li>
       ))}
+      <!-- Mobile-only (<=559.98px) left rail: replaces the desktop
+           per-item borders with one continuous vertical line running the
+           full height of the stacked 1-col layout, paired with the top
+           sparks kept below (dev-feedback: don't hide the divider/spark
+           treatment outright on mobile, give it a rail instead).
+           display:none outside that breakpoint. Deliberately placed AFTER
+           the mapped <li>s (not first) — DEVIATION from the reviewed plan,
+           which put it first: this UL has no other non-<li> sibling, so
+           inserting it first would shift every <li>'s :nth-child() index
+           by one, silently breaking the existing tablet-width
+           `.stats li:nth-child(odd)` cascade rule (and this task's own
+           `:nth-child(odd)` override below) — verified live before fixing,
+           see commit message / final report for detail. -->
+      <span class="stats-rail" aria-hidden="true"></span>
     </ul>
   </div>
 </section>
@@ -74,6 +88,11 @@ const STATS = [
        footer, so it owns both edges of its surrounding gaps. */
     padding-block: 4.6875rem 4.34rem;
     text-align: center;
+    /* Defensive guard: unlike Audiences.astro's analogous section, .scale
+       had no containment against horizontal-overflow bugs from its
+       negative-offset decor (the -0.75rem spark offsets, and now the
+       mobile rail's own negative left offset). */
+    overflow-x: hidden;
   }
 
   /* Eyebrow (text node 1:9175): Figma reference code returns
@@ -190,6 +209,11 @@ const STATS = [
     position: relative;
     padding: 2.5rem 1.5rem 0;
   }
+  /* Mobile-only rail (<=559.98px), see media block below for the visible
+     rule — no-op at tablet/desktop. */
+  .stats-rail {
+    display: none;
+  }
   .stats li.has-divider {
     /* Hairline color CORRECTED from the brief's --color-line guess: the
        vertical dividers in group 1:9465/1:9466 (vectors 1:9467-1:9471)
@@ -260,10 +284,40 @@ const STATS = [
       grid-template-columns: 1fr;
     }
     .stats li.has-divider {
+      /* Rail replaces the per-item border entirely. */
       border-left: 0;
     }
-    .stat-spark {
+    .stats li {
+      /* Clears the rail + spark, which sit at left: -0.75rem. */
+      padding-left: 1.5rem;
+    }
+    .stats-rail {
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -0.75rem;
+      width: 1px;
+      background: var(--color-orange);
+    }
+    /* Keep only the top spark per boundary item as the 3 boundary markers
+       — hiding the bottom twin avoids a doubled icon at each boundary and
+       a dangling 4th spark below the last item. Repositioned to align
+       with the rail. */
+    .stat-spark-bottom {
       display: none;
+    }
+    .stat-spark-top {
+      left: -0.75rem;
+    }
+    /* Required override: item 3's ("Pan India") spark was force-hidden by
+       the cascaded <=1023.98px rule `.stats li:nth-child(odd) .stat-spark
+       { display: none; }` (that rule exists because odd items aren't
+       horizontally adjacent in the 2-col tablet grid) — re-enable it here
+       since in the 1-col mobile layout it's needed as the boundary marker
+       between items 2 and 3. */
+    .stats li:nth-child(odd) .stat-spark-top {
+      display: block;
     }
   }
 </style>
