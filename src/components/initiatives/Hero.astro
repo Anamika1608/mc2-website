@@ -59,18 +59,18 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       a lab-stage IP, or an institution ready to co-build the next decade of
       energy technology, MC&sup2;+ is for you.
     </p>
-  </div>
 
-  <div class="notice">
-    <NoticeIcon class="notice-icon" aria-hidden="true" />
-    <p class="notice-text">
-      Capital, infrastructure and mentorship support every stage, from lab
-      access to pilot sites across the seven energy majors. <a
-        href="/support"
-        class="notice-link"
-        >See the full support stack <span aria-hidden="true">&rarr;</span></a
-      >
-    </p>
+    <div class="notice reveal-rise">
+      <NoticeIcon class="notice-icon" aria-hidden="true" />
+      <p class="notice-text">
+        Capital, infrastructure and mentorship support every stage, from lab
+        access to pilot sites across the seven energy majors. <a
+          href="/support"
+          class="notice-link"
+          >See the full support stack <span aria-hidden="true">&rarr;</span></a
+        >
+      </p>
+    </div>
   </div>
 
   <ScrollArrow class="scroll" aria-hidden="true" />
@@ -270,6 +270,17 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
 
   .notice {
+    /* Reveal timing (2026-07-08, user directive): the bar now sits inside
+       .hero-inner's own .reveal wrapper (moved from a sibling of it) and
+       reuses the shared .reveal-rise mechanism (src/styles/global.css) the
+       lede already uses, so it pops in only after the H1 + lede finish
+       revealing, rather than being visible immediately. Delay follows the
+       site's existing "next stage starts at previous stage's delay + 90% of
+       its duration" convention: the lede's own delay is 1.1s (reveal-rise--
+       after-2-lines) + 90% of its 0.8s reveal-rise duration = 1.82s. Scoped
+       here (not a new global modifier class) since this is currently the
+       only hero-embedded notice bar on the site. */
+    --reveal-rise-delay: 1.82s;
     display: flex;
     align-items: center;
     gap: 1.1rem; /* 17.67px, icon-right-edge to text-left-edge gap, node 1:16817 children */
