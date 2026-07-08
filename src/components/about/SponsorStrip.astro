@@ -29,19 +29,21 @@ const SPONSORS = [
 
 <section class="sponsors">
   <div class="container">
-    <p class="eyebrow">Promoted by India&rsquo;s leading energy majors</p>
+    <p class="eyebrow">Backed by India&rsquo;s oil and gas majors with a turnover of $232 billion</p>
     <h2>Seven sponsors. One platform.</h2>
 
-    <ul class="logos">
-      {SPONSORS.map((s) => (
-        <li>
-          <span class="logo-frame">
-            <img src={s.img} alt={s.alt} width={s.width} height={s.height} class="logo" />
-          </span>
-          <span class="caption">{s.caption}</span>
-        </li>
-      ))}
-    </ul>
+    <div class="logos-viewport">
+      <ul class="logos">
+        {[...SPONSORS, ...SPONSORS].map((s, i) => (
+          <li aria-hidden={i >= SPONSORS.length ? "true" : undefined}>
+            <span class="logo-frame">
+              <img src={s.img} alt={s.alt} width={s.width} height={s.height} class="logo" />
+            </span>
+            <span class="caption">{s.caption}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
 
     <div class="ctas">
       <PillButton label="Meet the team" href="/team" variant="ghost" />
@@ -97,19 +99,45 @@ const SPONSORS = [
      stretched the row across the full container width, inflating gaps well
      past Figma's own ~103px-average, centered-natural-width layout (confirmed
      via get_screenshot on node 1:194) -- same fix as Home's SponsorStrip. */
+  .logos-viewport {
+    overflow: hidden;
+    width: 100%;
+    margin: 0 0 3rem; /* gap to the CTAs — approximate, not pixel-derived (see report) */
+  }
+
+  /* Marquee: SPONSORS is rendered twice back-to-back and the track is
+     animated left by exactly 50% of its own width (one full set) -- see
+     Home's SponsorStrip.astro for the full seamless-loop rationale. */
   .logos {
     list-style: none;
-    margin: 0 0 3rem; /* gap to the CTAs — approximate, not pixel-derived (see report) */
+    margin: 0;
     padding: 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     gap: 1.5rem 3rem; /* column-gap bumped from 2rem to 3rem (48px) per user directive 2026-07-07 -- see Home's SponsorStrip.astro for the full math */
+    width: max-content;
+    animation: sponsor-scroll 32s linear infinite;
   }
   .logos li {
     display: grid;
     gap: 0.75rem;
     justify-items: center;
+    flex-shrink: 0;
+  }
+
+  @keyframes sponsor-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logos {
+      animation-play-state: paused;
+    }
   }
   .logo-frame {
     display: flex;
@@ -158,17 +186,8 @@ const SPONSORS = [
     h2 {
       font-size: clamp(2.2rem, 6vw, 3.25rem);
     }
-    .logos {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      row-gap: 2rem;
-    }
   }
   @media (max-width: 559.98px) {
-    .logos {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
     .ctas {
       flex-direction: column;
       align-items: center;
