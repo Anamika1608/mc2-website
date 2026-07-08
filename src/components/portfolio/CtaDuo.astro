@@ -81,6 +81,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     position: relative;
     display: flex;
     align-items: flex-start;
+    justify-content: center; /* fix (2026-07-09): .container's max-width (1760px) exceeds the two columns' combined natural width (2*43.6rem + 6rem gap = 1491.2px) at wide viewports, and with no justify-content the default flex-start left leftover space on the right -- shifting the real visual gap between columns left of .columns' own 50% mark, so .divider below (fixed at left:50%) ended up crossing into the right column's heading instead of sitting in the gap. Centering the pair keeps the gap's midpoint at 50% regardless of container width. */
     gap: 6rem;
   }
 
