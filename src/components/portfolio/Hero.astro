@@ -73,16 +73,18 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       years. Now, we are all coming together to do it.
     </p>
 
-    <div class="info-bar">
-      <div class="info-badge" aria-hidden="true">i</div>
-      <p class="info-text">
-        Ventures backed across the energy majors. A selection of companies
-        incubated through the energy majors&rsquo; programmes. MC&sup2;+
-        Cohort 1 onboards from August 2026.
-      </p>
-    </div>
+    <div class="hero-bottom">
+      <div class="info-bar">
+        <div class="info-badge" aria-hidden="true">i</div>
+        <p class="info-text">
+          Ventures backed across the energy majors. A selection of companies
+          incubated through the energy majors&rsquo; programmes. MC&sup2;+
+          Cohort 1 onboards from August 2026.
+        </p>
+      </div>
 
-    <ScrollArrow class="scroll" aria-hidden="true" />
+      <ScrollArrow class="scroll" aria-hidden="true" />
+    </div>
   </div>
 </section>
 
@@ -112,6 +114,30 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          sized off the curve box's height MINUS the header (1086 - 110.65 =
          975.35px = 60.96rem at the 1920 reference, 975.35/1920 = 50.80vw). */
       min-height: clamp(40rem, 50.8vw, 60.96rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* Sync info-bar to the base of the frame (user directive 2026-07-08):
+       .hero's min-height above is sized off the decorative curve SVG's own
+       height, well taller than the actual content (eyebrow/H1/lede/info-bar/
+       chevron), which otherwise just sits at the top via normal flow and
+       leaves a large empty gap below the chevron on wide/short viewports.
+       Splitting .hero-inner's children into two groups -- eyebrow/underline/
+       h1/lede (unwrapped, own spacing untouched) and .hero-bottom (info-bar +
+       scroll arrow) -- and making .hero-inner a flex column with
+       justify-content:space-between distributes .hero's own leftover height
+       as one gap right before .hero-bottom, so the info-bar+chevron now sit
+       near .hero's bottom edge instead of directly under the lede. Matches
+       .hero's own padding (6rem top / 4rem bottom = 10rem) so there's real
+       leftover height for space-between to distribute. Scoped to the same
+       breakpoint as .hero's own min-height -- below it .hero has no reserved
+       extra height, so normal (unwrapped-equivalent) flow is correct as-is. */
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(clamp(40rem, 50.8vw, 60.96rem) - 10rem);
+      justify-content: space-between;
     }
   }
 

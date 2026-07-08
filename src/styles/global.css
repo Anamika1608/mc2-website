@@ -47,6 +47,15 @@
   box-sizing: border-box;
 }
 
+/* Reserves the scrollbar's track permanently, so centered layouts (margin:
+   auto columns, hero content, etc.) never shift a few px left/right when a
+   vertical scrollbar appears/disappears -- which otherwise happens at
+   different zoom levels or content heights, since a scrollbar only eats
+   space from the right side of the viewport (user-reported, 2026-07-08). */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
   background: var(--color-cream);
