@@ -569,13 +569,31 @@ const CARDS = [
       max-width: 29.15rem;
     }
     .art-expertise {
-      max-width: 15.66rem;
+      /* Halved per direct feedback on the Expertise card specifically (7.83rem,
+         half of the 15.66rem desktop-native ceiling above) -- the feedback slide's
+         own screenshot is mobile-width and only calls out this one card's
+         illustration, not the other three, so this stays scoped to
+         .art-expertise alone rather than touching the shared .art rule. */
+      max-width: 7.83rem;
     }
     .art-infrastructure {
       max-width: 15.3rem;
     }
     .art-piloting {
       max-width: 27.52rem;
+    }
+    /* Halved per the same feedback, same card: "02 | WHO YOU WORK WITH" specifically
+       (not the other three cards' eyebrows, which the feedback slide never mentions).
+       .card-eyebrow's own font-size (above) is one shared rule used by all four cards
+       and already resolves to a flat 1.375rem below 1200px (the --support-stage-scale
+       custom property the calc() divides by is only ever set at >=1200px, see the
+       script -- its `, 1` fallback makes the calc a no-op here), so scoping this
+       override to just .support-card-expertise and dropping it inside the existing
+       <1200px block (this file's own mobile/tablet breakpoint, matching the
+       instruction to reuse the file's established convention) changes nothing for
+       Capital/Infrastructure/Piloting or for the >=1200px desktop rule above. */
+    .support-card-expertise .card-eyebrow {
+      font-size: 0.6875rem; /* 11px, half of 1.375rem/22px */
     }
 
     .support-card {
