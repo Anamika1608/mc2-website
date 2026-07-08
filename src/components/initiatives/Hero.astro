@@ -73,7 +73,9 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     </div>
   </div>
 
-  <ScrollArrow class="scroll" aria-hidden="true" />
+  <button type="button" class="scroll" aria-label="Scroll to next section">
+    <ScrollArrow aria-hidden="true" />
+  </button>
 </section>
 
 <style>
@@ -359,10 +361,19 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          pill can't survive a narrow viewport without either truncating or
          overflowing, so it collapses to a stacked card below 1024px — icon
          above text, rounded corners instead of a true pill, full container
-         width. */
+         width.
+         Mobile-review fix (2026-07-09, annotated screenshot): the stacked
+         card was reading as a near-full-width strip (90%) with the icon+text
+         left-aligned inside it, rather than a compact, centered card — user
+         asked to "reduce the box size" and "centre align the text". Narrowed
+         max-width 90% -> 22rem (352px, comfortably inside a 375px viewport
+         with room either side, same order of magnitude as PillButton's own
+         mobile-floor sizing) and switched align-items to center so the icon
+         centers above the (now also centered, see .notice-text below) text
+         instead of pinning both to the card's left edge. */
       flex-direction: column;
-      align-items: flex-start;
-      max-width: 90%;
+      align-items: center;
+      max-width: 22rem;
       border-radius: 1.5rem;
       padding: 1.75rem 1.5rem;
       gap: 1rem;
@@ -370,6 +381,14 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     .notice-icon {
       width: 3.5rem;
       height: 3.5rem;
+    }
+    .notice-text {
+      /* Was left-aligned (inherited from the desktop pill's own left-aligned
+         paragraph, appropriate there since text sits beside the icon rather
+         than under it) — with the card now a centered column (see .notice
+         above), center the text too so it reads as a single centered block
+         under the icon, matching the requested "centre align the text". */
+      text-align: center;
     }
   }
 

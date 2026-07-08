@@ -82,7 +82,9 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
         </p>
       </div>
 
-      <ScrollArrow class="scroll" aria-hidden="true" />
+      <button type="button" class="scroll" aria-label="Scroll to next section">
+        <ScrollArrow aria-hidden="true" />
+      </button>
     </div>
   </div>
 </section>
@@ -334,10 +336,16 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     .info-bar {
       /* Sanctioned adaptation (design is desktop-only): the wide fixed pill
          can't survive a narrow viewport, so it collapses to a stacked card,
-         same treatment as Initiatives' own notice bar. */
+         same treatment as Initiatives' own notice bar.
+         Mobile-review fix (2026-07-09, annotated screenshot): narrowed from
+         90% (a near-full-width strip) to 22rem (352px) and switched to
+         centered icon+text, matching the same fix and the same target width
+         applied to Initiatives' near-identical stacked notice card
+         (initiatives/Hero.astro) for visual consistency between the two
+         pages' equivalent pattern. */
       flex-direction: column;
-      align-items: flex-start;
-      max-width: 90%;
+      align-items: center;
+      max-width: 22rem;
       margin-inline: auto;
       border-radius: 1.5rem;
       padding: 1.75rem 1.5rem;
@@ -351,11 +359,28 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
       height: 3.5rem;
       font-size: 1.75rem;
     }
-  }
-
-  @media (max-width: 639.98px) {
-    .info-bar {
-      max-width: 100%;
+    .info-text {
+      /* Was left-aligned + the desktop 1.1875rem/19px size (no prior mobile
+         override) — user asked to "reduce font & box size" and "centre
+         align the text & icon". Centered to match the now-centered column
+         (.info-bar above); font-size dropped to 1rem/16px, this site's own
+         --text-body-sm token value, small enough to look proportioned to
+         the now-narrower 22rem card without wrapping awkwardly (verified
+         against a real render at 500/600px). */
+      text-align: center;
+      font-size: 1rem;
     }
+    /* A `@media (max-width: 639.98px) { .info-bar { max-width: 100% } }`
+       block used to live here, re-widening the card back out below 640px
+       (presumably so it wouldn't feel cramped on the narrowest phones when
+       the block above capped it at 90%). Removed (2026-07-09 mobile-review
+       fix): now that .info-bar is capped at a fixed 22rem (352px, above),
+       that override would directly undo this fix in the 500-639px range —
+       exactly the range a phone screenshot lives in — stretching the
+       "reduced" card back out to nearly full width there. No replacement
+       rule needed: a block box with max-width:22rem already renders at
+       min(container width, 22rem) automatically, so on genuinely narrow
+       phones (<352px of available width) it still shrinks to fit with no
+       separate rule required. */
   }
 </style>
