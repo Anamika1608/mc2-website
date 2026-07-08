@@ -381,6 +381,14 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   // in sync with the cards' width/margin transitions instead of chasing a moving target.
   const NARROW = 28.345;
   const OVERLAP = 7.502;
+  // Mobile/tablet counterpart of the --spark-left derivation above (see the mobile
+  // scrollspy block below for why a second axis is needed at all): 64.62px is the
+  // exact same card-top-to-numeral offset the desktop `top: 4.04rem` CSS rule already
+  // uses (see .o1-spark below), reused rather than re-derived since .card-head's own
+  // top padding is unchanged below 1024 (only its horizontal padding shrinks further
+  // down, at 639.98px) — so the numeral still sits this far below each card's own top
+  // at every width this offset is used at.
+  const SPARK_NUMERAL_OFFSET = 64.62;
 
   const activate = (target: HTMLElement) => {
     cards.forEach((card) => card.classList.toggle("is-active", card === target));
@@ -389,6 +397,17 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
       const leftPercent = activeIndex * (NARROW - OVERLAP);
       const rowWidth = row.getBoundingClientRect().width;
       row.style.setProperty("--spark-left", `${(leftPercent / 100) * rowWidth}px`);
+      // Mobile/tablet: cards stack full-width vertically (see the <1024 media query),
+      // so there's no horizontal fan to track — --spark-left above is meaningless at
+      // that layout and the mobile-scoped CSS ignores it. What needs to move instead is
+      // the VERTICAL position, so the spark stays beside whichever card is active as
+      // the user scrolls past each one. Safe to read `target.offsetTop` directly here
+      // (unlike the analytic --spark-left math above, which exists specifically
+      // because reading geometry mid-transition is unreliable): mobile cards never
+      // resize when `.is-active` toggles (width/min-height are pinned to 100%/auto at
+      // this breakpoint regardless of state), so there's no simultaneous-transition
+      // race to chase, only a plain static offset.
+      row.style.setProperty("--spark-top", `${target.offsetTop + SPARK_NUMERAL_OFFSET}px`);
     }
   };
 
@@ -408,6 +427,55 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
       activate(document.querySelector(".card--o1")!);
     });
   }
+
+  // Scroll-driven activation (mobile/tablet, <1024px): mirrors HowItWorks.astro's own
+  // scrollspy fix (see that file for the general precedent) — there's no hover on touch
+  // devices, so per direct feedback, whichever card is currently centered in the
+  // viewport while scrolling activates instead, sliding the spark along to follow it
+  // (see SPARK_NUMERAL_OFFSET/--spark-top above and the mobile-scoped .o1-spark
+  // override in the CSS). The feedback slide offered a "stay constant per folder
+  // (parallax)" alternative instead of sliding — sliding was chosen because it's the
+  // more direct extension of the already-proven desktop mechanism, and the slide's own
+  // "this will change on scroll" wording already implies a continuously-updating
+  // interaction, not a static per-card decoration.
+  // Kept as a SEPARATE, continuous observer (unlike the site's one-shot `.reveal`
+  // observer in BaseLayout.astro, which unobserves after first trigger) so it keeps
+  // reacting as the user keeps scrolling, and independent of the hover mechanism above
+  // so the two never fight over `.is-active` on desktop.
+  const isMobile = () => window.matchMedia("(max-width: 1023.98px)").matches;
+  let scrollObserver: IntersectionObserver | null = null;
+
+  const enableScrollActivation = () => {
+    if (scrollObserver) return;
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) activate(entry.target as HTMLElement);
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    cards.forEach((card) => scrollObserver!.observe(card));
+  };
+
+  const disableScrollActivation = () => {
+    scrollObserver?.disconnect();
+    scrollObserver = null;
+    // Unlike HowItWorks (where "no card active" is a valid resting state), Programs
+    // always has exactly one active card, even before any interaction (O1, per the
+    // markup) — reset to it here (matching the mouseleave handler above) rather than
+    // clearing entirely, so that invariant still holds once the viewport crosses back
+    // to desktop mid-scroll.
+    activate(cards[0]);
+  };
+
+  const syncScrollActivation = () => {
+    if (isMobile()) enableScrollActivation();
+    else disableScrollActivation();
+  };
+
+  syncScrollActivation();
+  window.addEventListener("resize", syncScrollActivation);
 </script>
 
 <style>
@@ -889,14 +957,15 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
 
   /* Responsive rule (brief step 3): below 1024, the overlapping fan is a desktop-only
      composition (occlusion existing purely to read as a stacked-folders collage) — drop
-     it for full-width sequential cards, each showing everything it has. Hover-to-expand
-     (this task) is a desktop-hover concept with nothing to attach to here (the script
-     below no-ops under 1024, see matchMedia guard) — every card now HAS subtitle/body/
-     status content (added this task), so just show it unconditionally instead of gating
-     on `.is-active`. O1 keeps its `is-active` class from the markup regardless (nothing
-     ever removes it at this width), so its border/title/numeral/chip colors render
-     exactly as they always have; O2/O3/O4 never gain `.is-active` here, so theirs do too
-     — this block changes ONLY subtitle/body/status visibility, nothing else. */
+     it for full-width sequential cards, each showing everything it has. Below-1024
+     activation used to be desktop-hover-only with nothing to attach to here (the hover
+     script no-ops under 1024) — every card already HAS subtitle/body/status content
+     (added a prior task), so this block showed it unconditionally instead of gating on
+     `.is-active`. That's still true, but `.is-active` itself is no longer permanently
+     frozen on O1 at this width: the scroll-driven activation added below (see the
+     script) now toggles it as the user scrolls, same as HowItWorks' own mobile fix —
+     this block's job is still just subtitle/body/status visibility, not gating who's
+     active. */
   @media (max-width: 1023.98px) {
     .card-subtitle,
     .card-body {
@@ -908,6 +977,22 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     .programs-row {
       flex-direction: column;
       gap: 2rem;
+    }
+    /* Mobile/tablet scrollspy spark (see the script's SPARK_NUMERAL_OFFSET/--spark-top
+       and the "sliding vs parallax" comment above for the full rationale). Cards stack
+       full-width vertically here, so — unlike the desktop fan, where cards sit
+       side-by-side and the spark slides horizontally — there's no horizontal movement
+       to speak of; every card starts at the same left edge. `left` stays fixed at the
+       same offset O1's own card always used (the analytic --spark-left the script still
+       computes is desktop-fan-only math and must not leak in here). `top` instead
+       tracks --spark-top, the active card's own offsetTop plus the numeral offset, so
+       the spark slides down/up to sit beside whichever card is currently centered while
+       scrolling. The `4.04rem` fallback matches O1's own desktop value at rest — the
+       correct default before any scroll/JS has run (O1 is the first card, offsetTop 0). */
+    .programs-row .o1-spark {
+      left: -4.23rem;
+      top: var(--spark-top, 4.04rem);
+      transition: top 250ms ease;
     }
     /* `.programs-row .card` (two classes) rather than repeating `.card--o1, .card--o2, …`
        (one class each): `.card.is-active` now sets width too (hover-to-expand width fix,
