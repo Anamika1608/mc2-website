@@ -320,10 +320,38 @@ const DIRECTORS = [
        page at 680-900px in row layout). Stacking the card (photo above
        meta) gives the name the full card width instead of card-width minus
        photo minus gap — the same stacked layout already used below 680px,
-       just extended up to cover this range too. */
+       just extended up to cover this range too.
+       align-items/text-align: center (was flex-start/left) — user directive:
+       stacked photo-above-text read "awkward" hugging the left edge; chose
+       centered-stack over a photo-left/text-right row because a row layout
+       re-introduces the exact narrow-column squeeze that forced the switch
+       to stacking in the first place (this range is still only ~2-col-grid
+       width per card, ~380-450px, not full container width). Centering is
+       the lower-risk of the two options the user offered. */
     .card {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+      text-align: center;
+    }
+    /* .meta is a flex item with no explicit width, so under align-items:
+       center it would otherwise shrink-wrap to its own max-content width —
+       governed by .meta h3's `white-space: nowrap` — which either clips
+       nothing visibly (nowrap can't clip) but forces .desc's wrapped lines
+       to also compute against that same (very wide, name-driven) intrinsic
+       width, which can overflow a narrow card. width:100% makes .meta fill
+       the card so .desc wraps against the card's real width instead. */
+    .meta {
+      width: 100%;
+    }
+    /* The nowrap-name assumption baked into `.meta h3` (see that rule above)
+       was calibrated for the ≥1024px side-by-side layout where the row's
+       full width is available. Now that the photo sits ABOVE the text
+       instead of beside it, a name wrapping to 2 lines is visually safe —
+       so allow it here rather than risk a long name (e.g. "Shri Sandeep
+       Maheshwari") overflowing the narrower ~380-450px stacked-card width
+       in the 680-1023px tablet range. */
+    .meta h3 {
+      white-space: normal;
     }
     /* Decorative flourish is desktop-only per user request — removed
        completely on tablet and mobile, not just resized/hidden partially. */
