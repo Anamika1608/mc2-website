@@ -269,6 +269,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        corrected value). Different node, different (if barely distinguishable)
        fill — verify-don't-assume applies per node, not per house pattern. */
     color: var(--color-ink-alt);
+    text-align: justify; /* sitewide paragraph-justify pass */
   }
 
   .notice {
@@ -320,7 +321,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     font-size: 1.1463rem; /* 18.34px — notice text was 0.9168× the hero lede in the design (28.42/31); rescaled with the lede: 20px × 0.9168 — normalized to home hero scale per user directive 2026-07-06 */
     line-height: 1.31;
     color: var(--color-white); /* sampled fill: literal "white" in the node's own paths */
-    text-align: left;
+    text-align: justify; /* sitewide paragraph-justify pass — was plain left; pill position/left-alignment of the block is unaffected */
   }
   .notice-link {
     color: var(--color-orange); /* #f37d2c exact match, sampled from this link's own paths */
@@ -388,6 +389,18 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          than under it) — with the card now a centered column (see .notice
          above), center the text too so it reads as a single centered block
          under the icon, matching the requested "centre align the text". */
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    /* sitewide paragraph-justify pass: this lede's font-size doesn't shrink below
+       1024px, so once the column narrows to ~90% of a phone viewport a justified
+       line risks only 2-3 words with an ugly stretched gap (verified pattern on
+       this page's sibling hero ledes at 390px). Reverting to the pre-existing
+       center alignment below this breakpoint; justify is kept ≥768px, where it
+       renders cleanly (verified at 900/1920px). */
+    .lede {
       text-align: center;
     }
   }
