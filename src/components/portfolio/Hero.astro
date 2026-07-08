@@ -243,6 +243,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     font-size: var(--text-hero-lede); /* 31px — reused site-wide lede constant, see frontmatter comment — normalized to home hero scale per user directive 2026-07-06 */
     line-height: var(--text-hero-lede-lh); /* derived — see frontmatter comment — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink-alt);
+    text-align: justify; /* sitewide paragraph-justify pass */
   }
 
   .info-bar {
@@ -313,7 +314,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     font-size: 1.1875rem; /* 19px */
     line-height: 1.27;
     color: var(--color-ink-alt);
-    text-align: left;
+    text-align: justify; /* sitewide paragraph-justify pass — was plain left; pill's own left-aligned block position is unaffected */
   }
 
   .scroll {
@@ -382,5 +383,17 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        min(container width, 22rem) automatically, so on genuinely narrow
        phones (<352px of available width) it still shrinks to fit with no
        separate rule required. */
+  }
+
+  @media (max-width: 767.98px) {
+    /* sitewide paragraph-justify pass: this lede's font-size doesn't shrink below
+       1024px, so once the column narrows to ~90% of a phone viewport a justified
+       line risks only 2-3 words with an ugly stretched gap (verified pattern on
+       this page's sibling hero ledes at 390px). Reverting to the pre-existing
+       center alignment below this breakpoint; justify is kept ≥768px, where it
+       renders cleanly (verified at 900/1920px). */
+    .lede {
+      text-align: center;
+    }
   }
 </style>
