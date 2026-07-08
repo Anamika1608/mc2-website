@@ -352,6 +352,25 @@ const NOTCH = `<svg class="pillar-notch" viewBox="0 0 51.11 72.18" aria-hidden="
     margin-top: auto; /* per direct feedback (equal card heights): pushes the icon to .card-content's own bottom edge, so the extra height every card now gets (to match the tallest) shows up as breathing room above the icon, not a gap after it. */
   }
 
+  /* O4-only override (2026-07-08, user directive): Figma's own O4 illustration
+     node (1:1457, "Clip path group") is 239.67x132.38 -- notably bigger than
+     O2's (211.66x64.56) or O3's (176.26x87.66) -- and is actually a larger
+     graphic deliberately cropped by the card edge so only its top half peeks
+     through (confirmed via get_design_context + get_screenshot). Per user
+     direction, keeping O4 as a complete/uncropped icon like O1/O2/O3 rather
+     than replicating that crop, but sizing it up to better match Figma's
+     larger intent for this specific card. Also switches away from the
+     shared rule's height:fixed + width:auto + max-width:100% pattern (which
+     breaks aspect ratio once max-width actually clamps the width, since
+     height never follows) to width:100% + max-width + height:auto, which
+     can never distort at any card width. Scoped to .card--o4 only --
+     O1/O2/O3 keep the shared rule above, completely unchanged. */
+  .card--o4 .card-illus {
+    height: auto;
+    width: 100%;
+    max-width: 14rem; /* 224px, ~26% larger than the shared rule's effective 178px (89px height x icon04.png's 2:1 aspect) */
+  }
+
   /* :global — this SVG is injected via set:html (it's shared, colour-swapped
      markup built in frontmatter), so Astro's scoped data-attribute never
      attaches to it and an un-prefixed rule here would silently no-op. The
