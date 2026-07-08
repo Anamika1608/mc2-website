@@ -130,7 +130,7 @@ const ADVISORS = [
     font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667;
     color: var(--color-gray);
-    text-align: center;
+    text-align: justify; /* sitewide paragraph-justify pass — block stays centered via margin auto */
   }
 
   /* Grid: 4 advisor cards, one row. get_metadata shows the photos themselves
@@ -208,6 +208,7 @@ const ADVISORS = [
     font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.3;
     color: var(--color-gray);
+    text-align: justify; /* sitewide paragraph-justify pass — block stays centered via the card's own centered layout */
   }
 
   /* Spark (node 1:13347): a single spark centered below the row (unlike
