@@ -215,11 +215,25 @@ const STATS = [
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* NOT uniform quarters. Figma's 4 stat groups (1:9307/9353/9387/9428)
+       start at x 0 / 381.37 / 765.03 / 1144.26 of the 1383.96px row —
+       successive column widths 381.37 / 383.66 / 379.23px, with column 4
+       taking the remaining 239.7px (deliberately narrower, which is why its
+       desc wraps to 2 lines in the design). This rhythm is what puts each
+       column's text ~44px RIGHT of its own flourish vertical; the previous
+       repeat(4, 1fr) + side-padding grid drifted further off per column
+       until v3 sat 2px from "Pan India" and v2 cut through column 4's text
+       (user-reported, live-measured). */
+    grid-template-columns: 27.556% 27.722% 27.402% minmax(0, 1fr);
     text-align: left;
   }
   .stats li {
-    padding: 2.5rem 1.5rem 0;
+    /* Top = Figma's single-line value offset below the row top (3819.67 −
+       3778.56 = 41.11px). No inline padding: text begins at the column
+       start exactly like Figma — the line-to-text clearance lives in the
+       column positions above, not in padding. Mobile restores side padding
+       in the <=1023.98px block (its 2-col grid needs the separation). */
+    padding: 2.57rem 0 0;
   }
   /* Mobile-only rail (<=559.98px), see media block below for the visible
      rule — no-op at tablet/desktop. .has-divider/border-left from the
@@ -273,7 +287,10 @@ const STATS = [
     font-family: var(--font-display);
     font-size: 1.75rem; /* 28px — reduced from 35.23px per user directive 2026-07-07, matches Audiences' analogous column-title cut on Home */
     color: var(--color-orange);
-    margin: 0 0 0.75rem;
+    /* Was 0.75rem — Figma's desc paragraphs start 97.33px below the row top
+       (3875.89 − 3778.56); with the 41.11px value offset + ~31px value line,
+       that leaves ~25px between value and desc. */
+    margin: 0 0 1.56rem;
     line-height: 1.1;
   }
   .stat-arrow {
@@ -285,6 +302,11 @@ const STATS = [
     color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
     line-height: 1.5;
     margin: 0;
+    /* Figma's desc paragraphs are 209.9–266.7px wide (that's why "Balance
+       sheets behind a single mandate" wraps to 2 lines in the design) —
+       cap at the widest so wrapping matches, instead of running the full
+       ~380px column. Lifted on mobile (<=1023.98px block). */
+    max-width: 16.7rem;
   }
 
   @media (max-width: 1023.98px) {
@@ -309,6 +331,18 @@ const STATS = [
     }
     .stats-wrap {
       margin-bottom: 0;
+    }
+    /* The desktop rules put text at the column start (no side padding) and
+       cap desc width to Figma's paragraph widths — both derived against the
+       flourish's 4-column rhythm, which doesn't exist down here. Restore
+       the previous mobile layout: side padding separates the 2-col grid's
+       columns, descs use the full column. The <=559.98px rail block's own
+       padding-left override still applies on top. */
+    .stats li {
+      padding: 2.5rem 1.5rem 0;
+    }
+    .stat-desc {
+      max-width: none;
     }
   }
   @media (max-width: 559.98px) {
