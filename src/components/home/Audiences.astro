@@ -58,7 +58,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 
       <div class="column">
         <p class="number">01</p>
-        <h3 class="title">Startups & Founders</h3>
+        <h3 class="title">Startups & <br class="title-break" />Founders</h3>
         <p class="body">
           Validate, pilot and scale your energy technology with India’s
           largest energy majors behind you.
@@ -80,7 +80,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
         <SparkOrange class="divider-spark divider-spark--top" aria-hidden="true" />
         <SparkOrange class="divider-spark divider-spark--bottom" aria-hidden="true" />
         <p class="number">03</p>
-        <h3 class="title">Academic & R&D Institutions</h3>
+        <h3 class="title">Academic & <br class="title-break" />R&D Institutions</h3>
         <p class="body">
           Bring your labs, faculty and pipeline of innovators into a national
           energy-innovation platform.
@@ -460,6 +460,19 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     }
     .intro {
       max-width: 90%;
+    }
+
+    /* .title-break forces "Startups &"/"Founders" and "Academic &"/"R&D
+       Institutions" onto 2 lines to match Figma's desktop 4-column layout
+       (node 1:377 — confirmed via separate text nodes 1:538/1:539 at
+       different y-offsets, a real 2-line title, not a coincidental wrap).
+       Below 1024px the columns get much wider (2-col, then 1-col), so the
+       forced break reads as unnecessary/inconsistent next to the other 2
+       titles' natural single-line fit at those widths (confirmed visually)
+       — drop it here and let all 4 titles wrap naturally like they did
+       before this fix. */
+    .title-break {
+      display: none;
     }
 
     /* Responsive rule (brief step 2): 2x2 grid below 1024. The desktop decor
