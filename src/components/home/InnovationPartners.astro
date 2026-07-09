@@ -151,7 +151,19 @@ const partners = [
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: 8.0625rem; /* 129px, same shared frame height as SponsorStrip.astro */
+    /* Same fluid clamp fix as SponsorStrip.astro's own .logo-frame/.logo img
+       (per direct feedback across all 3 carousels) -- 129px ceiling
+       unchanged at desktop, scaling down to a 4.5rem/72px floor by ~375px. */
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem); /* 129px ceiling, same shared frame height as SponsorStrip.astro */
+  }
+
+  /* See SponsorStrip.astro's own .logo img rule for the full rationale --
+     without this, the frame's clamp alone wouldn't shrink the actual
+     rendered logo, since the <img> tags carry explicit width/height
+     attributes at the full 129px-based size. */
+  .logo img {
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem);
+    width: auto;
   }
 
   figcaption {

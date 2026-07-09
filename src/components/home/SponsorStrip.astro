@@ -170,8 +170,28 @@ const sponsors = [
        Petroleum, scaled per user directive 2026-07-07 -- see the sponsors
        array comment above). Bottom-aligning each image inside a box this
        tall keeps the row visually level without stretching or cropping any
-       logo, same technique as before, just scaled with the images. */
-    height: 8.0625rem;
+       logo, same technique as before, just scaled with the images.
+       Per direct feedback, this was flat at every viewport (no mobile
+       override existed), reading oversized on narrow phones -- a fluid
+       clamp keeps the exact 129px ceiling at desktop (unchanged) and
+       scales down smoothly to a 4.5rem/72px floor, reached at ~375px and
+       held flat below that so the very smallest phones don't shrink
+       further. Two-point-derived, same technique as this repo's other
+       vw-based clamps (e.g. BoardOfDirectors.astro's photo size). */
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem);
+  }
+
+  /* Logo images carry explicit width/height HTML attributes (each logo's
+     own aspect ratio at the 129px desktop height) -- without this rule
+     those attributes render at their fixed intrinsic size regardless of
+     .logo-frame's own height, so the frame's clamp above wouldn't actually
+     shrink the visible logo, just add empty space around a still-full-size
+     image. Matching the same clamp on the image's own height (width: auto
+     lets the browser scale width proportionally via the aspect-ratio the
+     HTML attributes already establish) is what actually shrinks the logo. */
+  .logo img {
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem);
+    width: auto;
   }
 
   figcaption {

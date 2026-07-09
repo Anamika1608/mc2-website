@@ -147,10 +147,22 @@ const SPONSORS = [
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: 8.0625rem; /* 129px, 80% of the tallest logo (Hindustan Petroleum) -- bottom-aligns every logo inside a box this tall so the row reads level, same technique as Home's SponsorStrip.astro */
+    /* Per direct feedback across all 3 carousels: was flat at every
+       viewport, reading oversized on narrow phones. Same fluid clamp as
+       Home's SponsorStrip.astro/InnovationPartners.astro -- 129px ceiling
+       unchanged at desktop, scaling down to a 4.5rem/72px floor by ~375px. */
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem); /* 129px ceiling, 80% of the tallest logo (Hindustan Petroleum) -- bottom-aligns every logo inside a box this tall so the row reads level, same technique as Home's SponsorStrip.astro */
   }
+  /* .logo is the <img> element itself here (unlike Home's SponsorStrip.astro,
+     where .logo wraps a separate img) -- matching the same clamp on its own
+     height (width: auto scales proportionally via the aspect ratio its
+     width/height HTML attributes already establish) is what actually shrinks
+     the rendered logo; the frame's clamp alone wouldn't, since the <img>'s
+     explicit HTML attributes otherwise render it at its full intrinsic size. */
   .logo {
     display: block;
+    height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem);
+    width: auto;
   }
 
   /* Captions (7 groups under 1:9000) are ALSO vectorized paragraphs, not real
