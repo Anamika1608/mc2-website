@@ -1,0 +1,164 @@
+---
+// New section per user directive 2026-07-09, directly below SponsorStrip's
+// own "Built together by India's energy backbone:" carousel. Same
+// infinite-scroll marquee technique as SponsorStrip.astro, different
+// heading and a different (smaller) logo set: 5 innovation-ecosystem
+// partners (4 IITs + a PSU + a life-sciences platform), sourced from files
+// dropped directly in public/ with messy names (spaces, a generic upload
+// hash) — renamed here to match the project's existing lowercase-hyphenated
+// convention (see SponsorStrip.astro's own logos): nlc-india.png,
+// c-camp.png, iit-kanpur.png, iit-madras.png, iit-bombay.png. Also
+// downscaled from their original multi-hundred-KB/multi-megapixel source
+// files (up to 2300x1009 and 876KB) to ~300-600px-max, since the display
+// size here is only ~130-300px — same visual result at a fraction of the
+// page weight.
+//
+// width/height below are each logo's own real (post-resize) aspect ratio
+// scaled to the same 129px shared frame height SponsorStrip.astro uses,
+// so the two sections' logo rows read as the same visual rhythm.
+const partners = [
+  {
+    src: "/nlc-india.png",
+    width: 101,
+    height: 129,
+    caption: "NLC India Ltd",
+    alt: "NLC India Limited",
+  },
+  {
+    src: "/c-camp.png",
+    width: 294,
+    height: 129,
+    caption: "C-CAMP",
+    alt: "Centre for Cellular and Molecular Platforms",
+  },
+  {
+    src: "/iit-kanpur.png",
+    width: 129,
+    height: 129,
+    caption: "IIT Kanpur",
+    alt: "Indian Institute of Technology Kanpur",
+  },
+  {
+    src: "/iit-madras.png",
+    width: 129,
+    height: 129,
+    caption: "IIT Madras",
+    alt: "Indian Institute of Technology Madras",
+  },
+  {
+    src: "/iit-bombay.png",
+    width: 135,
+    height: 129,
+    caption: "IIT Bombay",
+    alt: "Indian Institute of Technology Bombay",
+  },
+] as const;
+---
+
+<section class="partners-strip">
+  <div class="container">
+    <h2>Built on Partnerships Across India&rsquo;s Innovation Ecosystem</h2>
+
+    <div class="logos-viewport">
+      <ul class="logos">
+        {
+          [...partners, ...partners].map((partner, i) => (
+            <li aria-hidden={i >= partners.length ? "true" : undefined}>
+              <figure class="logo">
+                <span class="logo-frame">
+                  <img
+                    src={partner.src}
+                    alt={partner.alt}
+                    width={partner.width}
+                    height={partner.height}
+                  />
+                </span>
+                <figcaption>{partner.caption}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Styling intentionally mirrors SponsorStrip.astro's own (renamed classes
+     to avoid collisions since both sections can render on the same page) —
+     see that file for the full rationale on the marquee technique. No
+     bottom divider spark here: SponsorStrip.astro directly above already
+     ends with one, so a second one immediately following read as
+     redundant when the two sections sit back to back — verify live. */
+  .partners-strip {
+    background: var(--color-cream);
+    padding-block: 4rem;
+  }
+
+  h2 {
+    margin: 0 0 2.5rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .logos-viewport {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: start;
+    gap: 2.5rem 3rem;
+    width: max-content;
+    /* Slower than SponsorStrip's 32s: fewer logos (5 vs 7) in the same loop
+       would otherwise cycle noticeably faster at the same speed — verify
+       live and adjust if it still feels too brisk/sparse. */
+    animation: partners-scroll 26s linear infinite;
+  }
+
+  @keyframes partners-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logos {
+      animation-play-state: paused;
+    }
+  }
+
+  .logo {
+    flex-shrink: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-frame {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 8.0625rem; /* 129px, same shared frame height as SponsorStrip.astro */
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-gray);
+    text-align: center;
+  }
+</style>

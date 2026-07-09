@@ -12,6 +12,7 @@
 //      caption text.
 import SparkOrange from "../../assets/about/spark-orange.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
+import ScaleFlourish from "../../assets/about/scale-flourish.svg";
 
 const STATS = [
   { value: "4OO+ acres", desc: "Dedicated R&D campuses across the energy majors" },
@@ -44,26 +45,19 @@ const STATS = [
     </p>
 
     <div class="stats-wrap">
-      <!-- Desktop-only (>=1024px) Figma-exact grid overlay (see .grid-lines
-           below) — the mobile rail (<=559.98px) is a separate, simpler
+      <!-- Desktop-only (>=1024px) flourish, exported whole from Figma (node
+           1:9465, the full lines+sparks group) as a single SVG. This REPLACES
+           the previous CSS-built overlay (7 positioned 1px rects + 8 placed
+           spark icons): the positions were Figma-exact, but the RENDERING
+           style wasn't reproducible in CSS — Figma draws the lines as
+           tapered, brush-stroke-like filled shapes that swell INTO the spark
+           crossings as one continuous piece of art, not uniform hairlines
+           with stars placed on top (user-reported mismatch). Same asset
+           approach as the Support page's lines-*.svg. Export cleaned of the
+           known Figma-export background-rect artifacts (see repo history on
+           SVG exports). The mobile rail (<=559.98px) is a separate, simpler
            treatment defined further down, not derived from this. -->
-      <div class="grid-lines" aria-hidden="true">
-        <span class="gline gline-v gline-v1"></span>
-        <span class="gline gline-v gline-v2"></span>
-        <span class="gline gline-v gline-v3"></span>
-        <span class="gline gline-v gline-v4"></span>
-        <span class="gline gline-v gline-v5"></span>
-        <span class="gline gline-h gline-h-top"></span>
-        <span class="gline gline-h gline-h-bottom"></span>
-        <SparkOrange class="gspark gspark-1" />
-        <SparkOrange class="gspark gspark-2" />
-        <SparkOrange class="gspark gspark-3" />
-        <SparkOrange class="gspark gspark-4" />
-        <SparkOrange class="gspark gspark-5" />
-        <SparkOrange class="gspark gspark-6" />
-        <SparkOrange class="gspark gspark-7" />
-        <SparkOrange class="gspark gspark-8" />
-      </div>
+      <ScaleFlourish class="grid-lines" aria-hidden="true" />
 
       <ul class="stats">
         {STATS.map((s, i) => (
@@ -105,9 +99,13 @@ const STATS = [
     padding-block: 4.6875rem 4.34rem;
     text-align: center;
     /* Contains the grid-lines' genuine Figma bleed past .stats-wrap's own
-       edges (Audiences.astro precedent for the same kind of bleed), and the
-       mobile rail's own negative left offset. */
-    overflow-x: hidden;
+       edges, and the mobile rail's own negative left offset. `clip`, not
+       `hidden`: per spec, overflow-x:hidden with overflow-y:visible computes
+       overflow-y to `auto`, turning the section into a scroll container —
+       which is exactly the vertical scrollbar the user reported when the
+       grid lines protruded past the section box. `clip` clips without ever
+       creating a scroll container (SupportStack.astro precedent). */
+    overflow-x: clip;
   }
 
   /* Eyebrow (text node 1:9175): Figma reference code returns
@@ -151,7 +149,15 @@ const STATS = [
      the brief's guess. */
   .intro {
     max-width: 44rem;
-    margin: 0 auto 3rem;
+    /* Bottom margin was 3rem (48px), predating the grid-lines rebuild. The
+       grid's tallest verticals rise 4.9813rem (79.7px, Figma-exact) above
+       .stats-wrap, so at 3rem they crossed ~2rem into this text
+       (user-reported overlap). Figma's own intro-bottom -> stats-top gap is
+       ~99.56px (intro line-2 top y3646.06 + ~32.94 line height ≈ 3679;
+       stats top 3778.56) = 6.22rem, which puts the line tops ~20px below
+       the intro — matching the design. Reverted to 3rem at <=1023.98px,
+       where the grid is hidden and the extra gap would be dead space. */
+    margin: 0 auto 6.22rem;
     font-family: var(--font-sans);
     font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.26;
@@ -193,17 +199,42 @@ const STATS = [
     position: relative;
     max-width: 86.5rem;
     margin-inline: auto;
+    /* Reserves the grid lines' below-stats overhang in layout height: the
+       deepest verticals end 254.9px below .stats-wrap's top = 110.23px
+       (6.89rem) past its Figma-calibrated bottom (group bottom 4033.5 −
+       stats text bottom 3923.23). The lines are absolutely positioned, so
+       without this the section's own 4.34rem bottom padding (derived from
+       the Figma group bottom, i.e. already assuming the lines counted
+       toward layout height) couldn't contain them — they protruded past
+       the section and, combined with the old overflow-x:hidden scroll
+       container, produced the vertical scrollbar the user reported.
+       Zeroed at <=1023.98px where the grid is hidden. */
+    margin-bottom: 6.89rem;
   }
   .stats {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* NOT uniform quarters. Figma's 4 stat groups (1:9307/9353/9387/9428)
+       start at x 0 / 381.37 / 765.03 / 1144.26 of the 1383.96px row —
+       successive column widths 381.37 / 383.66 / 379.23px, with column 4
+       taking the remaining 239.7px (deliberately narrower, which is why its
+       desc wraps to 2 lines in the design). This rhythm is what puts each
+       column's text ~44px RIGHT of its own flourish vertical; the previous
+       repeat(4, 1fr) + side-padding grid drifted further off per column
+       until v3 sat 2px from "Pan India" and v2 cut through column 4's text
+       (user-reported, live-measured). */
+    grid-template-columns: 27.556% 27.722% 27.402% minmax(0, 1fr);
     text-align: left;
   }
   .stats li {
-    padding: 2.5rem 1.5rem 0;
+    /* Top = Figma's single-line value offset below the row top (3819.67 −
+       3778.56 = 41.11px). No inline padding: text begins at the column
+       start exactly like Figma — the line-to-text clearance lives in the
+       column positions above, not in padding. Mobile restores side padding
+       in the <=1023.98px block (its 2-col grid needs the separation). */
+    padding: 2.57rem 0 0;
   }
   /* Mobile-only rail (<=559.98px), see media block below for the visible
      rule — no-op at tablet/desktop. .has-divider/border-left from the
@@ -225,134 +256,42 @@ const STATS = [
   .stat-spark-top {
     top: -0.75rem;
   }
+  /* The flourish SVG (node 1:9465, viewBox 1920x335 = the full Figma canvas
+     width x the group's own height). Position derived from the same
+     calibration as before (stats text group 1:9306 at Figma x242.15,
+     y3778.56, w1383.96 maps 1:1 to .stats-wrap):
+       left  = (0 - 242.15) / 1383.96          = -17.497%
+       width = 1920 / 1383.96                   = 138.732%
+       top   = 3698.85 - 3778.56 = -79.71px     = -4.982rem
+       height= 335px                            = 20.9375rem (fixed)
+     Width is %-based so the baked-in verticals stay locked to the fluid
+     column grid at any viewport width (they sit at fixed fractions of the
+     1920 canvas, which this mapping preserves), while height is a fixed rem
+     so the lines keep their verified clearance from the fixed-rem text
+     above/below instead of shrinking with the viewport — the asset carries
+     preserveAspectRatio="none" to allow that split. The horizontal squash
+     this implies at narrower desktop widths maxes out at ~0.68x at 1024px,
+     verified visually acceptable on the spark shapes. */
   .grid-lines {
     position: absolute;
-    inset: 0;
+    left: -17.497%;
+    top: -4.982rem;
+    width: 138.732%;
+    /* global.css's `img, svg { max-width: 100% }` reset clamps the >100%
+       width above, horizontally compressing the whole flourish (verified
+       live: vertical spacing shrank 381px -> 275px before this override). */
+    max-width: none;
+    height: 20.9375rem;
     pointer-events: none;
-  }
-  .gline {
-    position: absolute;
-    background: var(--color-orange);
-  }
-  .gline-v {
-    width: 1px;
-  }
-  .gline-h {
-    height: 1px;
-  }
-  /* 5 verticals: the 3 internal column dividers (v2/v3/v4) plus the 2 outer
-     ones that bleed past .stats-wrap's own edges (v1 right, v5 left) —
-     dropped by the earlier simplification, restored here. Each has its own
-     top/height per Figma (not a uniform rise/drop shared across all 5). */
-  .gline-v1 {
-    left: 106.97%;
-    top: -4.9813rem;
-    height: 15.2875rem;
-  }
-  .gline-v2 {
-    left: 79.44%;
-    top: -4.9813rem;
-    height: 18.4125rem;
-  }
-  .gline-v3 {
-    left: 51.9%;
-    top: -3.7313rem;
-    height: 19.6625rem;
-  }
-  .gline-v4 {
-    left: 24.37%;
-    top: -3.1063rem;
-    height: 19.0375rem;
-  }
-  .gline-v5 {
-    left: -3.17%;
-    top: 2.2062rem;
-    height: 13.725rem;
-  }
-  /* 2 horizontals, true Figma bleed (not clamped to a positive inset like
-     the earlier pass) — .scale gets overflow-x:hidden below to contain it
-     safely at any viewport width instead. */
-  .gline-h-top {
-    left: 35.07%;
-    right: -23.25%;
-    top: -1.8188rem;
-    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-orange) 65%, transparent 100%);
-  }
-  .gline-h-bottom {
-    left: -19.51%;
-    right: 39.84%;
-    top: 12.8313rem;
-    background: linear-gradient(to right, transparent 0%, var(--color-orange) 35%, var(--color-orange) 100%);
-  }
-  /* 8 sparks, each at a real line x line crossing (confirmed geometrically —
-     v1 doesn't reach h-bottom's y and v5 doesn't reach h-top's y, so those 2
-     crossings genuinely don't exist and have no spark). Sizes vary per
-     Figma, not a uniform token. */
-  .gspark {
-    position: absolute;
-    transform: translate(-50%, -50%);
-  }
-  .gspark-1 {
-    /* v2 x h-bottom, tiny */
-    left: 79.47%;
-    top: 12.8625rem;
-    width: 0.5425rem;
-    height: 0.5425rem;
-  }
-  .gspark-2 {
-    /* v1 x h-top */
-    left: 107.01%;
-    top: -2.1875rem;
-    width: 3.0962rem;
-    height: 2.3044rem;
-  }
-  .gspark-3 {
-    /* v2 x h-top */
-    left: 79.47%;
-    top: -2.1875rem;
-    width: 3.0963rem;
-    height: 2.3044rem;
-  }
-  .gspark-4 {
-    /* v3 x h-bottom */
-    left: 51.92%;
-    top: 12.875rem;
-    width: 2.2075rem;
-    height: 2.2075rem;
-  }
-  .gspark-5 {
-    /* v3 x h-top */
-    left: 51.94%;
-    top: -2.0812rem;
-    width: 2.2662rem;
-    height: 1.6869rem;
-  }
-  .gspark-6 {
-    /* v4 x h-bottom */
-    left: 24.4%;
-    top: 12.8625rem;
-    width: 3.0963rem;
-    height: 3.0963rem;
-  }
-  .gspark-7 {
-    /* v4 x h-top, small */
-    left: 24.4%;
-    top: -1.7937rem;
-    width: 1.0225rem;
-    height: 1.0225rem;
-  }
-  .gspark-8 {
-    /* v5 x h-bottom */
-    left: -3.14%;
-    top: 12.8625rem;
-    width: 3.0962rem;
-    height: 3.0963rem;
   }
   .stat-value {
     font-family: var(--font-display);
     font-size: 1.75rem; /* 28px — reduced from 35.23px per user directive 2026-07-07, matches Audiences' analogous column-title cut on Home */
     color: var(--color-orange);
-    margin: 0 0 0.75rem;
+    /* Was 0.75rem — Figma's desc paragraphs start 97.33px below the row top
+       (3875.89 − 3778.56); with the 41.11px value offset + ~31px value line,
+       that leaves ~25px between value and desc. */
+    margin: 0 0 1.56rem;
     line-height: 1.1;
   }
   .stat-arrow {
@@ -364,7 +303,12 @@ const STATS = [
     color: var(--color-ink-alt); /* correction: sampled navy, not --color-gray */
     line-height: 1.5;
     margin: 0;
-    text-align: justify; /* sitewide paragraph-justify pass: block stays left-positioned via .stats' own text-align:left */
+    /* Figma's desc paragraphs are 209.9–266.7px wide (that's why "Balance
+       sheets behind a single mandate" wraps to 2 lines in the design) —
+       cap at the widest so wrapping matches, instead of running the full
+       ~380px column. Lifted on mobile (<=1023.98px block). */
+    max-width: 16.7rem;
+    text-align: justify; /* block stays left-positioned via .stats' own text-align:left */
   }
 
   @media (max-width: 1023.98px) {
@@ -380,6 +324,27 @@ const STATS = [
        2-col/1-col mobile layouts. */
     .grid-lines {
       display: none;
+    }
+    /* With the grid hidden, its desktop clearance spacing (intro's 6.22rem
+       Figma gap for the rising line tops; stats-wrap's 6.89rem reserve for
+       the line overhang below) would just be dead space — revert both. */
+    .intro {
+      margin-bottom: 3rem;
+    }
+    .stats-wrap {
+      margin-bottom: 0;
+    }
+    /* The desktop rules put text at the column start (no side padding) and
+       cap desc width to Figma's paragraph widths — both derived against the
+       flourish's 4-column rhythm, which doesn't exist down here. Restore
+       the previous mobile layout: side padding separates the 2-col grid's
+       columns, descs use the full column. The <=559.98px rail block's own
+       padding-left override still applies on top. */
+    .stats li {
+      padding: 2.5rem 1.5rem 0;
+    }
+    .stat-desc {
+      max-width: none;
     }
   }
   @media (max-width: 559.98px) {
