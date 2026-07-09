@@ -304,8 +304,17 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     z-index: 1;
   }
   .notice-icon {
-    width: 6.8025rem; /* 108.84px — exactly the pill's own height, node 1:16817, flush left with no inset */
-    height: 6.8025rem;
+    /* Was 6.8025rem (108.84px, the Figma pill's own height). Deliberate
+       deviation (user directive 2026-07-09): the badge circle read as
+       oversized/too padded around its small glyph — an earlier shrink pass
+       had scaled the GLYPH down inside the SVG (0.68 wrapper, now removed,
+       restoring the icon's native 53% glyph-to-circle fill) instead of
+       shrinking the circle. 5.25rem keeps the glyph at ~44px rendered
+       (slightly larger than before) while the circle loses ~25px of
+       diameter. The pill slims with it, since the icon is its tallest
+       child. */
+    width: 5.25rem;
+    height: 5.25rem;
     flex-shrink: 0;
   }
   .notice-text {
