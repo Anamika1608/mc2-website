@@ -22,13 +22,13 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
           <span class="reveal-line-text">A unique hub-and-spoke</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
-      </span>
+      </span>{" "}
       <span class="line reveal-line">
         <span class="reveal-line-box">
           <span class="reveal-line-text">model to <span class="accent">support you</span></span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
-      </span>
+      </span>{" "}
       <span class="line reveal-line">
         <span class="reveal-line-box">
           <span class="reveal-line-text"><span class="accent">where you are</span>.</span>
@@ -150,6 +150,17 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   @media (max-width: 1023.98px) {
     h1 {
       font-size: var(--text-hero-h1-fluid); /* was clamp(2.4rem, 7vw, 5rem) — normalized to home hero scale per user directive 2026-07-06 */
+      /* Per direct feedback: the 3 authored blocks below (see markup) each
+         ALSO wrap naturally within their own row at this width, orphaning
+         single words ("spoke", "you") on their own line. Flattening to
+         inline lets all 3 flow as one continuous text run and reflow
+         together instead of 3 rigid rows — same fix already applied to
+         Scale.astro's/Audiences.astro's headings this session. Desktop-only
+         `nowrap` below (`@media min-width:1024px`) is untouched. */
+      text-wrap: balance;
+    }
+    h1 .line {
+      display: inline;
     }
     .lede {
       max-width: 90%;
