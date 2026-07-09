@@ -76,8 +76,13 @@ const SPONSORS = [
      (149,149,149) = #959595, an exact match for --color-gray. */
   .eyebrow {
     font-family: var(--font-sans);
-    color: var(--color-gray);
-    font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
+    /* Color + size matched to Home's InnovationPartners heading ("Built on
+       Partnerships Across India's Innovation Ecosystem") per user directive
+       2026-07-09 — same tokens (not literals) so the two stay in sync. This
+       supersedes the earlier gray/#959595 sampling and the 17px local
+       override of the --text-body token. */
+    color: var(--color-ink);
+    font-size: var(--text-body); /* 20px */
     margin: 0 0 1.3125rem; /* 21px gap to h2, measured from the full-section screenshot */
   }
 
