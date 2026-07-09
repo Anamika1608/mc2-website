@@ -105,9 +105,13 @@ const STATS = [
     padding-block: 4.6875rem 4.34rem;
     text-align: center;
     /* Contains the grid-lines' genuine Figma bleed past .stats-wrap's own
-       edges (Audiences.astro precedent for the same kind of bleed), and the
-       mobile rail's own negative left offset. */
-    overflow-x: hidden;
+       edges, and the mobile rail's own negative left offset. `clip`, not
+       `hidden`: per spec, overflow-x:hidden with overflow-y:visible computes
+       overflow-y to `auto`, turning the section into a scroll container —
+       which is exactly the vertical scrollbar the user reported when the
+       grid lines protruded past the section box. `clip` clips without ever
+       creating a scroll container (SupportStack.astro precedent). */
+    overflow-x: clip;
   }
 
   /* Eyebrow (text node 1:9175): Figma reference code returns
@@ -151,7 +155,15 @@ const STATS = [
      the brief's guess. */
   .intro {
     max-width: 44rem;
-    margin: 0 auto 3rem;
+    /* Bottom margin was 3rem (48px), predating the grid-lines rebuild. The
+       grid's tallest verticals rise 4.9813rem (79.7px, Figma-exact) above
+       .stats-wrap, so at 3rem they crossed ~2rem into this text
+       (user-reported overlap). Figma's own intro-bottom -> stats-top gap is
+       ~99.56px (intro line-2 top y3646.06 + ~32.94 line height ≈ 3679;
+       stats top 3778.56) = 6.22rem, which puts the line tops ~20px below
+       the intro — matching the design. Reverted to 3rem at <=1023.98px,
+       where the grid is hidden and the extra gap would be dead space. */
+    margin: 0 auto 6.22rem;
     font-family: var(--font-sans);
     font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.26;
@@ -192,6 +204,17 @@ const STATS = [
     position: relative;
     max-width: 86.5rem;
     margin-inline: auto;
+    /* Reserves the grid lines' below-stats overhang in layout height: the
+       deepest verticals end 254.9px below .stats-wrap's top = 110.23px
+       (6.89rem) past its Figma-calibrated bottom (group bottom 4033.5 −
+       stats text bottom 3923.23). The lines are absolutely positioned, so
+       without this the section's own 4.34rem bottom padding (derived from
+       the Figma group bottom, i.e. already assuming the lines counted
+       toward layout height) couldn't contain them — they protruded past
+       the section and, combined with the old overflow-x:hidden scroll
+       container, produced the vertical scrollbar the user reported.
+       Zeroed at <=1023.98px where the grid is hidden. */
+    margin-bottom: 6.89rem;
   }
   .stats {
     list-style: none;
@@ -378,6 +401,15 @@ const STATS = [
        2-col/1-col mobile layouts. */
     .grid-lines {
       display: none;
+    }
+    /* With the grid hidden, its desktop clearance spacing (intro's 6.22rem
+       Figma gap for the rising line tops; stats-wrap's 6.89rem reserve for
+       the line overhang below) would just be dead space — revert both. */
+    .intro {
+      margin-bottom: 3rem;
+    }
+    .stats-wrap {
+      margin-bottom: 0;
     }
   }
   @media (max-width: 559.98px) {
