@@ -13,10 +13,10 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
           <span class="reveal-line-text">Built for every builder</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
-      </span>
+      </span>{" "}
       <span class="line reveal-line">
         <span class="reveal-line-box">
-          <span class="reveal-line-text">in India’s energy story.</span>
+          <span class="reveal-line-text">in India’s energy&nbsp;story.</span>
           <RevealStar class="reveal-star" aria-hidden="true" />
         </span>
       </span>
@@ -98,6 +98,24 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
           industrial validation.
         </p>
       </div>
+
+      <!-- Mobile-only (<=639.98px) left rail: replaces the desktop decor
+           overlay and per-column dividers with a single continuous vertical
+           line running the full height of the stacked 1-col layout, paired
+           with the top sparks kept below (dev-feedback: don't hide the
+           divider/spark treatment outright on mobile, give it a rail
+           instead). display:none outside that breakpoint. Deliberately
+           placed LAST (not as the first sibling of .decor, as the reviewed
+           plan specified) — DEVIATION: `.columns`'s existing children are
+           .decor + 4x .column, and the pre-existing tablet-width cascade
+           (`.column:nth-child(3)...`) already numerically counts .decor as
+           child 1 (nth-child counts elements regardless of display:none),
+           so inserting a new sibling any earlier than the end shifts every
+           .column's :nth-child() index by one and silently breaks that
+           cascade (verified live). Placing it last leaves every existing
+           index untouched; its own absolute positioning in the CSS below
+           doesn't depend on DOM order. -->
+      <span class="columns-rail" aria-hidden="true"></span>
     </div>
   </div>
 </section>
@@ -210,6 +228,12 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   .column {
     position: relative;
     text-align: left;
+  }
+
+  /* Mobile-only rail (<=639.98px), see media block below for the visible
+     rule — no-op at tablet/desktop. */
+  .columns-rail {
+    display: none;
   }
 
   /* ==== Column dividers (node group 1:945) ====
@@ -465,15 +489,129 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     }
   }
 
+  /* Dev feedback ("text formatting", arrow at the H2): at narrow phone
+     widths "story." was orphaning alone below "in India's energy" (and
+     "builder" similarly below "Built for every"), since this heading's 2
+     `.line.reveal-line` spans are unconditionally forced one-per-row
+     (h2 .line above). Same fix and same reasoning as Scale.astro's
+     analogous override (see that file's comment for the full derivation);
+     summary of the 3 deviations from the reviewed plan, all verified live:
+       1. `.line` alone becoming inline doesn't reflow the nested
+          `.reveal-line-box`/`.reveal-line-text` (shared global.css,
+          `display: inline-block`) — an inline-block's shrink-to-fit width
+          claims the full available row once its content is wider than
+          that space, leaving no real room for a sibling even on the
+          wrapped box's otherwise-mostly-empty last line. All 3 nesting
+          levels are flattened to plain `inline` here, scoped locally to
+          this component (Astro's per-component style scoping keeps this
+          off Hero.astro/Pillars.astro's own instances of the same shared
+          classes).
+       2. This is its OWN dedicated breakpoint, NOT the shared
+          "below 1024px" one Scale.astro also uses, and NOT this file's own
+          639.98px columns breakpoint: this heading's per-line wrap
+          boundary was measured live at exactly 400px-wraps/405px-doesn't
+          (font-size is at its clamped floor across this whole span, so the
+          boundary is driven by container width, not font scaling) — well
+          short of both of this file's other breakpoints. Reusing either
+          would apply the join logic into a range where each line already
+          renders cleanly on its own single row, which (as found in
+          Scale.astro) creates a NEW single-word orphan instead of fixing
+          the original one.
+       3. `text-wrap: balance` on the h2 is still required, same as
+          Scale.astro, to avoid the reflow itself producing a new orphan
+          ("builder" landing alone) at some width within the fixed range.
+          DEVIATION from Scale.astro's own fix, though: Scale's line 2
+          ("every venture.", 2 words) was short enough to keep together
+          with `white-space: nowrap` on the whole span without ever
+          overflowing its container. Verified live that this file's line 2
+          ("in India’s energy story.", 5 words) is NOT — even alone, it
+          wraps to 2 rows within these same viewports (320-400px), so
+          forcing the whole phrase to `nowrap` just pushed it past the
+          container edge instead of wrapping (visibly clipped/cut off in
+          the screenshot). Used the standard editorial fix instead: an
+          `&nbsp;` between just the last two words ("energy" / "story.",
+          see the markup above) so only THAT pair can't be split across a
+          line break — "in India's" is still free to wrap normally, and
+          there's no full-phrase overflow risk.
+     Safe re: the star: `.reveal-star` is already `display: none` below
+     1024px sitewide, so there's no star-positioning concern either way.
+     Selector is this file's own `.line` class (NOT `.reveal-line` as in
+     Scale.astro — different local layout-class name, same shared
+     `.reveal-line` the star-stagger keys off). */
+  @media (max-width: 404.98px) {
+    h2 .line,
+    h2 .reveal-line-box,
+    h2 .reveal-line-text {
+      display: inline;
+    }
+    h2 {
+      text-wrap: balance;
+    }
+  }
+
   @media (max-width: 639.98px) {
-    /* Single column: no two columns are adjacent, so every hairline/spark
-       drops out. */
+    /* Single column: no two columns are adjacent, so the per-column
+       hairline drops out entirely (replaced below by one continuous rail)
+       — but the sparks are kept, repurposed as boundary markers along that
+       rail rather than hidden outright (dev-feedback: rail + sparkle
+       instead of hiding). */
     .columns {
       grid-template-columns: 1fr;
     }
-    .column::before,
-    .divider-spark {
+    .column::before {
       display: none;
+    }
+    .column {
+      /* Clears the rail + spark, which sit at left: -0.75rem (see below). */
+      padding-left: 1.25rem;
+    }
+    .columns-rail {
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -0.75rem;
+      width: 1px;
+      background: var(--color-orange);
+    }
+    /* Keep only the top spark per column as the 3 boundary markers (one
+       per column transition) — hiding the bottom twin avoids a doubled
+       icon at each boundary and a dangling 4th spark below the last
+       column. */
+    .divider-spark--bottom {
+      display: none;
+    }
+    /* Reposition the kept top spark from the base rule's left: -1.5rem
+       (matched to the desktop 3rem column gap) to left: -0.75rem here —
+       DEVIATION from the reviewed plan, which said to keep it at -1.5rem.
+       Verified live: `.divider-spark` uses `transform: translate(-50%,
+       -50%)` (center-anchored, unlike Scale.astro's edge-anchored
+       .stat-spark), and at these widths --container-gutter (clamped to a
+       1.25rem/20px floor) is narrower than 1.5rem/24px — so at -1.5rem the
+       spark's bounding box measured ~73% clipped off-screen (left: -12.8px
+       of a 17.6px-wide box) and the rail itself measured 4px off-screen.
+       -0.75rem keeps both fully on-screen at the narrowest supported width
+       (320px) with a small margin, and doubles as the .column padding
+       reference above so the rail/spark still align with each other. */
+    .divider-spark--top {
+      left: -0.75rem;
+    }
+    /* Required override, selector matches the reviewed plan, but its
+       target column-label is CORRECTED here: the plan's prose said this
+       re-enables column 3's ("Academic & R&D Institutions") spark, but
+       `.column:nth-child(3)` doesn't actually resolve to the 3rd .column
+       — `.decor` (the desktop overlay, still present in the DOM and
+       display:none rather than removed) is this row's real first child,
+       so nth-child counting (which counts elements regardless of
+       display:none) shifts everything by one: nth-child(3) is actually
+       column 2, "Researchers & Scientists" (verified live). That's also
+       the column genuinely force-hidden by the cascaded <=1023.98px rule
+       `.column:nth-child(3) .divider-spark { display: none; }` a few
+       lines up (same real target, same off-by-one) — so this override,
+       using the identical selector, correctly re-enables the boundary
+       marker between columns 1 and 2, the one actually missing. */
+    .column:nth-child(3) .divider-spark--top {
+      display: block;
     }
   }
 </style>

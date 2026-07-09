@@ -10,11 +10,12 @@ import PillButton from "../PillButton.astro";
 
 const ROLES = ["FOUNDER", "RESEARCHER", "INSTITUTION", "CORPORATE / INVESTOR", "PRESS"];
 
+// Simplified per dev feedback — was 4 enquiry-category emails, now just one
+// email + phone. info@mc2plus.in is a different domain than the site's other
+// @mcplus.in addresses above, used verbatim as given in the feedback.
 const CONTACTS = [
-  { label: "GENERAL ENQUIRIES", email: "hello@mcplus.in" },
-  { label: "ENERGY MAJOR PARTNERSHIPS", email: "partnerships@mcplus.in" },
-  { label: "INVESTOR / LP ENQUIRIES", email: "invest@mcplus.in" },
-  { label: "PRESS & MEDIA", email: "press@mcplus.in" },
+  { label: "EMAIL", value: "info@mc2plus.in", href: "mailto:info@mc2plus.in" },
+  { label: "PHONE", value: "+91 76971 86690", href: "tel:+917697186690" },
 ];
 ---
 
@@ -77,16 +78,16 @@ const CONTACTS = [
         CONTACTS.map((c) => (
           <div class="info-block">
             <p class="info-label">{c.label}</p>
-            <a class="info-email" href={`mailto:${c.email}`}>{c.email}</a>
+            <a class="info-value" href={c.href}>{c.value}</a>
           </div>
         ))
       }
       <div class="info-block">
         <p class="info-label">REGISTERED OFFICE</p>
         <p class="info-office">
-          MC²+ Foundation<br />
-          c/o Ministry of Petroleum &amp; Natural Gas<br />
-          Shastri Bhawan, New Delhi, 110001
+          MC² Foundation<br />
+          Tower I, 5th Floor, World Trade Centre, Nauroji Nagar<br />
+          New Delhi &ndash; 110 029
         </p>
       </div>
     </div>
@@ -262,13 +263,13 @@ const CONTACTS = [
     color: var(--color-gray);
     margin: 0 0 0.5rem;
   }
-  .info-email {
+  .info-value {
     font-family: var(--font-sans);
     font-size: 1.25rem; /* 20px — reduced from ~25px per user directive 2026-07-06 */
     color: var(--color-orange); /* #f37d2c */
     text-decoration: none;
   }
-  .info-email:hover {
+  .info-value:hover {
     text-decoration: underline;
   }
   .info-office {

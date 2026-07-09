@@ -136,7 +136,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         anywhere on this page).
       -->
       <article class="card card--o1 is-active">
-        <SparkFlourishO1 class="o1-spark" aria-hidden="true" />
         <div class="card-head">
           <p class="card-num">O1</p>
           <p class="card-label">
@@ -263,9 +262,9 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         </p>
         <div class="card-footer">
           <div class="chips">
-            <span class="chip">8 to 12 ventures</span>
+            <span class="chip chip--info">8 to 12 ventures</span>
             <span class="chip">Pilot + capital</span>
-            <span class="chip">Six months</span>
+            <span class="chip chip--info">Six months</span>
           </div>
           <p class="card-status">
             <span class="status-dot" aria-hidden="true"></span>Coming soon
@@ -352,6 +351,8 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         </div>
         <Fragment set:html={CARD_FLAG} />
       </article>
+
+      <SparkFlourishO1 class="o1-spark" aria-hidden="true" />
     </div>
   </div>
 </section>
@@ -362,11 +363,52 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   // in this codebase. Desktop-only: below 1024 the fan collage doesn't exist (cards are
   // full-width/stacked, see the CSS media query), so there's nothing to hover between.
   const row = document.querySelector<HTMLElement>(".programs-row");
-  const cards = document.querySelectorAll<HTMLElement>(".programs-row .card");
+  const cardList = document.querySelectorAll<HTMLElement>(".programs-row .card");
+  const cards = Array.from(cardList);
   const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+
+  // Decorative spark tracking: the active card's own rendered left edge can't be read via
+  // `offsetLeft` right after toggling `.is-active` — TWO cards resize simultaneously (the
+  // previously-active one shrinking back to NARROW, the newly-active one growing to WIDE),
+  // and both are still mid-transition at the instant the class toggles, so a synchronous
+  // geometry read captures a stale, in-between layout rather than the transition's target.
+  // Computed analytically instead, from the same WIDE/NARROW/OVERLAP % constants the CSS
+  // itself uses (see the `.card`/`.card.is-active` width rules above): every card before
+  // the active one is always NARROW (only one card is ever active at a time), so the
+  // active card's left edge (as a % of the row's own width) is simply
+  // `activeIndex * (NARROW - OVERLAP)`. This needs no DOM measurement of any transitioning
+  // element, so it's correct immediately and lets the spark's own `transition: left` run
+  // in sync with the cards' width/margin transitions instead of chasing a moving target.
+  const NARROW = 28.345;
+  const OVERLAP = 7.502;
+  // Mobile/tablet counterpart of the --spark-left derivation above (see the mobile
+  // scrollspy block below for why a second axis is needed at all): 64.62px is the
+  // exact same card-top-to-numeral offset the desktop `top: 4.04rem` CSS rule already
+  // uses (see .o1-spark below), reused rather than re-derived since .card-head's own
+  // top padding is unchanged below 1024 (only its horizontal padding shrinks further
+  // down, at 639.98px) — so the numeral still sits this far below each card's own top
+  // at every width this offset is used at.
+  const SPARK_NUMERAL_OFFSET = 64.62;
 
   const activate = (target: HTMLElement) => {
     cards.forEach((card) => card.classList.toggle("is-active", card === target));
+    if (row) {
+      const activeIndex = cards.indexOf(target);
+      const leftPercent = activeIndex * (NARROW - OVERLAP);
+      const rowWidth = row.getBoundingClientRect().width;
+      row.style.setProperty("--spark-left", `${(leftPercent / 100) * rowWidth}px`);
+      // Mobile/tablet: cards stack full-width vertically (see the <1024 media query),
+      // so there's no horizontal fan to track — --spark-left above is meaningless at
+      // that layout and the mobile-scoped CSS ignores it. What needs to move instead is
+      // the VERTICAL position, so the spark stays beside whichever card is active as
+      // the user scrolls past each one. Safe to read `target.offsetTop` directly here
+      // (unlike the analytic --spark-left math above, which exists specifically
+      // because reading geometry mid-transition is unreliable): mobile cards never
+      // resize when `.is-active` toggles (width/min-height are pinned to 100%/auto at
+      // this breakpoint regardless of state), so there's no simultaneous-transition
+      // race to chase, only a plain static offset.
+      row.style.setProperty("--spark-top", `${target.offsetTop + SPARK_NUMERAL_OFFSET}px`);
+    }
   };
 
   if (row) {
@@ -385,6 +427,55 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
       activate(document.querySelector(".card--o1")!);
     });
   }
+
+  // Scroll-driven activation (mobile/tablet, <1024px): mirrors HowItWorks.astro's own
+  // scrollspy fix (see that file for the general precedent) — there's no hover on touch
+  // devices, so per direct feedback, whichever card is currently centered in the
+  // viewport while scrolling activates instead, sliding the spark along to follow it
+  // (see SPARK_NUMERAL_OFFSET/--spark-top above and the mobile-scoped .o1-spark
+  // override in the CSS). The feedback slide offered a "stay constant per folder
+  // (parallax)" alternative instead of sliding — sliding was chosen because it's the
+  // more direct extension of the already-proven desktop mechanism, and the slide's own
+  // "this will change on scroll" wording already implies a continuously-updating
+  // interaction, not a static per-card decoration.
+  // Kept as a SEPARATE, continuous observer (unlike the site's one-shot `.reveal`
+  // observer in BaseLayout.astro, which unobserves after first trigger) so it keeps
+  // reacting as the user keeps scrolling, and independent of the hover mechanism above
+  // so the two never fight over `.is-active` on desktop.
+  const isMobile = () => window.matchMedia("(max-width: 1023.98px)").matches;
+  let scrollObserver: IntersectionObserver | null = null;
+
+  const enableScrollActivation = () => {
+    if (scrollObserver) return;
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) activate(entry.target as HTMLElement);
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    cards.forEach((card) => scrollObserver!.observe(card));
+  };
+
+  const disableScrollActivation = () => {
+    scrollObserver?.disconnect();
+    scrollObserver = null;
+    // Unlike HowItWorks (where "no card active" is a valid resting state), Programs
+    // always has exactly one active card, even before any interaction (O1, per the
+    // markup) — reset to it here (matching the mouseleave handler above) rather than
+    // clearing entirely, so that invariant still holds once the viewport crosses back
+    // to desktop mid-scroll.
+    activate(cards[0]);
+  };
+
+  const syncScrollActivation = () => {
+    if (isMobile()) enableScrollActivation();
+    else disableScrollActivation();
+  };
+
+  syncScrollActivation();
+  window.addEventListener("resize", syncScrollActivation);
 </script>
 
 <style>
@@ -413,6 +504,7 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
   .programs-row {
     display: flex;
     align-items: flex-start; /* all four cards share one top y in the design — no bottom-alignment waterfall needed here, unlike HowItWorks/Pillars */
+    position: relative; /* positioning context for .o1-spark, which now tracks whichever card is active rather than being pinned inside O1's own box — see .o1-spark below */
   }
 
   .card {
@@ -423,7 +515,18 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     box-sizing: border-box;
     border: 0.125rem solid var(--color-ink-alt); /* 2px navy default; is-active overrides to orange below */
     background: var(--color-cream);
-    min-height: 37.93rem; /* 606.86px, shared by all four cards' own frames (606.86-607.13px jitter) */
+    /* Raised from 37.93rem (606.86px, the original shared frame height) per direct
+       feedback: measured live, the four cards' own body copy wraps to different line
+       counts (140-196px) and O2's title is uniquely 2 lines tall (110px vs 56px for the
+       other three's single-line titles), so with the original floor, three of the four
+       cards' natural content already exceeded it (footer pinned flush against body with
+       zero gap) while only O4 had room for the auto-margin gap to show at all — an
+       uneven, content-dependent gap. Raised to fit the tallest combination (O2's title +
+       body) with the new fixed body-to-footer gap below, and paired with `.card-body`'s
+       own min-height (below) so every card's content reaches this same floor exactly —
+       keeping every card (active or collapsed) at one consistent height, not just
+       making the gap itself even. */
+    min-height: 42.38rem; /* 678.02px — see comment above; re-derive/adjust via live measurement if any card still overflows or falls short */
     /* Width/overlap/color transition (this fix round): the resize used to be an instant
        snap between the fixed per-card widths below; now that width itself is state-driven
        (see WIDE/NARROW below), animate it so hovering between cards reads as a smooth
@@ -546,17 +649,29 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     color: var(--color-orange); /* tracks the same is-active switch as the border/title/numeral above */
   }
 
-  /* O1's decorative spark (see frontmatter comment) — positioned so its own right edge
+  /* Decorative spark (see frontmatter comment) — positioned so its own right edge
      (where the sparkle sits, per the raw SVG's own local x68.5-81.79 hot zone) lands
-     beside the "O1" numeral, matching the screenshot; left of that trails the thin
-     flourish line, bleeding slightly past the card's own left border (contained by
-     `.programs`'s own overflow-x:hidden above). */
-  .card--o1 .o1-spark {
+     beside the active card's own "O1"/"O2"/"O3"/"O4" numeral, matching the screenshot;
+     left of that trails the thin flourish line, bleeding slightly past the card's own
+     left border (contained by `.programs`'s own overflow-x:hidden above).
+     Per direct feedback, the spark now tracks whichever card is active instead of
+     staying pinned to O1 — it's a sibling of the four `.card`s (not nested inside one),
+     absolutely positioned against `.programs-row` itself, with its horizontal offset
+     driven by `--spark-left` (the active card's own `offsetLeft` within the row, set by
+     the activate() script below) rather than a fixed position relative to O1's own box.
+     `--spark-left` defaults to 0px, matching O1's own offsetLeft (first-child,
+     margin-left:0), so the resting/default state (O1 active on load) is unchanged from
+     before. top/width/height are untouched — every card shares the same header row y,
+     so only the horizontal position needs to move. */
+  .programs-row .o1-spark {
     position: absolute;
-    left: -4.23rem; /* 67.68px — group 1:16449's own left inset ahead of the card border (1:16453 at x122.47 vs card at x190.15) */
+    left: calc(var(--spark-left, 0px) - 4.23rem); /* 67.68px left of the active card's own left edge — see frontmatter derivation */
     top: 4.04rem; /* 64.62px — 1:16453's own y (2304.44) minus card top (2239.64) */
     width: 10.25rem; /* 164px */
     height: 3.4375rem; /* 55px */
+    z-index: 11; /* above the max card z-index (10, is-active), so it's never covered */
+    pointer-events: none;
+    transition: left 250ms ease; /* matches the card width/margin-left transition so the spark reads as sliding in sync with the active card's own expansion */
   }
 
   .card-head {
@@ -744,15 +859,36 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     font-size: 1.25rem; /* reused Pillars/HowItWorks secondary-body scale */
     line-height: 1.4;
     color: var(--color-gray);
+    /* Per direct feedback (see `.card`'s min-height comment above for the full
+       measurement): O1/O3/O4's body copy wraps to different line counts, and with the
+       old auto-margin footer, that meant a different (often zero) gap before the chip
+       row on each. Reserves the same vertical space for the body block on every card
+       regardless of its own text length — combined with each card's own title height,
+       this reaches the SAME total (title+body) footprint on all four, so the fixed
+       body-to-footer gap below lands at the same place everywhere. Has no effect when
+       `display:none` (collapsed/inactive cards), so this doesn't touch that state. */
+    min-height: 13.87rem; /* 221.94px — target combined footprint (277.91px, O2's own title+body) minus O1/O3/O4's shared 55.97px single-line title height */
+  }
+  /* O2's title is uniquely 2 lines (`.card-title--split`, ~110px vs the other three's
+     56px single line) — its own body already reaches the shared target combined footprint
+     without any boost, so it gets its own smaller min-height instead of the general one
+     above (which would otherwise over-inflate it past the target). */
+  .card--o2 .card-body {
+    min-height: 10.5rem; /* 168px — O2's own natural body height; combined with its own ~110px title this already hits the same target the other three reach via the larger shared min-height */
   }
 
   .card-footer {
-    margin-top: auto; /* pins the divider+chips flush to the card's own bottom regardless of how much (or how little — O2/O3/O4 have no body) content precedes it, reproducing the design's fixed chip-row position at every card's own bottom */
+    margin-top: auto; /* pins the divider+chips flush to the card's own bottom regardless of how much (or how little — O2/O3/O4 have no body) content precedes it, reproducing the design's fixed chip-row position at every card's own bottom. Kept as-is for the COLLAPSED state (card-body/subtitle are display:none there, so this is the only thing positioning the footer) — only overridden for the active state below. */
     border-top: 0.125rem solid var(--color-ink-alt);
     padding: 2.4044rem 2.36rem 2.24rem; /* 38.47px divider-to-chip-row gap; 35.86px chip-row-to-card-bottom gap */
   }
   .card.is-active .card-footer {
     border-top-color: var(--color-orange);
+    /* Per direct feedback: replaces the auto-margin above (which pinned the footer flush
+       to the card's own bottom, an inconsistent gap depending on how much body content
+       preceded it) with the same fixed gap already used for subtitle-to-body, so
+       heading→body and body→table read as evenly spaced, matching every other card. */
+    margin-top: 1.9238rem; /* 30.78px, reusing the subtitle-to-body gap constant */
   }
 
   .chips {
@@ -787,6 +923,15 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     background: var(--color-orange); /* node 1:16724's own raw fill */
     color: var(--color-white);
   }
+  /* Per direct feedback: O3's "8 to 12 ventures"/"Six months" chips are capacity/duration
+     facts, not eligibility requirements, and shouldn't get the same highlighted treatment
+     as "Pilot + capital" once the card is active — this modifier (applied only to those
+     two chips, in O3's markup above) keeps the resting tan/navy style even while its
+     parent card is `.is-active`. Scoped to O3 only, per the explicit feedback. */
+  .card.is-active .chip.chip--info {
+    background: var(--color-line);
+    color: var(--color-ink-alt);
+  }
 
   /* New: status pill ("Coming soon" / "Affiliate · Coming soon", see markup comments —
      no Figma node exists for this anywhere, styled from this component's own existing
@@ -812,14 +957,15 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
 
   /* Responsive rule (brief step 3): below 1024, the overlapping fan is a desktop-only
      composition (occlusion existing purely to read as a stacked-folders collage) — drop
-     it for full-width sequential cards, each showing everything it has. Hover-to-expand
-     (this task) is a desktop-hover concept with nothing to attach to here (the script
-     below no-ops under 1024, see matchMedia guard) — every card now HAS subtitle/body/
-     status content (added this task), so just show it unconditionally instead of gating
-     on `.is-active`. O1 keeps its `is-active` class from the markup regardless (nothing
-     ever removes it at this width), so its border/title/numeral/chip colors render
-     exactly as they always have; O2/O3/O4 never gain `.is-active` here, so theirs do too
-     — this block changes ONLY subtitle/body/status visibility, nothing else. */
+     it for full-width sequential cards, each showing everything it has. Below-1024
+     activation used to be desktop-hover-only with nothing to attach to here (the hover
+     script no-ops under 1024) — every card already HAS subtitle/body/status content
+     (added a prior task), so this block showed it unconditionally instead of gating on
+     `.is-active`. That's still true, but `.is-active` itself is no longer permanently
+     frozen on O1 at this width: the scroll-driven activation added below (see the
+     script) now toggles it as the user scrolls, same as HowItWorks' own mobile fix —
+     this block's job is still just subtitle/body/status visibility, not gating who's
+     active. */
   @media (max-width: 1023.98px) {
     .card-subtitle,
     .card-body {
@@ -831,6 +977,22 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     .programs-row {
       flex-direction: column;
       gap: 2rem;
+    }
+    /* Mobile/tablet scrollspy spark (see the script's SPARK_NUMERAL_OFFSET/--spark-top
+       and the "sliding vs parallax" comment above for the full rationale). Cards stack
+       full-width vertically here, so — unlike the desktop fan, where cards sit
+       side-by-side and the spark slides horizontally — there's no horizontal movement
+       to speak of; every card starts at the same left edge. `left` stays fixed at the
+       same offset O1's own card always used (the analytic --spark-left the script still
+       computes is desktop-fan-only math and must not leak in here). `top` instead
+       tracks --spark-top, the active card's own offsetTop plus the numeral offset, so
+       the spark slides down/up to sit beside whichever card is currently centered while
+       scrolling. The `4.04rem` fallback matches O1's own desktop value at rest — the
+       correct default before any scroll/JS has run (O1 is the first card, offsetTop 0). */
+    .programs-row .o1-spark {
+      left: -4.23rem;
+      top: var(--spark-top, 4.04rem);
+      transition: top 250ms ease;
     }
     /* `.programs-row .card` (two classes) rather than repeating `.card--o1, .card--o2, …`
        (one class each): `.card.is-active` now sets width too (hover-to-expand width fix,

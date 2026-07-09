@@ -4,7 +4,12 @@
 // 1:20788 / 1:20844. Body copy is vectorized in Figma, transcribed from the
 // native 1920x4790 screenshot saved during context gathering.
 import { Image } from "astro:assets";
-import SparkOrange from "../../assets/about/spark-orange.svg";
+import LinesCapital from "../../assets/support/lines-capital.svg";
+import LinesExpertise from "../../assets/support/lines-expertise.svg";
+import LinesInfrastructure from "../../assets/support/lines-infrastructure.svg";
+import LinesPiloting from "../../assets/support/lines-piloting.svg";
+import DividerLine from "../../assets/support/divider-line.svg";
+import SparkDiagram from "../../assets/support/spark-diagram.svg";
 import CapitalArt from "../../assets/support/capital-art.png";
 import ExpertiseArt from "../../assets/support/expertise-art.png";
 import InfrastructureArt from "../../assets/support/infrastructure-art.png";
@@ -68,6 +73,23 @@ const CARDS = [
     ],
   },
 ];
+
+// Figma sparks: 8 big (60.78px) at closing-line crossings, 4 small (31.36px)
+// on the opening lines. Keys map to position classes below; nodes in comments.
+const SPARKS = [
+  { key: "capital-open", size: "sm" }, // 1:19582
+  { key: "capital-left", size: "lg" }, // 1:19584
+  { key: "capital-mid", size: "lg" }, // 1:19581
+  { key: "expertise-open", size: "sm" }, // 1:19944
+  { key: "expertise-mid", size: "lg" }, // 1:19946
+  { key: "expertise-right", size: "lg" }, // 1:19943
+  { key: "infrastructure-open", size: "sm" }, // 1:20311
+  { key: "infrastructure-left", size: "lg" }, // 1:20313
+  { key: "infrastructure-mid", size: "lg" }, // 1:20310
+  { key: "piloting-open", size: "sm" }, // 1:20695
+  { key: "piloting-mid", size: "lg" }, // 1:20697
+  { key: "piloting-right", size: "lg" }, // 1:20694
+];
 ---
 
 <section class="support-stack" aria-labelledby="support-stack-title">
@@ -75,19 +97,19 @@ const CARDS = [
 
   <div class="stage" data-support-stage>
     <div class="stage-artboard" data-support-artboard>
-      <div class="line line-v line-left" aria-hidden="true"></div>
-      <div class="line line-v line-mid" aria-hidden="true"></div>
-      <div class="line line-v line-right" aria-hidden="true"></div>
-      <div class="line line-h line-one" aria-hidden="true"></div>
-      <div class="line line-h line-two" aria-hidden="true"></div>
-      <div class="line line-h line-three" aria-hidden="true"></div>
-      <div class="line line-h line-four" aria-hidden="true"></div>
+      <LinesCapital class="lines lines-capital" aria-hidden="true" />
+      <LinesExpertise class="lines lines-expertise" aria-hidden="true" />
+      <LinesInfrastructure class="lines lines-infrastructure" aria-hidden="true" />
+      <LinesPiloting class="lines lines-piloting" aria-hidden="true" />
 
-      {
-        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"].map((id) => (
-          <SparkOrange class={`spark spark-${id}`} aria-hidden="true" />
-        ))
-      }
+      <DividerLine class="divider divider-capital" aria-hidden="true" />
+      <DividerLine class="divider divider-expertise" aria-hidden="true" />
+      <DividerLine class="divider divider-infrastructure" aria-hidden="true" />
+      <DividerLine class="divider divider-piloting" aria-hidden="true" />
+
+      {SPARKS.map(({ key, size }) => (
+        <SparkDiagram class={`spark spark-${size} spark-${key}`} aria-hidden="true" />
+      ))}
 
       <Image
         src={CapitalArt}
@@ -187,201 +209,150 @@ const CARDS = [
     transform-origin: top center;
   }
 
-  .line {
+  /* The four decorative line groups are exported 1:1 from Figma (nodes
+     1:19574 / 1:19936 / 1:20303 / 1:20687): tapered spindle-shaped strokes,
+     solid #F37D2C, full opacity. Positions are the groups' exact offsets
+     inside the 109.87rem x 168rem artboard. Adjacent groups are designed so
+     one group's subtitle divider is collinear with its neighbour's closing
+     line, which is what makes the long horizontals read as continuous. */
+  .lines {
     position: absolute;
     z-index: 0;
-    background: var(--color-orange);
-    opacity: 0.7;
+    width: 63.86rem; /* 1021.83px, all four groups share this width */
+    height: auto;
     pointer-events: none;
   }
 
-  .line-v {
-    width: 1px;
-  }
-
-  .line-h {
-    height: 1px;
-  }
-
-  .line-left {
-    /* Was 99rem (ending at 109.1rem) — didn't reach .line-four (125.18rem,
-       the infrastructure-closing line), so that crossing didn't exist.
-       Extended so it does, per user request — same fix as .line-mid/
-       .line-right above. */
-    left: 9.95rem;
-    top: 10.1rem;
-    height: 115.08rem;
-  }
-
-  .line-mid {
-    /* Was 152rem — didn't reach .line-three (161.14rem, the last/piloting
-       closing line), so that crossing didn't exist at all. Extended so it
-       does, per user request. */
-    left: 50%;
-    top: 0;
-    height: 161.14rem;
-  }
-
-  .line-right {
-    /* Was 90rem (spanning 43-133rem) — didn't reach .line-three (161.14rem),
-       so the pre-existing spark-f sat without a true crossing beneath it
-       (user-reported). Extended to reach it, same fix as .line-mid above. */
-    right: 2rem;
-    top: 43rem;
-    height: 118.14rem;
-  }
-
-  /* All 4 closing-line positions below (.line-one/-two/-four/-three, one per
-     card) were re-derived from Figma directly (fileKey u4NLOVKuXUTKULhSn0sAJQ,
-     node 1:19224): found each card's own eyebrow text node to establish the
-     conversion between Figma's absolute canvas y and this artboard's local
-     y (figma_y − 1067.23 = local_y, confirmed against all 4 cards' own
-     `top` values), then found each card's actual "closing" hairline (the
-     widest h-line in its own decorative group) and converted its y the same
-     way. Previously only 3 lines existed for 4 cards, and none were at the
-     Figma-derived offset — line-one/-two were each too early (crossing the
-     end of their own card's content) and line-three, despite this session's
-     earlier attempt to fix it, was still short of piloting's true offset
-     (161.14rem, not the ~153.7rem estimated last time from live content
-     bounds alone). Infrastructure (point 3) had no closing line at all.
-     Left/right (width) values are intentionally untouched — this is a
-     y-position-only fix. */
-  .line-one {
-    /* Capital-closing. Was 41.8rem. */
+  .lines-capital {
     left: 0;
-    right: 0;
+    top: 0;
+  }
+
+  .lines-expertise {
+    left: 46.01rem; /* 736.09px */
+    top: 35.95rem; /* 575.22px */
+  }
+
+  .lines-infrastructure {
+    left: 0;
+    top: 71.89rem; /* 1150.30px */
+  }
+
+  .lines-piloting {
+    left: 46.01rem;
+    top: 107.85rem; /* 1725.52px */
+  }
+
+  /* Each card's subtitle divider crosses its own card box (between subtitle
+     and intro — Figma places it in that whitespace). The cards keep a cream
+     background at z-index 2 to mask line overflow when the counter-scaled
+     text grows at narrower desktop widths, so the divider is re-drawn above
+     the card (z-index 3). It is the same spindle path as the one inside the
+     line groups, at the same coordinates — they overlap exactly. */
+  .divider {
+    position: absolute;
+    z-index: 3;
+    width: 56.55rem; /* 904.79px */
+    height: auto;
+    pointer-events: none;
+  }
+
+  .divider-capital {
+    left: 3.9rem;
+    top: 17.34rem; /* group top + 277.36px (the divider path's ink-bounds top) */
+  }
+
+  .divider-expertise {
+    left: 49.9rem;
     top: 53.29rem;
   }
 
-  .line-two {
-    /* Expertise-closing. Was 87.9rem. */
-    left: 3.5rem;
-    right: 1.5rem;
-    top: 89.24rem;
+  .divider-infrastructure {
+    left: 3.9rem;
+    top: 89.23rem;
   }
 
-  .line-four {
-    /* Infrastructure-closing — newly added, this card had no closing line
-       before. Reuses .line-one's full-width style since Infrastructure
-       shares Capital's card-left/art-right layout.
-       left was 0, then 9.95rem (trimmed to align with .line-left's
-       crossing) — now matched exactly to .line-two's own left (3.5rem) per
-       user request, so the two closing lines above/below this card share
-       the same left edge. Still comfortably left of .line-left's x
-       (9.95rem) so that crossing/spark-m is unaffected. */
-    left: 3.5rem;
-    right: 0;
+  .divider-piloting {
+    left: 49.9rem;
     top: 125.18rem;
   }
 
-  .line-three {
-    /* Piloting-closing (this is the line the user originally flagged).
-       Was 144.2rem, then 153.7rem after this session's first attempt —
-       still short of the Figma-derived offset by ~7.4rem.
-       left was 37rem, then 46rem (the Figma-derived offset for this hairline,
-       HLINE 20690) — but 46rem still sat under .art-piloting's own x-range
-       (20.07-47.59rem), reading as an "extra portion" hanging below the
-       globe illustration per user report. Halved the leg before the
-       .line-mid crossing (46 to 54.94rem) so it starts at 50.47rem instead
-       — clears the image's footprint while keeping that crossing intact. */
-    left: 50.47rem;
-    right: 2rem;
-    top: 161.14rem;
-  }
-
+  /* Sparks: two Figma sizes — 60.78px (closing-line crossings) and 31.36px
+     (opening lines). Offsets are each node's exact top-left. */
   .spark {
     position: absolute;
     z-index: 1;
-    width: 3.125rem;
-    height: 3.125rem;
     pointer-events: none;
   }
 
-  .spark-a {
-    left: 8.39rem;
-    top: 10.1rem;
+  .spark-lg {
+    width: 3.8rem;
+    height: 3.8rem;
   }
 
-  .spark-b {
-    left: calc(50% - 1.5625rem);
-    top: -1.5625rem;
+  .spark-sm {
+    width: 1.96rem;
+    height: 1.96rem;
   }
 
-  .spark-c {
-    /* Paired with .line-one. Was 40.2rem — moved with it, keeping the same
-       1.6rem spark-to-line gap used throughout this diagram. */
-    right: 0.44rem;
-    top: 51.73rem;
+  .spark-capital-open {
+    left: 55.26rem;
+    top: 3.7rem;
   }
 
-  .spark-d {
-    /* Paired with .line-two. Was 86.34rem. */
-    left: 8.39rem;
-    top: 87.68rem;
+  .spark-capital-left {
+    left: 8.34rem;
+    top: 51.42rem;
   }
 
-  .spark-e {
-    /* Paired with .line-two. Was 86.34rem. */
-    left: calc(50% - 1.5625rem);
-    top: 87.68rem;
+  .spark-capital-mid {
+    left: 54.34rem;
+    top: 51.42rem;
   }
 
-  .spark-g {
-    /* Paired with the new .line-four (infrastructure-closing). */
-    right: 0.44rem;
-    top: 123.62rem;
+  .spark-expertise-open {
+    left: 101.26rem;
+    top: 39.65rem;
   }
 
-  .spark-f {
-    /* Paired with .line-three (piloting-closing). Was 142.6rem, then
-       152.1rem after this session's first attempt. */
-    right: 0.44rem;
-    top: 159.58rem;
+  .spark-expertise-mid {
+    left: 54.35rem;
+    top: 87.37rem;
   }
 
-  /* The 5 sparks below fill in true line×line crossings that existed
-     geometrically but had no spark (user-reported), plus the new
-     .line-mid x .line-three crossing created by extending .line-mid above.
-     Each is centered on its crossing using the same convention as the
-     existing sparks (left:8.39rem for .line-left crossings,
-     calc(50% - 1.5625rem) for .line-mid, right:0.44rem for .line-right —
-     all three already used by spark-a/-d and spark-b/-e and spark-c/-g/-f
-     respectively). */
-  .spark-h {
-    /* .line-one x .line-left. */
-    left: 8.39rem;
-    top: 51.73rem;
+  .spark-expertise-right {
+    left: 100.34rem;
+    top: 87.37rem;
   }
 
-  .spark-i {
-    /* .line-one x .line-mid. */
-    left: calc(50% - 1.5625rem);
-    top: 51.73rem;
+  .spark-infrastructure-open {
+    left: 9.26rem;
+    top: 75.59rem;
   }
 
-  .spark-j {
-    /* .line-two x .line-right. */
-    right: 0.44rem;
-    top: 87.68rem;
+  .spark-infrastructure-left {
+    left: 8.34rem;
+    top: 123.31rem;
   }
 
-  .spark-k {
-    /* .line-four x .line-mid. */
-    left: calc(50% - 1.5625rem);
-    top: 123.62rem;
+  .spark-infrastructure-mid {
+    left: 54.34rem;
+    top: 123.31rem;
   }
 
-  .spark-l {
-    /* .line-mid x .line-three — the newly-created crossing. */
-    left: calc(50% - 1.5625rem);
-    top: 159.58rem;
+  .spark-piloting-open {
+    left: 101.26rem;
+    top: 111.54rem;
   }
 
-  .spark-m {
-    /* .line-left x .line-four — the newly-created crossing (Infrastructure
-       section). */
-    left: 8.39rem;
-    top: 123.62rem;
+  .spark-piloting-mid {
+    left: 54.35rem;
+    top: 159.26rem;
+  }
+
+  .spark-piloting-right {
+    left: 100.34rem;
+    top: 159.26rem;
   }
 
   .art {
@@ -535,7 +506,8 @@ const CARDS = [
       transform: none;
     }
 
-    .line,
+    .lines,
+    .divider,
     .spark {
       display: none;
     }
@@ -569,13 +541,31 @@ const CARDS = [
       max-width: 29.15rem;
     }
     .art-expertise {
-      max-width: 15.66rem;
+      /* Halved per direct feedback on the Expertise card specifically (7.83rem,
+         half of the 15.66rem desktop-native ceiling above) -- the feedback slide's
+         own screenshot is mobile-width and only calls out this one card's
+         illustration, not the other three, so this stays scoped to
+         .art-expertise alone rather than touching the shared .art rule. */
+      max-width: 7.83rem;
     }
     .art-infrastructure {
       max-width: 15.3rem;
     }
     .art-piloting {
       max-width: 27.52rem;
+    }
+    /* Halved per the same feedback, same card: "02 | WHO YOU WORK WITH" specifically
+       (not the other three cards' eyebrows, which the feedback slide never mentions).
+       .card-eyebrow's own font-size (above) is one shared rule used by all four cards
+       and already resolves to a flat 1.375rem below 1200px (the --support-stage-scale
+       custom property the calc() divides by is only ever set at >=1200px, see the
+       script -- its `, 1` fallback makes the calc a no-op here), so scoping this
+       override to just .support-card-expertise and dropping it inside the existing
+       <1200px block (this file's own mobile/tablet breakpoint, matching the
+       instruction to reuse the file's established convention) changes nothing for
+       Capital/Infrastructure/Piloting or for the >=1200px desktop rule above. */
+    .support-card-expertise .card-eyebrow {
+      font-size: 0.6875rem; /* 11px, half of 1.375rem/22px */
     }
 
     .support-card {

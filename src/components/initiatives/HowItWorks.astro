@@ -195,6 +195,43 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
       activate(null);
     });
   }
+
+  // Scroll-driven activation (mobile/tablet, <1024px): there's no hover on touch
+  // devices, so per direct feedback, whichever card is currently centered in the
+  // viewport while scrolling activates instead — a standard "scrollspy" technique.
+  // Kept as a SEPARATE, continuous observer (unlike the site's one-shot `.reveal`
+  // observer in BaseLayout.astro, which unobserves after first trigger) so it keeps
+  // reacting as the user keeps scrolling, and independent of the hover mechanism
+  // above so the two never fight over `.is-active` on desktop.
+  const isMobile = () => window.matchMedia("(max-width: 1023.98px)").matches;
+  let scrollObserver: IntersectionObserver | null = null;
+
+  const enableScrollActivation = () => {
+    if (scrollObserver) return;
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          entry.target.classList.toggle("is-active", entry.isIntersecting);
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    steps.forEach((step) => scrollObserver!.observe(step));
+  };
+
+  const disableScrollActivation = () => {
+    scrollObserver?.disconnect();
+    scrollObserver = null;
+    steps.forEach((step) => step.classList.remove("is-active"));
+  };
+
+  const syncScrollActivation = () => {
+    if (isMobile()) enableScrollActivation();
+    else disableScrollActivation();
+  };
+
+  syncScrollActivation();
+  window.addEventListener("resize", syncScrollActivation);
 </script>
 
 <style>

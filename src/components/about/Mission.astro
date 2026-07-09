@@ -34,12 +34,13 @@
 
   /* Column widths from node 1:8065 (fileKey u4NLOVKuXUTKULhSn0sAJQ): heading
      text bbox (1:8066) is x=201.65 w=360 -> ends at x=561.65; body group bbox
-     (1:8067) is x=600.79 w=673.66. Gap = 600.79 - 561.65 = 39.14px = 2.45rem.
-     Heading column = 360px = 22.5rem. Body column = 673.66px = 42.10rem
-     (rounded 42.1rem) — confirms the plan's ~42rem estimate almost exactly. */
+     (1:8067) is x=600.79 w=673.66 -> 42.1rem. Body column widened to 67.54rem
+     (user directive, dev feedback deck) to match Vision's body column exactly
+     — a deliberate deviation from Figma's own narrower 42.1rem, so both
+     sections read at the same line length. */
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 22.5rem) minmax(0, 42.1rem);
+    grid-template-columns: minmax(0, 22.5rem) minmax(0, 67.54rem);
     gap: 2.45rem;
     align-items: start; /* heading's visual cap-top and body's first-line
       ink-top land within ~10px of each other once the heading text box's
@@ -71,6 +72,7 @@
     font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-07 (overridden locally, same approach as Home/Initiatives CtaBand; the shared token itself is untouched) */
     line-height: 1.4; /* was 1.31 — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink); /* body text token */
+    text-align: justify; /* user directive, dev feedback deck — matches Vision's body */
   }
 
   @media (max-width: 1023.98px) {
