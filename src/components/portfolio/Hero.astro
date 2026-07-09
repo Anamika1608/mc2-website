@@ -353,6 +353,14 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          pages' equivalent pattern. */
       flex-direction: column;
       align-items: center;
+      /* width:100% is load-bearing, not just tidy: the desktop pill sets a
+         HARD width (58.97rem), so max-width alone computes to a fixed 352px
+         that never yields to a narrower container -- on a 360px phone the
+         card clipped 12px off the right edge (user-reported, measured).
+         100% makes it fill the container's content width up to the 22rem
+         cap, matching how Initiatives' .notice (auto-width) already
+         behaves. */
+      width: 100%;
       max-width: 22rem;
       margin-inline: auto;
       border-radius: 1.5rem;
