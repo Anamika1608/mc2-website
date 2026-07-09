@@ -523,37 +523,18 @@ const SPARKS = [
       background: transparent;
     }
 
-    /* .art used to share the .support-card's width:min(100%,36rem) cap
-       above, plus a blanket max-width:70% below -- discarding each
-       illustration's own distinct native size (29.15rem/15.66rem/15.3rem/
-       27.52rem, all different) in favor of one shared value. That's fine
-       for Capital/Piloting (already close to or bigger than the shared
-       cap) but massively inflates Expertise/Infrastructure, the two
-       smallest illustrations -- confirmed live at 825px, where
-       Infrastructure's compass-in-hand icon rendered at ~660px, nearly
-       triple its intended 245px. Each illustration now gets its own
-       max-width (its existing desktop-native size, reused as the ceiling)
-       so it stays fluidly responsive but never exceeds its correct size. */
+    /* One UNIFORM size for all 4 illustrations (user directive 2026-07-09,
+       phone screenshots): the previous per-illustration desktop-native
+       ceilings (Capital 29.15rem, Expertise 7.83rem — itself an earlier
+       user-requested halving, superseded by this — Infrastructure 15.3rem,
+       Piloting 27.52rem) made Capital/Piloting fill nearly the whole phone
+       viewport while Expertise stayed tiny. All four now render at the same
+       compact 10rem (160px, size chosen by the user from offered options),
+       so the stacked mobile rhythm reads consistently. */
     .art {
       justify-self: center;
       width: 100%;
-    }
-    .art-capital {
-      max-width: 29.15rem;
-    }
-    .art-expertise {
-      /* Halved per direct feedback on the Expertise card specifically (7.83rem,
-         half of the 15.66rem desktop-native ceiling above) -- the feedback slide's
-         own screenshot is mobile-width and only calls out this one card's
-         illustration, not the other three, so this stays scoped to
-         .art-expertise alone rather than touching the shared .art rule. */
-      max-width: 7.83rem;
-    }
-    .art-infrastructure {
-      max-width: 15.3rem;
-    }
-    .art-piloting {
-      max-width: 27.52rem;
+      max-width: 10rem;
     }
     /* Halved per the same feedback, same card: "02 | WHO YOU WORK WITH" specifically
        (not the other three cards' eyebrows, which the feedback slide never mentions).
