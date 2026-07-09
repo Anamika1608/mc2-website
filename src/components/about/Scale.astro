@@ -14,10 +14,10 @@ import SparkOrange from "../../assets/about/spark-orange.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
 
 const STATS = [
-  { value: "4OO+", unit: "acres", desc: "Dedicated R&D campuses across the energy majors" },
-  { value: "12+", unit: "", desc: "R&D centres and labs open to startups" },
-  { value: "Pan India", unit: "", desc: "Refining, E&P, gas, LNG and retail operations" },
-  { value: "7", unit: "", desc: "Balance sheets behind a single mandate", arrow: true },
+  { value: "4OO+ acres", desc: "Dedicated R&D campuses across the energy majors" },
+  { value: "12+", desc: "R&D centres and labs open to startups" },
+  { value: "Pan India", desc: "Refining, E&P, gas, LNG and retail operations" },
+  { value: "7", desc: "Balance sheets behind a single mandate", arrowTarget: "1" },
 ];
 ---
 
@@ -43,34 +43,50 @@ const STATS = [
       sites and anchor demand, assets no standalone incubator can replicate.
     </p>
 
-    <ul class="stats">
-      {STATS.map((s, i) => (
-        <li class={i > 0 ? "has-divider" : ""}>
-          {i > 0 && <SparkOrange class="stat-spark stat-spark-top" aria-hidden="true" />}
-          <p class="stat-value">
-            {s.value}
-            {s.unit && (<><br />{s.unit}</>)}
-            {s.arrow && <span class="stat-arrow" aria-hidden="true"> &rarr;</span>}
-          </p>
-          <p class="stat-desc">{s.desc}</p>
-          {i > 0 && <SparkOrange class="stat-spark stat-spark-bottom" aria-hidden="true" />}
-        </li>
-      ))}
-      <!-- Mobile-only (<=559.98px) left rail: replaces the desktop
-           per-item borders with one continuous vertical line running the
-           full height of the stacked 1-col layout, paired with the top
-           sparks kept below (dev-feedback: don't hide the divider/spark
-           treatment outright on mobile, give it a rail instead).
-           display:none outside that breakpoint. Deliberately placed AFTER
-           the mapped <li>s (not first) — DEVIATION from the reviewed plan,
-           which put it first: this UL has no other non-<li> sibling, so
-           inserting it first would shift every <li>'s :nth-child() index
-           by one, silently breaking the existing tablet-width
-           `.stats li:nth-child(odd)` cascade rule (and this task's own
-           `:nth-child(odd)` override below) — verified live before fixing,
-           see commit message / final report for detail. -->
-      <span class="stats-rail" aria-hidden="true"></span>
-    </ul>
+    <div class="stats-wrap">
+      <!-- Desktop-only (>=1024px) Figma-exact grid overlay (see .grid-lines
+           below) — the mobile rail (<=559.98px) is a separate, simpler
+           treatment defined further down, not derived from this. -->
+      <div class="grid-lines" aria-hidden="true">
+        <span class="gline gline-v gline-v1"></span>
+        <span class="gline gline-v gline-v2"></span>
+        <span class="gline gline-v gline-v3"></span>
+        <span class="gline gline-v gline-v4"></span>
+        <span class="gline gline-v gline-v5"></span>
+        <span class="gline gline-h gline-h-top"></span>
+        <span class="gline gline-h gline-h-bottom"></span>
+        <SparkOrange class="gspark gspark-1" />
+        <SparkOrange class="gspark gspark-2" />
+        <SparkOrange class="gspark gspark-3" />
+        <SparkOrange class="gspark gspark-4" />
+        <SparkOrange class="gspark gspark-5" />
+        <SparkOrange class="gspark gspark-6" />
+        <SparkOrange class="gspark gspark-7" />
+        <SparkOrange class="gspark gspark-8" />
+      </div>
+
+      <ul class="stats">
+        {STATS.map((s, i) => (
+          <li>
+            {/* Mobile-only (<=559.98px) rail boundary marker — display:none
+                outside that breakpoint (see .stat-spark-top below), so this
+                doesn't clash with the desktop .grid-lines sparks above. */}
+            {i > 0 && <SparkOrange class="stat-spark stat-spark-top" aria-hidden="true" />}
+            <p class="stat-value">
+              {s.value}
+              {s.arrowTarget && <span class="stat-arrow" aria-hidden="true"> &rarr; {s.arrowTarget}</span>}
+            </p>
+            <p class="stat-desc">{s.desc}</p>
+          </li>
+        ))}
+        <!-- Mobile-only (<=559.98px) left rail: a continuous vertical line
+             running the full height of the stacked 1-col layout, paired
+             with the top sparks above as boundary markers (dev-feedback:
+             don't drop this treatment outright on mobile, give it a rail
+             instead). display:none outside that breakpoint. -->
+        <span class="stats-rail" aria-hidden="true"></span>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -88,10 +104,9 @@ const STATS = [
        footer, so it owns both edges of its surrounding gaps. */
     padding-block: 4.6875rem 4.34rem;
     text-align: center;
-    /* Defensive guard: unlike Audiences.astro's analogous section, .scale
-       had no containment against horizontal-overflow bugs from its
-       negative-offset decor (the -0.75rem spark offsets, and now the
-       mobile rail's own negative left offset). */
+    /* Contains the grid-lines' genuine Figma bleed past .stats-wrap's own
+       edges (Audiences.astro precedent for the same kind of bleed), and the
+       mobile rail's own negative left offset. */
     overflow-x: hidden;
   }
 
@@ -161,8 +176,23 @@ const STATS = [
      same gray-vs-navy correction SponsorStrip.astro made for its captions).
      Size derived the same way as the intro: "D" of "Dedicated" (vector
      1:9312) measures 14.74px cap height -> 14.74 / 0.73 ≈ 20.19px = 1.26rem. */
-  .stats {
+  /* Full re-derivation from Figma's raw node tree (get_metadata on 1:9305,
+     fileKey u4NLOVKuXUTKULhSn0sAJQ), not the earlier "readable core"
+     simplification (which dropped 2 of 5 verticals and clamped both
+     horizontals' bleeding ends to avoid overflow). Calibration: text group
+     1:9306 (x=242.15 y=3778.56 w=1383.96 h=144.67) maps 1:1 to .stats-wrap,
+     confirmed because the previous code's .stats::before{left:35.07%} — kept
+     from an earlier partial pass — matches this calibration's h-top left%
+     exactly. .stats itself needs an explicit max-width matching Figma's
+     1383.96px content width (86.5rem) since it previously just inherited
+     .container's wider 1760px, which would have put every line/spark at the
+     wrong absolute position despite correct percentages. */
+  .stats-wrap {
     position: relative;
+    max-width: 86.5rem;
+    margin-inline: auto;
+  }
+  .stats {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -170,64 +200,21 @@ const STATS = [
     grid-template-columns: repeat(4, minmax(0, 1fr));
     text-align: left;
   }
-  /* The 2 asymmetric horizontal hairlines the earlier simplification dropped
-     (see .has-divider comment below) — added back per user request. Both are
-     vectors in group 1:9465/1:9466, pixel-sampled/fetched as solid #F37D2C,
-     same orange as the vertical dividers/sparks, fading to transparent at
-     their outer/far tip rather than ending in a hard edge (confirmed via
-     get_screenshot on 1:9465 — every line in this flourish is solid near its
-     spark/crossing point and fades out toward its unanchored far end).
-     Figma's own lines bleed past the row's edges into the page margin, but
-     .container caps at 1760px with only a small gutter (global.css), so
-     reproducing that literal bleed pushed these past .container's own edge
-     and caused horizontal page overflow (user-reported). Clamped both to
-     stay within .stats's own box — left/right kept at a small positive inset
-     instead of the negative bleed — preserving the asymmetric
-     left-favoring/right-favoring look and the fade without the overflow. */
-  .stats::before,
-  .stats::after {
-    content: "";
-    position: absolute;
-    height: 1px;
-  }
-  .stats::before {
-    /* Solid from the left (where it meets the row), fading out to the right. */
-    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-orange) 65%, transparent 100%);
-    top: -0.75rem;
-    left: 35.07%;
-    right: 1.5%;
-  }
-  .stats::after {
-    /* Solid from the right (where it meets the row), fading out to the left
-       — mirror of ::before. */
-    background: linear-gradient(to right, transparent 0%, var(--color-orange) 35%, var(--color-orange) 100%);
-    bottom: -0.75rem;
-    left: 1.5%;
-    right: 39.84%;
-  }
   .stats li {
-    position: relative;
     padding: 2.5rem 1.5rem 0;
   }
   /* Mobile-only rail (<=559.98px), see media block below for the visible
-     rule — no-op at tablet/desktop. */
+     rule — no-op at tablet/desktop. .has-divider/border-left from the
+     earlier per-item-border system is gone (no <li> gets that class
+     anymore), superseded entirely by .grid-lines below. */
   .stats-rail {
     display: none;
   }
-  .stats li.has-divider {
-    /* Hairline color CORRECTED from the brief's --color-line guess: the
-       vertical dividers in group 1:9465/1:9466 (vectors 1:9467-1:9471)
-       pixel-sample to a solid RGB(243,125,44) = #f37d2c = --color-orange,
-       not the neutral --color-line. The source file actually draws 5
-       vertical hairlines (outer-left/right edges plus the 3 internal
-       column gaps) crossed by 2 asymmetric horizontal hairlines (now added
-       back above), all studded with sparks at seemingly arbitrary points.
-       This build keeps the readable core of it: 3 internal vertical
-       dividers, each with one spark at its top and one at its bottom, and
-       still drops the 2 outer-edge vertical lines (1:9467/1:9471). */
-    border-left: 1px solid var(--color-orange);
-  }
+  /* Rail boundary-marker spark (<=559.98px only — see media block below).
+     Hidden by default so it never doubles up with .grid-lines' own sparks
+     at tablet/desktop, where .grid-lines itself is also hidden anyway. */
   .stat-spark {
+    display: none;
     position: absolute;
     left: -0.75rem;
     width: 1.4rem;
@@ -236,8 +223,128 @@ const STATS = [
   .stat-spark-top {
     top: -0.75rem;
   }
-  .stat-spark-bottom {
-    bottom: -0.75rem;
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .gline {
+    position: absolute;
+    background: var(--color-orange);
+  }
+  .gline-v {
+    width: 1px;
+  }
+  .gline-h {
+    height: 1px;
+  }
+  /* 5 verticals: the 3 internal column dividers (v2/v3/v4) plus the 2 outer
+     ones that bleed past .stats-wrap's own edges (v1 right, v5 left) —
+     dropped by the earlier simplification, restored here. Each has its own
+     top/height per Figma (not a uniform rise/drop shared across all 5). */
+  .gline-v1 {
+    left: 106.97%;
+    top: -4.9813rem;
+    height: 15.2875rem;
+  }
+  .gline-v2 {
+    left: 79.44%;
+    top: -4.9813rem;
+    height: 18.4125rem;
+  }
+  .gline-v3 {
+    left: 51.9%;
+    top: -3.7313rem;
+    height: 19.6625rem;
+  }
+  .gline-v4 {
+    left: 24.37%;
+    top: -3.1063rem;
+    height: 19.0375rem;
+  }
+  .gline-v5 {
+    left: -3.17%;
+    top: 2.2062rem;
+    height: 13.725rem;
+  }
+  /* 2 horizontals, true Figma bleed (not clamped to a positive inset like
+     the earlier pass) — .scale gets overflow-x:hidden below to contain it
+     safely at any viewport width instead. */
+  .gline-h-top {
+    left: 35.07%;
+    right: -23.25%;
+    top: -1.8188rem;
+    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-orange) 65%, transparent 100%);
+  }
+  .gline-h-bottom {
+    left: -19.51%;
+    right: 39.84%;
+    top: 12.8313rem;
+    background: linear-gradient(to right, transparent 0%, var(--color-orange) 35%, var(--color-orange) 100%);
+  }
+  /* 8 sparks, each at a real line x line crossing (confirmed geometrically —
+     v1 doesn't reach h-bottom's y and v5 doesn't reach h-top's y, so those 2
+     crossings genuinely don't exist and have no spark). Sizes vary per
+     Figma, not a uniform token. */
+  .gspark {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .gspark-1 {
+    /* v2 x h-bottom, tiny */
+    left: 79.47%;
+    top: 12.8625rem;
+    width: 0.5425rem;
+    height: 0.5425rem;
+  }
+  .gspark-2 {
+    /* v1 x h-top */
+    left: 107.01%;
+    top: -2.1875rem;
+    width: 3.0962rem;
+    height: 2.3044rem;
+  }
+  .gspark-3 {
+    /* v2 x h-top */
+    left: 79.47%;
+    top: -2.1875rem;
+    width: 3.0963rem;
+    height: 2.3044rem;
+  }
+  .gspark-4 {
+    /* v3 x h-bottom */
+    left: 51.92%;
+    top: 12.875rem;
+    width: 2.2075rem;
+    height: 2.2075rem;
+  }
+  .gspark-5 {
+    /* v3 x h-top */
+    left: 51.94%;
+    top: -2.0812rem;
+    width: 2.2662rem;
+    height: 1.6869rem;
+  }
+  .gspark-6 {
+    /* v4 x h-bottom */
+    left: 24.4%;
+    top: 12.8625rem;
+    width: 3.0963rem;
+    height: 3.0963rem;
+  }
+  .gspark-7 {
+    /* v4 x h-top, small */
+    left: 24.4%;
+    top: -1.7937rem;
+    width: 1.0225rem;
+    height: 1.0225rem;
+  }
+  .gspark-8 {
+    /* v5 x h-bottom */
+    left: -3.14%;
+    top: 12.8625rem;
+    width: 3.0962rem;
+    height: 3.0963rem;
   }
   .stat-value {
     font-family: var(--font-display);
@@ -265,17 +372,10 @@ const STATS = [
       grid-template-columns: repeat(2, 1fr);
       row-gap: 2.5rem;
     }
-    .stats li:nth-child(odd).has-divider {
-      border-left: 0;
-    }
-    .stats li:nth-child(odd) .stat-spark {
-      display: none;
-    }
-    /* Desktop-only per user request — their percentage positions are derived
-       against the 4-column grid and don't translate to the 2-col/1-col
-       mobile layouts. */
-    .stats::before,
-    .stats::after {
+    /* Desktop-only per user request — the grid's percentage positions are
+       derived against the 4-column layout and don't translate to the
+       2-col/1-col mobile layouts. */
+    .grid-lines {
       display: none;
     }
   }
@@ -357,10 +457,6 @@ const STATS = [
     .stats {
       grid-template-columns: 1fr;
     }
-    .stats li.has-divider {
-      /* Rail replaces the per-item border entirely. */
-      border-left: 0;
-    }
     .stats li {
       /* Clears the rail + spark, which sit at left: -0.75rem. */
       padding-left: 1.5rem;
@@ -374,24 +470,17 @@ const STATS = [
       width: 1px;
       background: var(--color-orange);
     }
-    /* Keep only the top spark per boundary item as the 3 boundary markers
-       — hiding the bottom twin avoids a doubled icon at each boundary and
-       a dangling 4th spark below the last item. Repositioned to align
-       with the rail. */
-    .stat-spark-bottom {
-      display: none;
-    }
+    /* Overrides .stat-spark's own display:none base (added when merging
+       this rail feature against the .grid-lines rebuild, so the rail's
+       markers don't double up with .grid-lines' sparks at wider widths).
+       Only the top spark per boundary item is shown, as the 3 boundary
+       markers, repositioned to align with the rail. No nth-child(odd)
+       override needed here (unlike the earlier per-item-border system) —
+       .grid-lines is a single desktop-only overlay, not per-item, so there
+       was never a competing odd/even hide-rule at this breakpoint. */
     .stat-spark-top {
-      left: -0.75rem;
-    }
-    /* Required override: item 3's ("Pan India") spark was force-hidden by
-       the cascaded <=1023.98px rule `.stats li:nth-child(odd) .stat-spark
-       { display: none; }` (that rule exists because odd items aren't
-       horizontally adjacent in the 2-col tablet grid) — re-enable it here
-       since in the 1-col mobile layout it's needed as the boundary marker
-       between items 2 and 3. */
-    .stats li:nth-child(odd) .stat-spark-top {
       display: block;
+      left: -0.75rem;
     }
   }
 </style>
