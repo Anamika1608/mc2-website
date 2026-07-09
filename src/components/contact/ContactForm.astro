@@ -21,7 +21,12 @@ const CONTACTS = [
 
 <section class="contact-section">
   <div class="container grid">
-    <!-- Form card -->
+    {/* Form card — commented out per user request (2026-07-09): only the
+        info column should show for now. Kept (not deleted) so it can be
+        re-enabled once a submission backend is wired up (see frontmatter
+        note — the form was static UI with no backend anyway). To restore:
+        remove this JSX comment wrapper, revert .grid to its original 2-col
+        template and .info's margin-top (both noted inline in the CSS below).
     <form class="card" action="#" novalidate>
       <div class="card-header">
         <h2>Send us a message</h2>
@@ -71,6 +76,7 @@ const CONTACTS = [
         </div>
       </div>
     </form>
+    */}
 
     <!-- Enquiry column -->
     <div class="info">
@@ -86,7 +92,8 @@ const CONTACTS = [
         <p class="info-label">REGISTERED OFFICE</p>
         <p class="info-office">
           MC² Foundation<br />
-          Tower I, 5th Floor, World Trade Centre, Nauroji Nagar<br />
+          Tower I, 5th Floor, World Trade Centre,<br />
+          Nauroji Nagar<br />
           New Delhi &ndash; 110 029
         </p>
       </div>
@@ -104,8 +111,11 @@ const CONTACTS = [
   }
   .grid {
     display: grid;
-    /* card 913.3px = 57.06rem, info 478.1px = 29.88rem, gap 122px = 7.625rem */
-    grid-template-columns: minmax(0, 57.06rem) minmax(0, 29.88rem);
+    /* card 913.3px = 57.06rem, info 478.1px = 29.88rem, gap 122px = 7.625rem.
+       With the form card commented out (see template above), the grid is
+       reduced to just the info column's own width, centered — restore
+       `minmax(0, 57.06rem) minmax(0, 29.88rem)` when re-enabling the form. */
+    grid-template-columns: minmax(0, 29.88rem);
     gap: 7.625rem;
     justify-content: center;
     align-items: start;
@@ -249,10 +259,13 @@ const CONTACTS = [
     justify-content: center;
   }
 
-  /* Enquiry column — offset down at desktop so it aligns with the form fields
-     (info top y2498 vs card top y2178.6 ≈ 319px = 19.94rem). */
+  /* Enquiry column. The desktop `margin-top: 19.94rem` (info top y2498 vs
+     card top y2178.6 ≈ 319px, aligning the info blocks with the form's
+     fields) is zeroed while the form card is commented out — without the
+     form there's nothing to align to and it just pushed the info ~319px
+     into empty space. Restore it when re-enabling the form. */
   .info {
-    margin-top: 19.94rem;
+    margin-top: 0;
     display: grid;
     gap: 3rem; /* ~48px between the blocks */
   }
