@@ -156,7 +156,8 @@ const STATS = [
     font-size: 1.0625rem; /* 17px — reduced from the --text-body token's 20px per user directive 2026-07-07 (overridden locally) */
     line-height: 1.26;
     color: var(--color-gray);
-    text-align: justify; /* sitewide paragraph-justify pass */
+    text-align: justify;
+    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
   }
 
   /* Stats row (group 1:9306). Labels (1:9309/1:9354/1:9388/1:9429, real text

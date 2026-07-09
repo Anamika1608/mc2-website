@@ -187,7 +187,8 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        near-identical (one value off in the blue channel); this corrects an
        undocumented token slip to match that node exactly. */
     color: var(--color-ink);
-    text-align: justify; /* sitewide paragraph-justify pass: block stays centered via margin auto, only the text's own wrap edges even out */
+    text-align: justify; /* block stays centered via margin auto, only the text's own wrap edges even out */
+    text-align-last: center; /* justify's own last line defaults to left even inside this centered block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
   }
 
   .scroll {

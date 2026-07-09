@@ -79,7 +79,8 @@ import PillButton from "../PillButton.astro";
     font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-06 (overridden locally, same approach as Initiatives' CtaBand; the shared token itself is untouched) */
     line-height: 1.4;
     color: var(--color-gray);
-    text-align: justify; /* sitewide paragraph-justify pass */
+    text-align: justify;
+    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
   }
 
   .cta {

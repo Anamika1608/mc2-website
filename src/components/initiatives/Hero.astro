@@ -269,7 +269,8 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        corrected value). Different node, different (if barely distinguishable)
        fill — verify-don't-assume applies per node, not per house pattern. */
     color: var(--color-ink-alt);
-    text-align: justify; /* sitewide paragraph-justify pass */
+    text-align: justify;
+    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
   }
 
   .notice {
