@@ -12,6 +12,7 @@
 //      caption text.
 import SparkOrange from "../../assets/about/spark-orange.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
+import ScaleFlourish from "../../assets/about/scale-flourish.svg";
 
 const STATS = [
   { value: "4OO+ acres", desc: "Dedicated R&D campuses across the energy majors" },
@@ -44,26 +45,19 @@ const STATS = [
     </p>
 
     <div class="stats-wrap">
-      <!-- Desktop-only (>=1024px) Figma-exact grid overlay (see .grid-lines
-           below) — the mobile rail (<=559.98px) is a separate, simpler
+      <!-- Desktop-only (>=1024px) flourish, exported whole from Figma (node
+           1:9465, the full lines+sparks group) as a single SVG. This REPLACES
+           the previous CSS-built overlay (7 positioned 1px rects + 8 placed
+           spark icons): the positions were Figma-exact, but the RENDERING
+           style wasn't reproducible in CSS — Figma draws the lines as
+           tapered, brush-stroke-like filled shapes that swell INTO the spark
+           crossings as one continuous piece of art, not uniform hairlines
+           with stars placed on top (user-reported mismatch). Same asset
+           approach as the Support page's lines-*.svg. Export cleaned of the
+           known Figma-export background-rect artifacts (see repo history on
+           SVG exports). The mobile rail (<=559.98px) is a separate, simpler
            treatment defined further down, not derived from this. -->
-      <div class="grid-lines" aria-hidden="true">
-        <span class="gline gline-v gline-v1"></span>
-        <span class="gline gline-v gline-v2"></span>
-        <span class="gline gline-v gline-v3"></span>
-        <span class="gline gline-v gline-v4"></span>
-        <span class="gline gline-v gline-v5"></span>
-        <span class="gline gline-h gline-h-top"></span>
-        <span class="gline gline-h gline-h-bottom"></span>
-        <SparkOrange class="gspark gspark-1" />
-        <SparkOrange class="gspark gspark-2" />
-        <SparkOrange class="gspark gspark-3" />
-        <SparkOrange class="gspark gspark-4" />
-        <SparkOrange class="gspark gspark-5" />
-        <SparkOrange class="gspark gspark-6" />
-        <SparkOrange class="gspark gspark-7" />
-        <SparkOrange class="gspark gspark-8" />
-      </div>
+      <ScaleFlourish class="grid-lines" aria-hidden="true" />
 
       <ul class="stats">
         {STATS.map((s, i) => (
@@ -247,128 +241,33 @@ const STATS = [
   .stat-spark-top {
     top: -0.75rem;
   }
+  /* The flourish SVG (node 1:9465, viewBox 1920x335 = the full Figma canvas
+     width x the group's own height). Position derived from the same
+     calibration as before (stats text group 1:9306 at Figma x242.15,
+     y3778.56, w1383.96 maps 1:1 to .stats-wrap):
+       left  = (0 - 242.15) / 1383.96          = -17.497%
+       width = 1920 / 1383.96                   = 138.732%
+       top   = 3698.85 - 3778.56 = -79.71px     = -4.982rem
+       height= 335px                            = 20.9375rem (fixed)
+     Width is %-based so the baked-in verticals stay locked to the fluid
+     column grid at any viewport width (they sit at fixed fractions of the
+     1920 canvas, which this mapping preserves), while height is a fixed rem
+     so the lines keep their verified clearance from the fixed-rem text
+     above/below instead of shrinking with the viewport — the asset carries
+     preserveAspectRatio="none" to allow that split. The horizontal squash
+     this implies at narrower desktop widths maxes out at ~0.68x at 1024px,
+     verified visually acceptable on the spark shapes. */
   .grid-lines {
     position: absolute;
-    inset: 0;
+    left: -17.497%;
+    top: -4.982rem;
+    width: 138.732%;
+    /* global.css's `img, svg { max-width: 100% }` reset clamps the >100%
+       width above, horizontally compressing the whole flourish (verified
+       live: vertical spacing shrank 381px -> 275px before this override). */
+    max-width: none;
+    height: 20.9375rem;
     pointer-events: none;
-  }
-  .gline {
-    position: absolute;
-    background: var(--color-orange);
-  }
-  .gline-v {
-    width: 1px;
-  }
-  .gline-h {
-    height: 1px;
-  }
-  /* 5 verticals: the 3 internal column dividers (v2/v3/v4) plus the 2 outer
-     ones that bleed past .stats-wrap's own edges (v1 right, v5 left) —
-     dropped by the earlier simplification, restored here. Each has its own
-     top/height per Figma (not a uniform rise/drop shared across all 5). */
-  .gline-v1 {
-    left: 106.97%;
-    top: -4.9813rem;
-    height: 15.2875rem;
-  }
-  .gline-v2 {
-    left: 79.44%;
-    top: -4.9813rem;
-    height: 18.4125rem;
-  }
-  .gline-v3 {
-    left: 51.9%;
-    top: -3.7313rem;
-    height: 19.6625rem;
-  }
-  .gline-v4 {
-    left: 24.37%;
-    top: -3.1063rem;
-    height: 19.0375rem;
-  }
-  .gline-v5 {
-    left: -3.17%;
-    top: 2.2062rem;
-    height: 13.725rem;
-  }
-  /* 2 horizontals, true Figma bleed (not clamped to a positive inset like
-     the earlier pass) — .scale gets overflow-x:hidden below to contain it
-     safely at any viewport width instead. */
-  .gline-h-top {
-    left: 35.07%;
-    right: -23.25%;
-    top: -1.8188rem;
-    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-orange) 65%, transparent 100%);
-  }
-  .gline-h-bottom {
-    left: -19.51%;
-    right: 39.84%;
-    top: 12.8313rem;
-    background: linear-gradient(to right, transparent 0%, var(--color-orange) 35%, var(--color-orange) 100%);
-  }
-  /* 8 sparks, each at a real line x line crossing (confirmed geometrically —
-     v1 doesn't reach h-bottom's y and v5 doesn't reach h-top's y, so those 2
-     crossings genuinely don't exist and have no spark). Sizes vary per
-     Figma, not a uniform token. */
-  .gspark {
-    position: absolute;
-    transform: translate(-50%, -50%);
-  }
-  .gspark-1 {
-    /* v2 x h-bottom, tiny */
-    left: 79.47%;
-    top: 12.8625rem;
-    width: 0.5425rem;
-    height: 0.5425rem;
-  }
-  .gspark-2 {
-    /* v1 x h-top */
-    left: 107.01%;
-    top: -2.1875rem;
-    width: 3.0962rem;
-    height: 2.3044rem;
-  }
-  .gspark-3 {
-    /* v2 x h-top */
-    left: 79.47%;
-    top: -2.1875rem;
-    width: 3.0963rem;
-    height: 2.3044rem;
-  }
-  .gspark-4 {
-    /* v3 x h-bottom */
-    left: 51.92%;
-    top: 12.875rem;
-    width: 2.2075rem;
-    height: 2.2075rem;
-  }
-  .gspark-5 {
-    /* v3 x h-top */
-    left: 51.94%;
-    top: -2.0812rem;
-    width: 2.2662rem;
-    height: 1.6869rem;
-  }
-  .gspark-6 {
-    /* v4 x h-bottom */
-    left: 24.4%;
-    top: 12.8625rem;
-    width: 3.0963rem;
-    height: 3.0963rem;
-  }
-  .gspark-7 {
-    /* v4 x h-top, small */
-    left: 24.4%;
-    top: -1.7937rem;
-    width: 1.0225rem;
-    height: 1.0225rem;
-  }
-  .gspark-8 {
-    /* v5 x h-bottom */
-    left: -3.14%;
-    top: 12.8625rem;
-    width: 3.0962rem;
-    height: 3.0963rem;
   }
   .stat-value {
     font-family: var(--font-display);
