@@ -19,26 +19,36 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 // array: Astro's `{}` text interpolation auto-escapes "&" to "&amp;" in the
 // rendered HTML, so storing the literal entity text here would double-escape
 // to "&amp;amp;".
+// pdf: each advisor's profile one-pager (public/advisors/, user-supplied
+// 2026-07-10 as numbered files 1-4.pdf). Renamed to per-person slugs because
+// the numbering did NOT follow this display order (verified by opening each
+// PDF: 1=Mishra, 2=Goenka, 3=Karandikar, 4=Garg) — numbered names invite
+// exactly that mis-mapping. Photo + name (only) link to it, per user
+// clarification.
 const ADVISORS = [
   {
     photo: abhay,
     name: "Dr. Abhay Karandikar",
     desc: "Member, NITI Aayog. Former Secretary, Department of Science & Technology, Government of India",
+    pdf: "/advisors/abhay-karandikar.pdf",
   },
   {
     photo: madhukar,
     name: "Dr. Madhukar Garg",
     desc: "Former President, R&D, Refining and Petrochemicals, Reliance Industries Ltd.",
+    pdf: "/advisors/madhukar-garg.pdf",
   },
   {
     photo: neelkanth,
     name: "Shri Neelkanth Mishra",
     desc: "Chief Economist, Axis Bank; Head of Global Research and Board member, Axis Capital",
+    pdf: "/advisors/neelkanth-mishra.pdf",
   },
   {
     photo: pawan,
     name: "Dr. Pawan Goenka",
     desc: "Chairperson, IN-SPACe, Department of Space, Government of India",
+    pdf: "/advisors/pawan-goenka.pdf",
   },
 ];
 ---
@@ -64,14 +74,16 @@ const ADVISORS = [
     <div class="grid">
       {ADVISORS.map((a) => (
         <article class="card">
-          <Image
-            src={a.photo}
-            alt={a.name}
-            widths={[252, 504]}
-            sizes="(max-width: 559.98px) 45vw, (max-width: 1023.98px) 30vw, 252px"
-            class="photo"
-          />
-          <h3>{a.name}</h3>
+          <a class="pdf-link" href={a.pdf} target="_blank" rel="noopener" aria-label={`View ${a.name}'s profile (PDF)`}>
+            <Image
+              src={a.photo}
+              alt={a.name}
+              widths={[252, 504]}
+              sizes="(max-width: 559.98px) 45vw, (max-width: 1023.98px) 30vw, 252px"
+              class="photo"
+            />
+          </a>
+          <h3><a class="pdf-link" href={a.pdf} target="_blank" rel="noopener">{a.name}</a></h3>
           <p class="desc">{a.desc}</p>
         </article>
       ))}
@@ -188,6 +200,17 @@ const ADVISORS = [
     font-size: 1.5rem; /* 24px — reduced from 30.102px per user directive 2026-07-06 */
     line-height: 1.3;
     color: #1e1e3e;
+  }
+  /* Photo + name link to the advisor's profile PDF (user directive
+     2026-07-10). Inherit the card's own colors — the hover/focus underline
+     on the name is the affordance (Footer's .links a hover convention). */
+  .pdf-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  h3 .pdf-link:hover,
+  h3 .pdf-link:focus-visible {
+    text-decoration: underline;
   }
 
   /* Description is a vectorized paragraph (not real text), same technique as
