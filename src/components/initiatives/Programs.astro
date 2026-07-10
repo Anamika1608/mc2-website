@@ -850,6 +850,12 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     font-size: clamp(0.7rem, 1.0417vw, 1.25rem); /* 20px at 1920 — subtitle's own outlined bbox height (13.78px) is numerically identical to the header label's own glyph cap-height above; same size + same scale/floor as the label */
     letter-spacing: 0.04em; /* approximate — outlined, no exact tracking data; visually tracked-out like the site's eyebrows, less extreme than their 0.25em since this is a secondary in-card label */
     color: var(--color-ink-alt);
+    /* Per direct feedback: O1's subtitle is authored as literal caps text;
+       O2/O3/O4 weren't, reading inconsistently in sentence case. Applied
+       here instead of retyping their markup — a no-op for O1, and keeps
+       O2/O3/O4's underlying text in natural case for accessibility/
+       copy-paste, same convention as this site's other eyebrow labels. */
+    text-transform: uppercase;
   }
 
   .card-body {
