@@ -433,7 +433,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     color: var(--color-ink-alt); /* navy on every card, including O2's orange one — matches Pillars' .card-title convention */
   }
   .step-body {
-    margin: 0.8rem auto 0;
+    margin: 0.8rem 0 0;
     font-family: var(--font-sans);
     /* Outlined (no text node). O2's body (node 1:16093, "We match you to the
        energy majors...") wraps to an exact 5 lines at its own 298.06px column
@@ -453,7 +453,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     /* Always visible now (per direct feedback: all four cards are
        permanently open, hover only changes background/text/notch color and
        the existing lift — see .step's own comment above). */
-    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 (the "narrow columns, verified acceptable" call in the prior comment didn't hold up against the actual desktop-width report) */
+    text-align: left; /* was centered (see justify-revert comment above); per direct user feedback 2026-07-10 the body should read left-aligned, flush to the card's own padding edge -- only .step-body changes, .step-title/.step-label/.step-number stay centered via .step-foot's own text-align:center */
   }
   .step.is-active .step-body {
     /* On-orange body copy is navy, not gray (matches Pillars' .card--o3 .card-body) —
@@ -461,14 +461,15 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
        that is (none by default — see markup/script above). */
     color: var(--color-ink-alt);
   }
-  .step--o2 .step-title,
-  .step--o2 .step-body {
+  .step--o2 .step-title {
     max-width: 18.6288rem; /* 298.06px, node 1:16090/1:16093's own wrap column — originally reproduced the design's "Find energy-major" / "champions" break; step 02's title was shortened to "Find energy-majors" per user directive 2026-07-10 and now fits one line, but the column stays for the other steps' own wraps */
-    margin-inline: auto;
+    margin-inline: auto; /* title stays centered -- only .step-body goes left-aligned, see that rule's own comment */
+  }
+  .step--o2 .step-body {
+    max-width: 18.6288rem; /* same wrap column as the title above, kept for O2's own line-break points -- no margin-inline:auto here so the block sits flush left like O1/O4 */
   }
   .step--o3 .step-body {
     max-width: 17.5138rem; /* 280.22px, node 1:16203's own wrap column */
-    margin-inline: auto;
   }
 
   .scroll {
@@ -516,12 +517,11 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   /* Mobile justify-revert (user directive 2026-07-10, same artifact class as
      the hero ledes' earlier fix): justified text in this narrow centered
      column produces stretched word gaps on phones — revert to plain centered
-     below 768px; justify stays at >=768px where it renders cleanly. */
+     below 768px; justify stays at >=768px where it renders cleanly.
+     (.step-body's own override here was removed -- .step-body is now
+     left-aligned unconditionally, see its base rule's own comment.) */
   @media (max-width: 767.98px) {
     .sub {
-      text-align: center;
-    }
-    .step-body {
       text-align: center;
     }
   }
