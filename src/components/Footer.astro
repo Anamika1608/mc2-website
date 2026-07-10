@@ -76,6 +76,13 @@ const currentYear = new Date().getFullYear();
     max-width: 46ch;
     margin: 1.25rem 0 0;
     line-height: 1.6;
+    /* Reviewer feedback 2026-07-10: the wrap read as long/short/long — the
+       .nowrap span below forces the ministry name to start its own line,
+       leaving the middle line short. `balance` redistributes the wrap
+       points so the three lines come out near-equal while still honoring
+       the atomic phrase (same property as Scale.astro's h2 orphan fix);
+       progressive — older browsers just keep the previous rendering. */
+    text-wrap: balance;
   }
   /* "Ministry of Petroleum & Natural Gas" (36 chars) must stay on one line
      per user request -- close to .brand p's own 46ch cap, verified via
