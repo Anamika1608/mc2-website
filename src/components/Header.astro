@@ -119,6 +119,11 @@ const isActive = (href: string) =>
     text-decoration: none;
     color: var(--color-ink);
     transition: color 120ms ease;
+    /* "Press releases" is the nav's only two-word label: at 1024px the flex
+       row compresses its li to min-content and the label wraps to a second
+       line (verified via Playwright: .nav-list height 21px → 42px). Nav
+       labels are atomic — never let one break mid-label. */
+    white-space: nowrap;
   }
   .nav-list a:hover,
   .nav-list a[aria-current="page"] {
