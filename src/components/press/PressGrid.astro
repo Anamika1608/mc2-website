@@ -1,0 +1,105 @@
+---
+// PDF-thumbnail grid for /press-releases: each card links straight to its
+// release PDF in a new tab (same interaction as AdvisoryBoard's profile-PDF
+// links). Grid breakpoints follow the site's established set (1023.98 /
+// 639.98). One release today; future ones are a data entry + two assets
+// (see src/data/press.ts).
+import { Image } from "astro:assets";
+import { RELEASES } from "../../data/press";
+---
+
+<section class="press">
+  <div class="container">
+    <div class="grid">
+      {
+        RELEASES.map((r) => (
+          <a
+            class="card"
+            href={r.pdf}
+            target="_blank"
+            rel="noopener"
+            aria-label={`Read the press release (PDF): ${r.title}`}
+          >
+            <Image
+              src={r.cover}
+              alt=""
+              widths={[480, 960]}
+              sizes="(max-width: 639.98px) 90vw, (max-width: 1023.98px) 45vw, 480px"
+              class="cover"
+            />
+            <p class="date">{r.date}</p>
+            <h2 class="title">{r.title}</h2>
+            <p class="summary">{r.summary}</p>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .press {
+    background: var(--color-cream);
+    padding-block: 2rem 7rem; /* hero owns the gap above; generous bottom before the footer, matching sibling last-sections */
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem; /* AdvisoryBoard's grid gap convention */
+  }
+
+  .card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+  .card:hover .title,
+  .card:focus-visible .title {
+    text-decoration: underline; /* the affordance — AdvisoryBoard pdf-link convention */
+  }
+
+  .cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-line); /* the cover is a white document page on a cream background — hairline keeps its edges defined, same token as the site's other hairlines */
+  }
+
+  .date {
+    margin: 1.25rem 0 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem; /* 15px — the site's small-label size (ContactForm labels) */
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gray);
+  }
+
+  .title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem; /* 24px — AdvisoryBoard card-name scale */
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--color-ink-alt);
+  }
+
+  .summary {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.0625rem; /* 17px — the site's body-copy scale */
+    line-height: 1.5;
+    color: var(--color-gray);
+  }
+
+  @media (max-width: 1023.98px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639.98px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
