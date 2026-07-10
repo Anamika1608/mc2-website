@@ -235,6 +235,17 @@ const STATS = [
        column positions above, not in padding. Mobile restores side padding
        in the <=1023.98px block (its 2-col grid needs the separation). */
     padding: 2.57rem 0 0;
+    /* Regression fix: this was missing, so .stat-spark's `position:
+       absolute` (below) had no positioned ancestor closer than
+       .stats-wrap — every instance (meant to mark a DIFFERENT item's own
+       boundary) resolved to the exact same position relative to
+       .stats-wrap instead, stacking all 3 rail sparks on top of each
+       other at one spot (verified live at 400px: only one spark visible
+       near the top of the rail, none at the other two boundaries).
+       Restoring per-item positioning fixes the already-shipped
+       <=559.98px rail and is a prerequisite for the new >=560px tablet
+       divider below, which also repositions this same element. */
+    position: relative;
   }
   /* Mobile-only rail (<=559.98px), see media block below for the visible
      rule — no-op at tablet/desktop. .has-divider/border-left from the
@@ -347,6 +358,40 @@ const STATS = [
       max-width: none;
     }
   }
+
+  /* Fills a real gap (user-reported "the grid is missing"): the mobile
+     rail below only applies <=559.98px, and .grid-lines only applies
+     >=1024px, leaving the 2-col grid here with zero decoration from
+     560-1023px. Matches Audiences.astro's own equivalent tablet pattern
+     (confirmed live, chosen over building a new design from scratch) —
+     one divider + one spark between the two bottom-row items, item 3
+     ("Pan India") and item 4 ("7"), the only pair actually adjacent to
+     each other in this 2-col grid's second row. Position derived from a
+     live measurement, not assumed: .stats has no explicit column-gap at
+     this breakpoint (grid tracks touch at 0), so the whole visual
+     separation between items 3/4 comes from their own 1.5rem side
+     padding on each side (from .stats li above) — item 4's own left
+     edge (border-box) sits exactly at the grid boundary, so `left:
+     -1.5rem` from its padding box (where its text starts) lands the
+     divider precisely on that boundary, and coincidentally matches
+     Audiences.astro's own -1.5rem convention despite the two grids
+     being configured differently. */
+  @media (min-width: 560px) and (max-width: 1023.98px) {
+    .stats li:nth-child(4)::before {
+      content: "";
+      position: absolute;
+      left: -1.5rem;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--color-orange);
+    }
+    .stats li:nth-child(4) .stat-spark-top {
+      display: block;
+      left: -1.5rem;
+    }
+  }
+
   @media (max-width: 559.98px) {
     /* Dev feedback: "every" was orphaning below "The industrial weight
        behind" (itself wrapping to 2 internal rows at the narrowest phone
