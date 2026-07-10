@@ -65,8 +65,15 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
          clear the spark; NetworkSection's own top padding is reduced by
          that same 8.3rem below, so the total chevron→H2 gap this fix
          achieved (≈209px) is unchanged — the 8.3rem just moves from
-         "network's padding" to "hero's own box" so the spark has room. */
-      min-height: 47rem;
+         "network's padding" to "hero's own box" so the spark has room.
+         Then wrapped in max() with 52.8vw: the fixed floor cut the orbit
+         circle mid-air at bottom center (user screenshot 2026-07-10 —
+         "complete this circle"). The curve SVG scales with viewport width
+         (1920x1012 Figma frame => height 52.7vw) and its arc's lowest point
+         sits at y~1010/1012, so a 52.8vw floor always contains the full
+         circle; the 47rem floor still guards the left spark/X-crossing at
+         narrower desktop widths where 52.8vw would dip below it. */
+      min-height: max(47rem, 52.8vw);
     }
     /* Each h1 span is one authored Figma line (916/798/552px) — the browser's
        Faculty Glyphic metrics render a hair wider than Figma's own, so at the

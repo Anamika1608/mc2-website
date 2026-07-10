@@ -84,8 +84,15 @@ import SparkOrange from "../../assets/team/spark-orange.svg";
          so overflow:hidden was silently clipping almost the entire spark.
          46.87rem is the exact floor for .right-spark's own bottom edge at
          1920px width (74.19rem hero-top + spark-bottom 749.92px), not an
-         arbitrary bump. */
-      min-height: 46.87rem;
+         arbitrary bump.
+         Then wrapped in max() with 52.8vw: the fixed floor cut the orbit
+         circle mid-air at bottom center (user screenshot 2026-07-10 —
+         "complete this circle"). The curve SVG scales with viewport width
+         (1920x1012 Figma frame => height 52.7vw) and its arc's lowest point
+         sits at y~1010/1012, so a 52.8vw floor always contains the full
+         circle; the rem floor still guards .right-spark at narrower desktop
+         widths where 52.8vw would dip below it. */
+      min-height: max(46.87rem, 52.8vw);
     }
   }
 
