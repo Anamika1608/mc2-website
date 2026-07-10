@@ -6,6 +6,11 @@
 // (see src/data/press.ts).
 import { Image } from "astro:assets";
 import { RELEASES } from "../../data/press";
+// board-spark.svg is the symmetric four-point star the Board of Directors
+// cards use (their import is also named SparkOrange) — NOT spark-orange.svg,
+// which is a different asymmetric X-shaped flourish (wrong star, per direct
+// user feedback 2026-07-10).
+import SparkOrange from "../../assets/team/board-spark.svg";
 ---
 
 <section class="press">
@@ -20,13 +25,18 @@ import { RELEASES } from "../../data/press";
             rel="noopener"
             aria-label={`Read the press release (PDF): ${r.title}`}
           >
-            <Image
-              src={r.cover}
-              alt=""
-              widths={[480, 960]}
-              sizes="(max-width: 639.98px) 90vw, (max-width: 1023.98px) 45vw, 480px"
-              class="cover"
-            />
+            <div class="photo-wrap">
+              <span class="v-line" aria-hidden="true" />
+              <span class="h-line" aria-hidden="true" />
+              <SparkOrange class="card-spark" aria-hidden="true" />
+              <Image
+                src={r.cover}
+                alt=""
+                widths={[480, 960]}
+                sizes="(max-width: 639.98px) 90vw, (max-width: 1023.98px) 45vw, 480px"
+                class="cover"
+              />
+            </div>
             <p class="date">{r.date}</p>
             <h2 class="title">{r.title}</h2>
             <p class="summary">{r.summary}</p>
@@ -40,7 +50,12 @@ import { RELEASES } from "../../data/press";
 <style>
   .press {
     background: var(--color-cream);
-    padding-block: 2rem 7rem; /* hero owns the gap above; generous bottom before the footer, matching sibling last-sections */
+    /* Top was 2rem: with the flourish's v-line reaching ~4rem above the first
+       card, the cards sat visually against the hero's curve tails (user
+       screenshot 2026-07-10). 7rem clears the flourish plus comfortable air
+       below the hero; bottom stays generous before the footer, matching
+       sibling last-sections. */
+    padding-block: 7rem;
   }
 
   .grid {
@@ -59,11 +74,71 @@ import { RELEASES } from "../../data/press";
     text-decoration: underline; /* the affordance — AdvisoryBoard pdf-link convention */
   }
 
+  .photo-wrap {
+    position: relative;
+  }
   .cover {
     display: block;
     width: 100%;
     height: auto;
-    border: 1px solid var(--color-line); /* the cover is a white document page on a cream background — hairline keeps its edges defined, same token as the site's other hairlines */
+  }
+
+  /* Corner star + vertical line, cloned from BoardOfDirectors' photo flourish
+     (user directive 2026-07-10: "like the board of directors page" — straight
+     four-point star on a straight line at the photo edge). The line keeps the
+     directors' exact percentages (top -21.9%, height 70%, same gradient) —
+     they're photo-height-relative there too, so the proportions carry over.
+     The star is fixed at 2.25rem: the directors' 19% is 19% of a small square
+     headshot (~24-36px rendered); 19% of this large landscape card would
+     inflate it, so the rendered size is matched instead of the ratio.
+     Desktop-only, matching the directors' convention below. */
+  /* Both lines sit 0.75rem OFF the image edges (per direct user feedback
+     2026-07-10: flush-on-the-edge lines didn't read clearly) — vertical line
+     floated right of the image, horizontal line floated above it, star
+     centered on their crossing. The star's outer edge overhangs the image by
+     ~30px, which stays inside the container gutter (41px at 1024px, its
+     narrowest desktop value) — no horizontal overflow, verified. */
+  .card-spark {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    transform: translate(50%, -50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .v-line {
+    position: absolute;
+    right: -0.75rem;
+    top: -21.9%;
+    width: 1px;
+    height: 70%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 116, 0, 0.1) 0%,
+      rgba(255, 116, 0, 0.6) 31%,
+      rgba(255, 116, 0, 0.35) 100%
+    );
+  }
+  .h-line {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    width: 45%;
+    height: 1px;
+    z-index: 1;
+    pointer-events: none;
+    /* Same stops as .v-line, mirrored so the faint end is nearest the star
+       and it brightens as it runs left across the image top. */
+    background: linear-gradient(
+      to left,
+      rgba(255, 116, 0, 0.1) 0%,
+      rgba(255, 116, 0, 0.6) 31%,
+      rgba(255, 116, 0, 0.35) 100%
+    );
   }
 
   .date {
@@ -95,6 +170,12 @@ import { RELEASES } from "../../data/press";
   @media (max-width: 1023.98px) {
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* Decorative flourish is desktop-only, same as BoardOfDirectors. */
+    .v-line,
+    .h-line,
+    .card-spark {
+      display: none;
     }
   }
   @media (max-width: 639.98px) {

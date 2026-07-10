@@ -9,7 +9,6 @@
 // scroll-arrow.svg exports are byte-identical).
 import HeroCurves from "../../assets/contact/hero-curves.svg";
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
-import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
 
 <section class="hero">
@@ -18,19 +17,13 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   </div>
 
   <div class="hero-inner reveal">
-    <p class="eyebrow">PRESS RELEASES</p>
+    <!-- The eyebrow doubles as the page's visible title; the big display
+         heading was removed per user directive 2026-07-10. The h1 element
+         stays for document structure/SEO but renders in the eyebrow style. -->
+    <h1 class="eyebrow">PRESS RELEASES</h1>
     <div class="underline" aria-hidden="true"></div>
 
-    <h1>
-      <span class="line reveal-line">
-        <span class="reveal-line-box">
-          <span class="reveal-line-text">Press <span class="accent">releases</span>.</span>
-          <RevealStar class="reveal-star" aria-hidden="true" />
-        </span>
-      </span>
-    </h1>
-
-    <p class="lede reveal-rise reveal-rise--after-1-line">
+    <p class="lede reveal-rise">
       Announcements and updates from MC&sup2;+ and India&rsquo;s oil &amp; gas
       sector partners.
     </p>
@@ -118,20 +111,6 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     background: #000; /* same one-off hairline literal as the sibling heroes */
   }
 
-  h1 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-hero-h1);
-    line-height: var(--text-hero-h1-lh);
-    color: #1e1e3e; /* sibling heroes' documented H1 literal */
-  }
-  h1 .line {
-    display: block;
-  }
-  h1 .accent {
-    color: var(--color-orange-bright);
-  }
-
   .lede {
     max-width: 50.31rem;
     margin: 1.54rem auto 0;
@@ -148,9 +127,6 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
 
   @media (max-width: 1023.98px) {
-    h1 {
-      font-size: var(--text-hero-h1-fluid);
-    }
     .lede {
       max-width: 90%;
     }

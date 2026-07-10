@@ -1,10 +1,12 @@
 // Press releases shown on /press-releases. Content migrated verbatim from the
 // previous site (https://mc2plus.in/press-release/) per user directive
 // 2026-07-10 — see docs/superpowers/specs/2026-07-10-press-releases-page-design.md.
-// To add a release: drop its PDF in public/press/, its cover in
-// src/assets/press/, and append an entry here (newest first).
+// To add a release: drop its PDF in public/press/, its thumbnail photo in
+// src/assets/press/, and append an entry here (newest first). Thumbnails are
+// the release's photograph only — not the PDF's headed first page (user
+// directive 2026-07-10: "just the photo in the thumbnail").
 import type { ImageMetadata } from "astro";
-import oilPtrcCover from "../assets/press/press-cover.jpg";
+import oilPtrcCover from "../assets/press/press-photo.jpg";
 
 export interface Release {
   title: string;

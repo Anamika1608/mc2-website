@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # agent controller scratch
 .superpowers/
+
+# Vercel adapter build output
+.vercel/
