@@ -172,6 +172,23 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     .lede {
       max-width: 90%;
     }
+    /* Zoom the background in on mobile (same ask/approach as Home Hero's own
+       .orbit mobile override). Unlike Home, this SVG bakes all 4 sparks in as
+       filled paths (Vector_4-7) rather than separate CSS-positioned elements,
+       so their canvas positions were read straight from the SVG's own path
+       data: Vector_4 (top-right cluster) is the rightmost of the 4, with its
+       farthest point at canvas x=1659.14 of the 1920px-wide viewBox (86.41%
+       across). .orbit stays left:0 (unchanged), so -- same reasoning as
+       Home's spark-c -- the only real risk from widening .orbit is that
+       right edge pushing Vector_4 off-screen; the left-side sparks only move
+       further into an already-safe margin. Solving for the width where
+       Vector_4's edge lands exactly at the visible window's right edge
+       (100/Z = 0.8641) gives ~115.7% as the hard ceiling; 112% leaves a
+       measured safety margin comparable to Home's own tuned value at every
+       width in this breakpoint. */
+    .orbit {
+      width: 112%;
+    }
   }
 
   @media (max-width: 767.98px) {
