@@ -3,10 +3,14 @@ import Logo from "./Logo.astro";
 import { NAV_ITEMS } from "../data/nav";
 
 const EXPLORE = NAV_ITEMS.slice(0, 5);
-// "Coming soon" and "Partners" have no destination yet — user decision routes
-// all ENGAGE items to /contact until dedicated pages exist.
+// "Partners" has no dedicated page yet — routes to /contact as a placeholder.
 const ENGAGE = [
-  { label: "Coming soon", href: "/contact" },
+  {
+    label: "Apply",
+    href: "http://app.mc2plus.in/",
+    target: "_blank",
+    rel: "noopener noreferrer",
+  },
   { label: "Contact", href: "/contact" },
   { label: "Partners", href: "/contact" },
 ];
@@ -78,7 +82,9 @@ const currentYear = new Date().getFullYear();
           {
             ENGAGE.map((item) => (
               <li>
-                <a href={item.href}>{item.label}</a>
+                <a href={item.href} target={item.target} rel={item.rel}>
+                  {item.label}
+                </a>
               </li>
             ))
           }
