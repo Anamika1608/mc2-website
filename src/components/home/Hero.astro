@@ -1,6 +1,14 @@
 ---
 import HeroCurves from "../../assets/home/hero-curves.svg";
-import SparkOrange from "../../assets/home/spark-orange.svg";
+// Per-position spark exports (Figma nodes 1:50/1:51/1:52): each star is
+// individually ROTATED in Figma so its points run along the local direction
+// of the curve it sits on — a single upright generic star (the old
+// spark-orange.svg) matched the positions but not that orientation (user
+// directive 2026-07-10: "see the stars alignment, how they are aligned with
+// the lines"). Exported verbatim, background rects/clip paths stripped.
+import SparkA from "../../assets/home/spark-a.svg";
+import SparkB from "../../assets/home/spark-b.svg";
+import SparkC from "../../assets/home/spark-c.svg";
 import ScrollArrow from "../../assets/home/scroll-arrow.svg";
 import RevealStar from "../../assets/shared/reveal-star.svg";
 ---
@@ -8,9 +16,9 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 <section class="hero">
   <div class="orbit" aria-hidden="true">
     <HeroCurves class="curves" />
-    <SparkOrange class="spark spark-a" />
-    <SparkOrange class="spark spark-b" />
-    <SparkOrange class="spark spark-c" />
+    <SparkA class="spark spark-a" />
+    <SparkB class="spark spark-b" />
+    <SparkC class="spark spark-c" />
   </div>
 
   <div class="hero-inner reveal">
@@ -99,37 +107,31 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
   }
   .spark {
     position: absolute;
-    transform: translate(-50%, -50%);
-  }
-  /* Fix (mobile decor bug, 2026-07-09 review): sizes were fixed rem
-     (1.9rem/1.9rem, 2.7rem/2.7rem) — unlike .curves (width:100%,
-     height:auto) and TeamHero's own .right-spark precedent, these did NOT
-     shrink with .orbit at narrower viewports, so as the curve linework
-     shrank toward mobile widths the sparks stayed pinned at full desktop
-     pixel size: curves fade to near-invisible hairlines while the sparks
-     read as oversized dots floating with nothing under them. Converted to
-     percentages of .orbit's own width (spark-orange.svg is a 50x50 square
-     viewBox, confirmed via its own <svg> tag, so width:X%/height:auto
-     reproduces the exact square at any scale) — this keeps the sparks
-     locked to the curve's own scale at any viewport, matching TeamHero's
-     convention, with no separate mobile-only override needed. */
-  .spark-a {
-    left: 5.17%;
-    top: 66.88%;
-    width: 1.583%; /* was 1.9rem — (1.9rem×16px) / (120rem×16px, the 1920px reference width) × 100 */
     height: auto;
+  }
+  /* Positions/sizes are each node's exact Figma bounding box as % of the
+     1920x1153 curve canvas (metadata nodes 1:50/1:51/1:52), placed by
+     top-left corner with no transform — the rotation is baked into each
+     exported path, so the box IS the alignment. Percentages (not rem) keep
+     the sparks locked to the curve's own scale at any viewport, including
+     the ≤1023.98px orbit{width:118%} zoom (spark-c right edge 81.75% of the
+     canvas — same as before, inside the 84.7% visible window). Verified
+     against the computed arc-circle intersection points: each star straddles
+     its crossing with points running along both lines. */
+  .spark-a {
+    left: 4.377%; /* 84.04 / 1920, node 1:50 */
+    top: 65.671%; /* 757.18 / 1153 */
+    width: 1.595%; /* 30.62 / 1920 */
   }
   .spark-b {
-    left: 13.66%;
-    top: 74.73%;
-    width: 1.583%; /* same derivation as spark-a — both were 1.9rem */
-    height: auto;
+    left: 12.88%; /* 247.29 / 1920, node 1:51 */
+    top: 73.467%; /* 847.07 / 1153 */
+    width: 1.56%; /* 29.95 / 1920 */
   }
   .spark-c {
-    left: 80.63%;
-    top: 26.98%;
-    width: 2.25%; /* was 2.7rem — (2.7rem×16px) / (120rem×16px) × 100 */
-    height: auto;
+    left: 79.51%; /* 1526.59 / 1920, node 1:52 */
+    top: 25.259%; /* 291.23 / 1153 */
+    width: 2.233%; /* 42.87 / 1920 */
   }
 
   .hero-inner {
