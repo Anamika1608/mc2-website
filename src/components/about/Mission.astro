@@ -53,6 +53,11 @@
     margin: 0;
     font-family: var(--font-display);
     font-size: 3.25rem; /* 52px — reduced from the Figma 65px per user directive 2026-07-07 (desktop type felt oversized on sub-1920 laptops) */
+    line-height: 0.7; /* this display font's default "normal" leading sits the cap noticeably
+      below the grid's shared align-items:start box-top, visibly lower than the body paragraph's
+      own tight 1.4 line-height -- 0.7 is the empirically-verified value (Playwright, zoomed
+      crop comparison) where the heading's cap-top lands level with the body's first-line
+      cap-top, per direct user feedback 2026-07-10 */
     color: var(--color-ink-alt); /* #1e1e3c */
   }
 
@@ -72,6 +77,9 @@
     font-size: 1.125rem; /* 18px — reduced from the --text-body-lg token's 23px per user directive 2026-07-07 (overridden locally, same approach as Home/Initiatives CtaBand; the shared token itself is untouched) */
     line-height: 1.4; /* was 1.31 — normalized to home hero scale per user directive 2026-07-06 */
     color: var(--color-ink); /* body text token */
+    text-align: justify; /* wide (67.54rem), multi-word-per-line paragraph -- reads cleanly
+      justified, unlike the narrow-card cases reverted elsewhere; block stays left-positioned,
+      no text-align-last needed */
   }
 
   @media (max-width: 1023.98px) {
@@ -87,6 +95,12 @@
   @media (max-width: 767.98px) {
     .grid {
       gap: 0.85rem;
+    }
+    .body {
+      text-align: left; /* sitewide justify only reads cleanly at >=768px where there's enough
+        width for multiple words per line; below that the single-column stacked layout narrows
+        to the same "river" conditions already fixed everywhere else -- same pattern as commit
+        8360f33's mobile reverts, applied here too */
     }
   }
 </style>
