@@ -42,8 +42,10 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
           </span>
         </h2>
         <p class="reveal-rise reveal-rise--after-1-line">
-          If your venture fits any of these sectors at TRL 4+, Cohort 1 is
-          open. Bring the technology and a real industrial problem.
+          {/* Desktop-only break before the second sentence (user directive
+              2026-07-10); hidden <1024px so phones keep natural wrapping. */}
+          If your venture fits any of these sectors at TRL 4+, Cohort 1 is open. <br class="line-break" />Bring
+          the technology and a real industrial problem.
         </p>
         <PillButton label="Coming soon" href="/contact" variant="filled" />
       </div>
@@ -101,7 +103,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
 
   p {
     margin: 0.75rem 0 2.1rem; /* ~11.7px heading-to-paragraph, ~33.8px paragraph-to-pill, both this section's own measurements */
-    max-width: 32rem; /* was 40rem (638.76px, node 1:25110's Figma bounding width) — shortened per user directive 2026-07-10 ("body text's length can be made shorter") to a comfortable ~65-70 char measure at this 17px size */
+    max-width: 35.5rem; /* was 40rem (638.76px, node 1:25110's Figma bounding width) — shortened per user directive 2026-07-10 ("body text's length can be made shorter"). First set to 32rem, then widened to 35.5rem: the follow-up directive breaks the left paragraph before "Bring…", and its first sentence needs 564px (35.25rem, measured live) to fit on one line without orphaning "open." */
     font-family: var(--font-sans);
     font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06, matches Explorer.astro's .row-desc */
     line-height: 1.4;
@@ -139,6 +141,12 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     }
     h2 {
       font-size: clamp(2.2rem, 6vw, 2.625rem);
+    }
+    /* The desktop-only forced break before "Bring…" (see markup) would land
+       arbitrarily in the narrower stacked column — let phones wrap
+       naturally (Audiences' title-break precedent). */
+    .line-break {
+      display: none;
     }
   }
 </style>
