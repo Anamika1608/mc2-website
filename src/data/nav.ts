@@ -10,4 +10,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Support", href: "/support" },
   { label: "Portfolio", href: "/portfolio" },
   { label: "Contact", href: "/contact" },
+  { label: "Press releases", href: "/press-releases" },
 ];
