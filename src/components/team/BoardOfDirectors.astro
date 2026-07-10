@@ -24,7 +24,11 @@ const DIRECTORS = [
     photo: neeraj,
     name: "Dr. Neeraj Mittal",
     role: "CHAIRMAN & DIRECTOR",
-    desc: "Secretary, Ministry of Petroleum and Natural Gas",
+    // Split so "Natural Gas" stays atomic (rendered in a .nowrap span, see
+    // the .desc markup) — per user directive 2026-07-10, the desc should
+    // break "…Petroleum and / Natural Gas", never orphaning "Gas".
+    desc: "Secretary, Ministry of Petroleum and",
+    descNowrap: "Natural Gas",
   },
   {
     photo: vikas,
@@ -66,8 +70,8 @@ const DIRECTORS = [
         </span>
       </h2>
       <p class="subheading reveal-rise reveal-rise--after-1-line">
-        MC&sup2; Plus is governed by leaders drawn from the Ministry of
-        Petroleum and Natural Gas and India&rsquo;s energy majors.
+        MC&sup2; Plus is governed by leaders drawn from the <span class="nowrap">Ministry of Petroleum and Natural Gas</span> and
+        India&rsquo;s energy majors.
       </p>
     </div>
 
@@ -82,7 +86,7 @@ const DIRECTORS = [
           <div class="meta">
             <h3>{p.name}</h3>
             <p class="role">{p.role}</p>
-            <p class="desc">{p.desc}</p>
+            <p class="desc">{p.desc}{p.descNowrap && <> <span class="nowrap">{p.descNowrap}</span></>}</p>
           </div>
         </article>
       ))}
@@ -138,7 +142,19 @@ const DIRECTORS = [
     font-size: 1.0625rem; /* 17px — reduced from the derived 19.2px per user directive 2026-07-06 */
     line-height: 1.667; /* derived — see comment above */
     color: var(--color-gray);
-    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 */
+    /* Reverted from justify to plain center — landed independently from two
+       directions 2026-07-10: user feedback on the uneven word-spacing, and
+       the .nowrap span below (which forces the ministry name atomic onto
+       line 2, leaving line 1 too sparse to justify without huge gaps). */
+    text-align: center;
+  }
+  /* Keeps "Ministry of Petroleum and Natural Gas" (subheading) and
+     "Natural Gas" (Dr. Mittal's desc) atomic across line breaks — per user
+     directive 2026-07-10, "Gas" must never orphan onto its own line. Same
+     precedent as Footer.astro's .nowrap around this same ministry name.
+     Verified via Playwright at 1920/1024/768/390/360px for overflow. */
+  .nowrap {
+    white-space: nowrap;
   }
 
   /* Grid: 5 director cards. Was repeat(3, ...) (3-then-2 layout) — switched
