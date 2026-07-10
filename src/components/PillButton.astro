@@ -7,12 +7,14 @@ interface Props {
   href?: string;
   type?: "button" | "submit";
   variant?: "filled" | "ghost";
+  target?: string;
+  rel?: string;
 }
-const { label, href, type = "button", variant = "filled" } = Astro.props;
+const { label, href, type = "button", variant = "filled", target, rel } = Astro.props;
 const Tag = href ? "a" : "button";
 ---
 
-<Tag class:list={["pill", variant]} href={href} type={href ? undefined : type}>
+<Tag class:list={["pill", variant]} href={href} type={href ? undefined : type} target={target} rel={rel}>
   <span class="pill-label">{label}</span>
   <span class="pill-arrow" aria-hidden="true">
     <!-- Exact path from Figma nodes 1:992 (home), 1:8938 (about ghost) and 1:8959/about
