@@ -154,8 +154,7 @@ const LOCATIONS = [
     line-height: 1.45;
     padding: 1.25rem 2.5rem; /* 20px / 40px -- reduced from 1.63rem/5.06rem (26px/81px, banner box vs text box 1:28683/1:28685) per user directive 2026-07-07, the Figma padding read as oversized against the pill's own max-width */
     border-radius: 999px; /* pill; banner h106 → radius 53px */
-    text-align: justify; /* block stays centered via .network's own text-align:center */
-    text-align-last: center; /* justify's own last line defaults to left even inside this centered block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
+    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 */
   }
 
   @media (max-width: 767.98px) {

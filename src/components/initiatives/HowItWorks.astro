@@ -274,8 +274,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     font-size: 1.0625rem; /* 17px — reduced from 20px per user directive 2026-07-06 */
     line-height: 1.4;
     color: var(--color-gray);
-    text-align: justify;
-    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
+    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 */
   }
 
   .steps-row {
@@ -454,8 +453,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
     /* Always visible now (per direct feedback: all four cards are
        permanently open, hover only changes background/text/notch color and
        the existing lift — see .step's own comment above). */
-    text-align: justify; /* narrow columns (O2/O3), verified acceptable via screenshot */
-    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin-inline:auto on O2/O3) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
+    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 (the "narrow columns, verified acceptable" call in the prior comment didn't hold up against the actual desktop-width report) */
   }
   .step.is-active .step-body {
     /* On-orange body copy is navy, not gray (matches Pillars' .card--o3 .card-body) —

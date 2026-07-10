@@ -138,8 +138,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     font-size: var(--text-hero-lede); /* 31px, derived from the outlined lede (cap-height 22.6/0.73) — normalized to home hero scale per user directive 2026-07-06 */
     line-height: var(--text-hero-lede-lh); /* baseline delta 40.4px / 31px — normalized to home hero scale per user directive 2026-07-06 */
     color: #1e1e3e; /* literal, matches the lede's baked SVG fill */
-    text-align: justify;
-    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
+    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 */
   }
 
   .scroll {

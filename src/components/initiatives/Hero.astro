@@ -269,8 +269,7 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
        corrected value). Different node, different (if barely distinguishable)
        fill — verify-don't-assume applies per node, not per house pattern. */
     color: var(--color-ink-alt);
-    text-align: justify;
-    text-align-last: center; /* justify's own last line defaults to left even inside this centered (margin:auto) block -- explicit center keeps it reading centered like the rest of the paragraph, per direct user feedback 2026-07-09 */
+    text-align: center; /* reverted from justify -- uneven word-spacing, per direct user feedback 2026-07-10 */
   }
 
   .notice {
@@ -331,7 +330,6 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     font-size: 1.1463rem; /* 18.34px — notice text was 0.9168× the hero lede in the design (28.42/31); rescaled with the lede: 20px × 0.9168 — normalized to home hero scale per user directive 2026-07-06 */
     line-height: 1.31;
     color: var(--color-white); /* sampled fill: literal "white" in the node's own paths */
-    text-align: justify; /* sitewide paragraph-justify pass — was plain left; pill position/left-alignment of the block is unaffected */
   }
   .notice-link {
     color: var(--color-orange); /* #f37d2c exact match, sampled from this link's own paths */
