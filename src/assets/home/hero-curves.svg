@@ -1,6 +1,6 @@
 <svg width="1920" height="1153" viewBox="0 0 1920 1153" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Desktop" clip-path="url(#clip0_0_1)">
-<g id="home test 1" clip-path="url(#clip1_0_1)">
+<g id="Desktop">
+<g id="home test 1">
 <g id="Group" opacity="0.6">
 <g id="Group_2">
 <path id="Vector" d="M1587.79 -207.52C1692.35 312.26 1355.75 818.39 835.97 922.95C316.18 1027.51 -189.95 690.91 -294.51 171.13" stroke="#F37D2C" stroke-miterlimit="10"/>
@@ -10,12 +10,4 @@
 </g>
 </g>
 </g>
-<defs>
-<clipPath id="clip0_0_1">
-<rect width="1920" height="4496" fill="white"/>
-</clipPath>
-<clipPath id="clip1_0_1">
-<rect width="1920" height="4495.38" fill="white"/>
-</clipPath>
-</defs>
 </svg>
