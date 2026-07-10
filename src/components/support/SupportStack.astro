@@ -428,7 +428,7 @@ const SPARKS = [
        normally to keep their Figma-derived proportions. The var()'s `, 1`
        fallback makes this a no-op below 1200px (where the script removes
        the property entirely) and at >=1798px (where scale is already 1). */
-    font-size: calc(1.375rem / var(--support-stage-scale, 1)); /* 22px, increased from 18.25px per user directive 2026-07-07 */
+    font-size: calc(1.1406rem / var(--support-stage-scale, 1)); /* 18.25px, reverted from 22px per direct user feedback 2026-07-10 (was increased from this exact value on 2026-07-07) */
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #949494;
