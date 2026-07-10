@@ -76,6 +76,19 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     z-index: 0;
     pointer-events: none;
   }
+  @media (min-width: 1024px) {
+    /* This hero is shorter than Contact's (36rem vs 47rem), and the curve
+       asset scales with viewport width — so on wide screens its lower-left
+       spark/X-crossing landed right on the hero's bottom edge and was
+       half-clipped by the grid section (user screenshot 2026-07-10). Shift
+       the orbit up by an amount that grows with the same vw scale: 0 at
+       1024px (where the SVG already fits — a flat shift pushed the spark
+       into the lede there) up to ~170px at 1920px (verified: spark fully
+       clear of the section boundary). */
+    .orbit {
+      top: calc((1024px - 100vw) * 0.19);
+    }
+  }
   .curves {
     display: block;
     width: 100%;
