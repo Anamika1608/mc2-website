@@ -3,7 +3,6 @@ import Logo from "./Logo.astro";
 import { NAV_ITEMS } from "../data/nav";
 
 const EXPLORE = NAV_ITEMS.slice(0, 5);
-// "Partners" has no dedicated page yet — routes to /contact as a placeholder.
 const ENGAGE = [
   {
     label: "Apply",
@@ -12,7 +11,6 @@ const ENGAGE = [
     rel: "noopener noreferrer",
   },
   { label: "Contact", href: "/contact" },
-  { label: "Partners", href: "/contact" },
 ];
 
 const SOCIALS = [
@@ -96,7 +94,7 @@ const currentYear = new Date().getFullYear();
   <div class="bottom">
     <div class="container bottom-row">
       <p>© {currentYear} MC²+ Foundation | New Delhi, India</p>
-      <a href="/contact" class="privacy-link">Privacy Policy</a>
+      <span class="privacy-link">Privacy Policy</span>
       <p>Multiply · Collaborate · Create</p>
     </div>
   </div>
@@ -192,10 +190,6 @@ const currentYear = new Date().getFullYear();
   }
   .privacy-link {
     color: var(--color-ink);
-    text-decoration: none;
-  }
-  .privacy-link:hover {
-    text-decoration: underline;
   }
 
   @media (max-width: 767.98px) {
