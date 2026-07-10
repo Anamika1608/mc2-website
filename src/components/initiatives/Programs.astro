@@ -262,9 +262,9 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
         </p>
         <div class="card-footer">
           <div class="chips">
-            <span class="chip chip--info">8 to 12 ventures</span>
+            {/* "8 to 12 ventures" / "Six months" chips removed per user
+                directive 2026-07-10 (annotated screenshot). */}
             <span class="chip">Pilot + capital</span>
-            <span class="chip chip--info">Six months</span>
           </div>
           <p class="card-status">
             <span class="status-dot" aria-hidden="true"></span>Coming soon
@@ -924,16 +924,6 @@ const CARD_FLAG = `<svg class="card-flag" viewBox="0 0 115.62 90.07" preserveAsp
     background: var(--color-orange); /* node 1:16724's own raw fill */
     color: var(--color-white);
   }
-  /* Per direct feedback: O3's "8 to 12 ventures"/"Six months" chips are capacity/duration
-     facts, not eligibility requirements, and shouldn't get the same highlighted treatment
-     as "Pilot + capital" once the card is active — this modifier (applied only to those
-     two chips, in O3's markup above) keeps the resting tan/navy style even while its
-     parent card is `.is-active`. Scoped to O3 only, per the explicit feedback. */
-  .card.is-active .chip.chip--info {
-    background: var(--color-line);
-    color: var(--color-ink-alt);
-  }
-
   /* New: status pill ("Coming soon" / "Affiliate · Coming soon", see markup comments —
      no Figma node exists for this anywhere, styled from this component's own existing
      tokens/proportions rather than the reference site's differently-themed pill). Sits
