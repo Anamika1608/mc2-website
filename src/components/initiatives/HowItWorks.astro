@@ -105,7 +105,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
           <Fragment set:html={VTAB} />
         </div>
         <div class="step-foot">
-          <h3 class="step-title">Find energy-major champions</h3>
+          <h3 class="step-title">Find energy-majors</h3>
           <p class="step-body">
             We match you to the energy majors who own the problem and the
             assets, your sponsors, mentors and first reference customers.
@@ -465,7 +465,7 @@ const VTAB = `<svg class="step-vtab" viewBox="0 0 21.11 40.22" aria-hidden="true
   }
   .step--o2 .step-title,
   .step--o2 .step-body {
-    max-width: 18.6288rem; /* 298.06px, node 1:16090/1:16093's own wrap column — reproduces the design's "Find energy-major" / "champions" break */
+    max-width: 18.6288rem; /* 298.06px, node 1:16090/1:16093's own wrap column — originally reproduced the design's "Find energy-major" / "champions" break; step 02's title was shortened to "Find energy-majors" per user directive 2026-07-10 and now fits one line, but the column stays for the other steps' own wraps */
     margin-inline: auto;
   }
   .step--o3 .step-body {
