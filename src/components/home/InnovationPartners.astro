@@ -21,35 +21,30 @@ const partners = [
     src: "/nlc-india.png",
     width: 101,
     height: 129,
-    caption: "NLC India Ltd",
     alt: "NLC India Limited",
   },
   {
     src: "/c-camp.png",
     width: 294,
     height: 129,
-    caption: "C-CAMP",
     alt: "Centre for Cellular and Molecular Platforms",
   },
   {
     src: "/iit-kanpur.png",
     width: 129,
     height: 129,
-    caption: "IIT Kanpur",
     alt: "Indian Institute of Technology Kanpur",
   },
   {
     src: "/iit-madras.png",
     width: 129,
     height: 129,
-    caption: "IIT Madras",
     alt: "Indian Institute of Technology Madras",
   },
   {
     src: "/iit-bombay.png",
     width: 135,
     height: 129,
-    caption: "IIT Bombay",
     alt: "Indian Institute of Technology Bombay",
   },
 ] as const;
@@ -73,7 +68,6 @@ const partners = [
                     height={partner.height}
                   />
                 </span>
-                <figcaption>{partner.caption}</figcaption>
               </figure>
             </li>
           ))
@@ -166,11 +160,4 @@ const partners = [
     width: auto;
   }
 
-  figcaption {
-    margin-top: 0.75rem;
-    font-family: var(--font-sans);
-    font-size: var(--text-caption);
-    color: var(--color-gray);
-    text-align: center;
-  }
 </style>

@@ -19,49 +19,42 @@ const sponsors = [
     src: "/hindustan-petroleum.png",
     width: 99,
     height: 129,
-    caption: "Hindustan Petroleum",
     alt: "Hindustan Petroleum Corporation",
   },
   {
     src: "/oil-naural-gas.png",
     width: 101,
     height: 101,
-    caption: "Oil & Natural Gas",
     alt: "Oil and Natural Gas Corporation",
   },
   {
     src: "/indian-oil.png",
     width: 112,
     height: 119,
-    caption: "Indian Oil Corp",
     alt: "Indian Oil Corporation",
   },
   {
     src: "/bharat-petroleum.png",
     width: 81,
     height: 101,
-    caption: "Bharat Petroleum",
     alt: "Bharat Petroleum Corporation",
   },
   {
     src: "/gas-authority.png",
     width: 141,
     height: 106,
-    caption: "Gas Authority",
     alt: "GAIL (India) Limited",
   },
   {
     src: "/oil-india.png",
     width: 83,
     height: 122,
-    caption: "Oil India Ltd",
     alt: "Oil India Limited",
   },
   {
     src: "/petronet-lng.png",
     width: 78,
     height: 103,
-    caption: "Petronet LNG",
     alt: "Petronet LNG Limited",
   },
 ] as const;
@@ -85,7 +78,6 @@ const sponsors = [
                     height={sponsor.height}
                   />
                 </span>
-                <figcaption>{sponsor.caption}</figcaption>
               </figure>
             </li>
           ))
@@ -192,14 +184,6 @@ const sponsors = [
   .logo img {
     height: clamp(4.5rem, 3.635rem + 3.69vw, 8.0625rem);
     width: auto;
-  }
-
-  figcaption {
-    margin-top: 0.75rem;
-    font-family: var(--font-sans);
-    font-size: var(--text-caption); /* ~12px, estimated from caption bbox heights (Figma 1:253 etc.) relative to the heading — captions are outlined vectors too */
-    color: var(--color-gray);
-    text-align: center;
   }
 
   .divider {
