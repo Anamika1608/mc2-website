@@ -99,4 +99,14 @@ import PillButton from "../PillButton.astro";
       max-width: 90%;
     }
   }
+
+  /* Mobile justify-revert (user directive 2026-07-10, same artifact class as
+     the hero ledes' earlier fix): justified text in this narrow centered
+     column produces stretched word gaps on phones — revert to plain centered
+     below 768px; justify stays at >=768px where it renders cleanly. */
+  @media (max-width: 767.98px) {
+    .body {
+      text-align: center;
+    }
+  }
 </style>
