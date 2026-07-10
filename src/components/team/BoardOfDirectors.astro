@@ -48,7 +48,7 @@ const DIRECTORS = [
     photo: sandeep,
     name: "Shri Sandeep Maheshwari",
     role: "DIRECTOR & CHIEF EXECUTIVE OFFICER",
-    desc: "Executive Director, Corporate Strategy & Business Development, HPCL",
+    desc: "Executive Director, Corporate Strategy & Business Development, HPCL",
   },
 ];
 ---
@@ -79,7 +79,6 @@ const DIRECTORS = [
             <SparkOrange class="card-spark" aria-hidden="true" />
             <Image src={p.photo} alt={p.name} widths={[240, 480]} sizes="240px" class="photo" />
           </div>
-          <span class="h-line" aria-hidden="true"></span>
           <div class="meta">
             <h3>{p.name}</h3>
             <p class="role">{p.role}</p>
@@ -212,19 +211,19 @@ const DIRECTORS = [
   }
 
   /* Desktop-only decorative flourish (spark at the photo's top-right corner,
-     crossed by a vertical + horizontal hairline — Figma nodes 1:13128/29/30),
-     removed sitewide in an earlier pass because its old fixed-rem values
-     were calibrated for one specific card width and badly overshot at every
+     crossed by a vertical hairline — Figma nodes 1:13128/29), removed
+     sitewide in an earlier pass because its old fixed-rem values were
+     calibrated for one specific card width and badly overshot at every
      other width across the fluid grid (real horizontal overflow, up to
      133px, plus text overlap). Re-added here, desktop-only per user
-     request, using percentages instead of fixed rem so it scales correctly
-     across the whole ≥1024px range rather than just one reference width:
-     .v-line/.card-spark are sized relative to .photo-wrap's own (fluid)
-     box, since they only need to track the photo's edge; .h-line is placed
-     on .card itself (not .photo-wrap) and sized relative to the card's own
-     width, since it alone needs to bridge across the gap into .meta, whose
-     width doesn't scale at the same rate as the photo alone. Verified via
-     Playwright at 1024/1440/1920px: no overflow, no overlap with the name. */
+     request, using percentages (not fixed rem) sized relative to
+     .photo-wrap's own (fluid) box so they scale correctly across the whole
+     ≥1024px range and stay locked to the photo's edge. Verified via
+     Playwright at 1024/1440/1920px: no overflow, no overlap with the name.
+     (A third element, .h-line, bridged into .meta via a card-relative
+     position — removed per direct feedback: unlike these two, it wasn't
+     anchored to .photo-wrap, so it drifted out of alignment with the photo
+     edge whenever a card's own photo-to-meta proportions shifted.) */
   .card-spark {
     position: absolute;
     top: 0;
@@ -250,22 +249,6 @@ const DIRECTORS = [
       rgba(255, 116, 0, 0.35) 100%
     );
   }
-  .h-line {
-    position: absolute;
-    left: 54%;
-    top: 0;
-    width: 29%;
-    height: 1px;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(
-      to right,
-      rgba(255, 116, 0, 0.4) 0%,
-      rgba(255, 116, 0, 0.55) 17%,
-      rgba(255, 116, 0, 0.12) 100%
-    );
-  }
-
   .meta {
     min-width: 0;
   }
@@ -358,7 +341,6 @@ const DIRECTORS = [
     /* Decorative flourish is desktop-only per user request — removed
        completely on tablet and mobile, not just resized/hidden partially. */
     .v-line,
-    .h-line,
     .card-spark {
       display: none;
     }
