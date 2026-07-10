@@ -1,8 +1,12 @@
 // @ts-check
 import { defineConfig, fontProviders } from "astro/config";
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: vercel({
+    webAnalytics: { enabled: true },
+  }),
   site: "https://mcplus.in",
   fonts: [
     {
