@@ -37,6 +37,16 @@ const isActive = (href: string) =>
             </li>
           ))
         }
+        <li>
+          <a
+            class="apply-link"
+            href="http://app.mc2plus.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apply
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -117,6 +127,17 @@ const isActive = (href: string) =>
   .nav-list a[aria-current="page"] {
     font-weight: 700;
   }
+  .nav-list a.apply-link {
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    background: var(--color-orange);
+    color: var(--color-white);
+    font-weight: 700;
+  }
+  .nav-list a.apply-link:hover {
+    background: var(--color-orange-bright);
+    color: var(--color-white);
+  }
   #menu-button {
     display: none;
     background: none;
@@ -160,6 +181,14 @@ const isActive = (href: string) =>
     .nav-list a {
       display: block;
       padding: 0.9rem clamp(1.25rem, 4vw, 5rem);
+    }
+    /* Keep the pill shape on mobile instead of stretching edge-to-edge like the
+       plain links above (this rule's own `display: block` + `.nav-list`'s full-width
+       <li> would otherwise square it off) -- inline-flex + margin insets it as a
+       proper pill, centered in the dropdown column. */
+    .nav-list a.apply-link {
+      display: inline-flex;
+      margin: 0.5rem clamp(1.25rem, 4vw, 5rem);
     }
   }
 </style>
