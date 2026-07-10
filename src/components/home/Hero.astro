@@ -226,27 +226,45 @@ import RevealStar from "../../assets/shared/reveal-star.svg";
     h1 .line {
       display: inline;
     }
+    /* Fix (2026-07-10 review): the above alone didn't actually stop the
+       stranding -- `.reveal-line-box`/`.reveal-line-text` (global.css) are
+       BOTH `display: inline-block` by default, and an inline-block's own
+       shrink-to-fit box doesn't reflow with its now-inline `.line` parent:
+       once its content is wider than the available row, the box just claims
+       the full remaining width for itself, so the wrapped remainder still
+       can't share a row with the next line's text. Same bug already
+       diagnosed and fixed for Scale.astro's H2 this session -- all 3
+       nesting levels have to flatten to plain `inline`, not just the
+       outermost one. */
+    h1 .reveal-line-box,
+    h1 .reveal-line-text {
+      display: inline;
+    }
     h1 .line:not(:last-child)::after {
       content: " ";
     }
-    /* Considered (2026-07-09 review) and deliberately NOT adding a
-       SupportHero-style `.orbit { min-width: Xrem }` "zoom crop" here: tried
-       it directly (min-width: 50rem) in a real render at 500/600px and it
-       trades away more than it gains — spark-c (the top-right spark) is
-       pushed fully off-screen by the wider, left-anchored canvas, which
-       contradicts the user's own mobile screenshot (both spark clusters —
-       the single top-right one AND the two-spark lower-left cluster —
-       visible together, just smaller), and the curve strokes don't read any
-       more clearly at that crop factor to justify the loss (an SVG's
-       stroke width scales down with its own viewBox regardless of how much
-       of the canvas overflow:hidden happens to crop away — only rendering
-       .orbit near its full ~120rem desktop physical scale would meaningfully
-       thicken the strokes, which stops being a "mobile" treatment at all).
-       The .spark-a/b/c percentage-sizing fix above already resolves the
-       actual reported bug (sparks were rendering ~3.2x oversized relative
-       to the curves — fixed 1.9rem against a curve scaled to ~31% of its
-       natural size at a 600px viewport) while keeping both spark clusters
-       on-screen, matching the user's own screenshot composition. */
+    /* Zoom the background in (2026-07-10, second request on this same ask).
+       Prior review (see git history) tried .orbit min-width:50rem and
+       rejected it: on a ~390px viewport that's a ~205% blow-up, which
+       pushes spark-c (80.63% across the curve canvas) fully off the right
+       edge, and reasoned that cropping alone can't thicken the strokes.
+       That reasoning had a gap: .curves is width:100% OF .orbit, so growing
+       .orbit's own width scales the whole embedded SVG up -- strokes
+       included, not just re-cropping the same-size art. The fix is a much
+       smaller, computed scale rather than a fixed rem jump: .orbit stays
+       left:0 (unchanged), so the only real risk is the right edge pushing
+       spark-c out. At width:115%, the visible window shows canvas-x
+       0%-85% (100/118), and spark-c sits at 80.63% -- inside with a real,
+       Playwright-measured safety margin (~18px at 390px width; 122% was
+       tried first and measured at just ~1-2px margin -- too tight for real
+       device rendering/subpixel rounding, dialed back) -- while the whole
+       illustration renders 18% bigger/bolder than the unscaled 100% today.
+       Percentage (not a fixed rem min-width) so this ratio -- and spark-c's
+       margin -- holds at every width in this breakpoint, not just one
+       tuned viewport. */
+    .orbit {
+      width: 118%;
+    }
   }
 
   @media (max-width: 767.98px) {
